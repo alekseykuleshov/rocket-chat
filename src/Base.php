@@ -6,12 +6,12 @@ abstract class Base {
 	private static $authUserId;
 	private static $authToken;
 
-	static public function init($instance, $root) {
+	public static function init($instance, $root) {
 
 		self::$client = new \GuzzleHttp\Client(['base_uri' => $instance . $root]);
 	}
 
-	static protected function setAuthUserId($userId) {
+	protected static function setAuthUserId($userId) {
 
 		self::$authUserId = $userId;
 	}
@@ -21,7 +21,7 @@ abstract class Base {
 		self::$authToken = $authToken;
 	}
 
-	static protected function send($url, $method = "GET", $data = null) {
+	protected static function send($url, $method = "GET", $data = null) {
 
 		if ( empty(self::$client) ) {
 
@@ -38,7 +38,7 @@ abstract class Base {
 		}
 		if ( ( $method == "POST" ) && ( ! empty($data) ) ) {
 
-			$params["form_params"] = $data;
+			$params["json"] = $data;
 		}
 
 		// Set authorization headers

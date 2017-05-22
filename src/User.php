@@ -21,7 +21,7 @@ class User extends Base {
 		$this->id = $userId;
 	}
 
-	static public function login($userName, $password, $auth = true) {
+	public static function login($userName, $password, $auth = true) {
 
 		$user = self::send("login", "POST", array("user" => $userName, "password" => $password));
 
@@ -39,7 +39,7 @@ class User extends Base {
 		return new self($user->data->userId);
 	}
 
-	static public function logout() {
+	public static function logout() {
 
 		$user = self::send("logout", "GET");
 
@@ -47,7 +47,7 @@ class User extends Base {
 		self::setAuthToken(null);
 	}
 
-	static public function me() {
+	public static function me() {
 
 		$user = self::send("me", "GET");
 
@@ -70,7 +70,7 @@ class User extends Base {
 
 	public function create() {
 
-		$userData = getUserData();
+		$userData = $this->getUserData();
 
 		$user = self::send("users.create", "POST", $userData);
 
@@ -86,7 +86,7 @@ class User extends Base {
 
 	public function update() {
 
-		$userData = getUserData();
+		$userData = $this->getUserData();
 
 		$user = self::send("users.update", "POST", array("userId" => $this->getId(), "data" => $userData));
 
