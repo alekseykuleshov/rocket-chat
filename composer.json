@@ -1,0 +1,15 @@
+{
+    "name": "atdev/rocket-chat",
+    "description": "Rocket Chat REST API SDK",
+    "keywords": ["rocketchat"],
+    "homepage": "https://github.com/alekseykuleshov/rocket-chat",
+    "license": "MIT",
+    "autoload": {
+        "classmap": ["src/"]
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.6.0",
+        "guzzlehttp/guzzle": "~6.0"
+    }
+}
