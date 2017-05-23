@@ -8,11 +8,19 @@ abstract class Base {
 
 	public static function init($instance, $root) {
 
-		// Guzzle 6
-		//self::$client = new \GuzzleHttp\Client(['base_uri' => $instance . $root]);
+		if ( class_exists("\GuzzleHttp\Client") ) {
+			// Guzzle 6
+			self::$client = new \GuzzleHttp\Client(['base_uri' => $instance . $root]);
+			return;
+		}
 
-		// Guzzle 3
-		self::$client = new \Guzzle\Http\Client($instance . $root);
+		if ( class_exists("\Guzzle\Http\Client") ) {
+			// Guzzle 3
+			self::$client = new \Guzzle\Http\Client($instance . $root);
+			return;
+		}
+
+		throw new \Exception("Canonot initiate guzzle");
 	}
 
 	protected static function setAuthUserId($userId) {
@@ -25,42 +33,32 @@ abstract class Base {
 		self::$authToken = $authToken;
 	}
 
-	// Guzzle 3
 	protected static function send($url, $method = "GET", $data = null) {
 
 		if ( empty(self::$client) ) {
 
-			throw new Exception("You should init first");
+			throw new \Exception("You should init first");
 		}
 
-		// Default request parameters
-		$params = array("timeout" => 60, "connect_timeout" => 60, "exceptions" => false);
+		if ( self::$client instanceof \GuzzleHttp\Client) {
 
-		// Set authorization headers
-		$headers = array();
-		if ( ! empty(self::$authUserId) ) {
-
-			$headers["X-User-Id"] = self::$authUserId;
-		}
-		if ( ! empty(self::$authToken) ) {
-
-			$headers["X-Auth-Token"] = self::$authToken;
+			return self::send6($url, $method, $data);
 		}
 
-		if ( ! empty($headers) ) {
+		if ( self::$client instanceof \Guzzle\Http\Client) {
 
-			$params["headers"] = $headers;
+			return self::send3($url, $method, $data);
 		}
 
-		// Set data
-		if ( ( $method == "GET" ) && ( ! empty($data) ) ) {
+		throw new \Exception("Unknown guzzle version");
+    }
 
-			$request = self::$client->get($url . "?" . http_build_query($data), $headers);
-		}
-		if ( ( $method == "POST" ) && ( ! empty($data) ) ) {
+	private static function send3($url, $method, $data) {
 
-			$request = self::$client->post($url, $headers, json_encode($data));
-		}
+		// Get request options
+		$options = self::getRequestOptions($method, $data, 3);
+
+		$request = self::$client->createRequest($method, $url, array(), null, $options);
 
 		// Do request
 		$res = $request->send();
@@ -68,6 +66,29 @@ abstract class Base {
 		$code = $res->getStatusCode();
 		$body = $res->getBody();
 
+		return self::getResult($code, $body);
+    }
+
+	private static function send6($url, $method, $data) {
+
+		// Get request options
+		$options = self::getRequestOptions($method, $data, 6);
+
+		// Do request
+		$res = self::$client->request(
+			$method,
+			$url,
+			$options
+		);
+
+		$code = $res->getStatusCode();
+		$body = $res->getBody()->getContents();
+
+		return self::getResult($code, $body);
+    }
+
+	private static function getResult($code, $body) {
+
 		if ( ( $code >= 200 ) && ($code < 300) ) {
 
 			return json_decode($body);
@@ -75,27 +96,27 @@ abstract class Base {
 
 			return false;
 		}
-    }
+	}
 
-	/* Guzzle 6
-	protected static function send($url, $method = "GET", $data = null) {
-
-		if ( empty(self::$client) ) {
-
-			throw new Exception("You should init first");
-		}
+	private static function getRequestOptions($method, $data, $version = 6) {
 
 		// Default request parameters
-		$params = array("timeout" => 60, "connect_timeout" => 60, "exceptions" => false);
+		$options = array("timeout" => 60, "connect_timeout" => 60, "exceptions" => false);
 
 		// Set data
 		if ( ( $method == "GET" ) && ( ! empty($data) ) ) {
 
-			$params["query"] = $data;
+			$options["query"] = $data;
 		}
 		if ( ( $method == "POST" ) && ( ! empty($data) ) ) {
 
-			$params["json"] = $data;
+			if ( $version == 6) {
+
+				$options["json"] = $data;
+			} else {
+
+				$options["body"] = json_encode($data);
+			}
 		}
 
 		// Set authorization headers
@@ -111,25 +132,9 @@ abstract class Base {
 
 		if ( ! empty($headers) ) {
 
-			$params["headers"] = $headers;
+			$options["headers"] = $headers;
 		}
 
-		// Do request
-		$res = self::$client->request(
-			$method,
-			$url,
-			$params
-		);
-
-		$code = $res->getStatusCode();
-		$body = $res->getBody()->getContents();
-
-		if ( ( $code >= 200 ) && ($code < 300) ) {
-
-			return json_decode($body);
-		} else {
-
-			return false;
-		}
-    } */
+		return $options;
+	}
 }
