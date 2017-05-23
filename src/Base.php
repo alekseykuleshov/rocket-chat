@@ -10,7 +10,7 @@ abstract class Base {
 
 		if ( class_exists("\GuzzleHttp\Client") ) {
 			// Guzzle 6
-			self::$client = new \GuzzleHttp\Client(['base_uri' => $instance . $root]);
+			self::$client = new \GuzzleHttp\Client(array('base_uri' => $instance . $root));
 			return;
 		}
 
@@ -20,7 +20,7 @@ abstract class Base {
 			return;
 		}
 
-		throw new \Exception("Canonot initiate guzzle");
+		throw new \Exception("Cannot initiate guzzle");
 	}
 
 	protected static function setAuthUserId($userId) {
