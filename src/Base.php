@@ -1,11 +1,25 @@
 <?php namespace ATDev\RocketChat;
 
+/**
+ * An abstract class for inheritance
+ * Has methods to do the requests to api
+ */
 abstract class Base {
 
+	/** @var \GuzzleHttp\Client|\Guzzle\Http\Client Guzzle client */
 	private static $client;
+	/** @var string Chat user id */
 	private static $authUserId;
+	/** @var string Chat user auth token */
 	private static $authToken;
 
+	/**
+	 * Inits lib with url to chat instance api
+	 * @param string $instance Protocol and domain, i.e. https://chat.here
+	 * @param string $root apth to apim i.e. /api/v1/
+	 * @return null
+	 * @throws \Exception
+	 */
 	public static function init($instance, $root) {
 
 		if ( class_exists("\GuzzleHttp\Client") ) {
@@ -23,16 +37,32 @@ abstract class Base {
 		throw new \Exception("Cannot initiate guzzle");
 	}
 
+	/**
+	 * Sets chat user id on login
+	 * @param string $userId Chat user id
+	 */
 	protected static function setAuthUserId($userId) {
 
 		self::$authUserId = $userId;
 	}
 
+	/**
+	 * Sets chat user auth token on login
+	 * @param string $authToken Chat user auth token
+	 */
 	protected static function setAuthToken($authToken) {
 
 		self::$authToken = $authToken;
 	}
 
+	/**
+	 * Sends the request to the specified url via specified method with specified data
+	 * @param string $url Url
+	 * @param string $method Method
+	 * @param array|null $data Data
+	 * @return stdClass|false
+	 * @throws \Exception
+	 */
 	protected static function send($url, $method = "GET", $data = null) {
 
 		if ( empty(self::$client) ) {
@@ -51,8 +81,16 @@ abstract class Base {
 		}
 
 		throw new \Exception("Unknown guzzle version");
-    }
+	}
 
+	/**
+	 * Sends the request to the specified url via specified method with specified data via Guzzle3
+	 * @param string $url Url
+	 * @param string $method Method
+	 * @param array|null $data Data
+	 * @return stdClass|false
+	 * @throws \Exception
+	 */
 	private static function send3($url, $method, $data) {
 
 		// Get request options
@@ -67,8 +105,16 @@ abstract class Base {
 		$body = $res->getBody();
 
 		return self::getResult($code, $body);
-    }
+	}
 
+	/**
+	 * Sends the request to the specified url via specified method with specified data via Guzzle6
+	 * @param string $url Url
+	 * @param string $method Method
+	 * @param array|null $data Data
+	 * @return stdClass|false
+	 * @throws \Exception
+	 */
 	private static function send6($url, $method, $data) {
 
 		// Get request options
@@ -85,8 +131,14 @@ abstract class Base {
 		$body = $res->getBody()->getContents();
 
 		return self::getResult($code, $body);
-    }
+	}
 
+	/**
+	 * Gets result by http code ans response body
+	 * @param int $code
+	 * @param string $body
+	 * @return stdClass|false
+	 */
 	private static function getResult($code, $body) {
 
 		if ( ( $code >= 200 ) && ($code < 300) ) {
@@ -98,6 +150,13 @@ abstract class Base {
 		}
 	}
 
+	/**
+	 * Gets options for request for guzzle version specifically
+	 * @param string $method
+	 * @param array|null $data
+	 * @param 3|6 $version
+	 * @return array
+	 */
 	private static function getRequestOptions($method, $data, $version = 6) {
 
 		// Default request parameters
