@@ -3,14 +3,19 @@
 /**
  * Basic functionality to make a requests to api
  */
-abstract class Base {
+abstract class Request {
 
 	/** @var \GuzzleHttp\Client client */
 	private static $client;
+
 	/** @var string Chat user id */
 	private static $authUserId;
+
 	/** @var string Chat user auth token */
 	private static $authToken;
+
+	/** @var string|null Error message, empty if no error, some text if any */
+	private $error;
 
 	/**
 	 * Inits lib with url to chat instance api
@@ -144,5 +149,29 @@ abstract class Base {
 		}
 
 		return $options;
+	}
+
+	/**
+	 * Gets error
+	 *
+	 * @return string
+	 */
+	public function getError() {
+
+		return $this->error;
+	}
+
+	/**
+	 * Sets error
+	 *
+	 * @param string $error
+	 *
+	 * @return \ATDev\RocketChat\Request
+	 */
+	protected function setError($error) {
+
+		$this->error = $error;
+
+		return $this;
 	}
 }

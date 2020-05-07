@@ -2,7 +2,7 @@
 
 use \ATDev\RocketChat\Base;
 
-class User extends Base {
+class User extends Request {
 
 	use \ATDev\RocketChat\User\Data;
 

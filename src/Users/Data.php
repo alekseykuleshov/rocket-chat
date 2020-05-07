@@ -60,7 +60,7 @@ trait Data {
 	 */
 	public static function createOutOfResponse($response) {
 
-		$user = new self($response->_id);
+		$user = new static($response->_id);
 
 		return $user->updateOutOfResponse($response);
 	}
@@ -125,7 +125,7 @@ trait Data {
 			$validator = new EmailValidator();
 			if (!$validator->isValid($email, new RFCValidation())) {
 
-				$this->setError("Invalid email");
+				$this->setError("Invalid email value");
 			} else {
 
 				$this->email = $email;
@@ -202,7 +202,7 @@ trait Data {
 	 */
 	public function getPassword() {
 
-		return null; // No way to get password now
+		return $this->password;
 	}
 
 	/**
@@ -214,7 +214,7 @@ trait Data {
 	 */
 	public function setUsername($username) {
 
-		if (!is_string($password)) {
+		if (!is_string($username)) {
 
 			$this->setError("Invalid user name");
 		} else {
@@ -244,7 +244,7 @@ trait Data {
 	 */
 	public function setActive($active) {
 
-		if (!is_boolean($active)) {
+		if (!is_bool($active)) {
 
 			$this->setError("Invalid active value");
 		} else {
@@ -304,7 +304,7 @@ trait Data {
 	 */
 	public function setJoinDefaultChannels($joinDefaultChannels) {
 
-		if (!is_boolean($joinDefaultChannels)) {
+		if (!is_bool($joinDefaultChannels)) {
 
 			$this->setError("Invalid join default channels value");
 		} else {
@@ -334,7 +334,7 @@ trait Data {
 	 */
 	public function setRequirePasswordChange($requirePasswordChange) {
 
-		if (!is_boolean($requirePasswordChange)) {
+		if (!is_bool($requirePasswordChange)) {
 
 			$this->setError("Invalid require password change value");
 		} else {
@@ -364,7 +364,7 @@ trait Data {
 	 */
 	public function setSendWelcomeEmail($sendWelcomeEmail) {
 
-		if (!is_boolean($sendWelcomeEmail)) {
+		if (!is_bool($sendWelcomeEmail)) {
 
 			$this->setError("Invalid send welcome email value");
 		} else {
@@ -394,7 +394,7 @@ trait Data {
 	 */
 	public function setVerified($verified) {
 
-		if (!is_boolean($verified)) {
+		if (!is_bool($verified)) {
 
 			$this->setError("Invalid verified value");
 		} else {
@@ -506,6 +506,16 @@ trait Data {
 	}
 
 	/**
+	 * Gets user avatar url
+	 *
+	 * @return string
+	 */
+	public function getAvatarUrl() {
+
+		return $this->avatarUrl;
+	}
+
+	/**
 	 * Updates current user out of api response
 	 *
 	 * @param \stdClass $response
@@ -522,12 +532,12 @@ trait Data {
 			$this->setCreatedAt($response->createdAt);
 		}
 
-		if (!is_null($user->user->emails[0]->address)) {
-			$this->setEmail($user->user->emails[0]->address);
+		if (!is_null($response->emails[0]->address)) {
+			$this->setEmail($response->emails[0]->address);
 		}
 
-		if (!is_null($user->user->emails[0]->verified)) {
-			$this->setVerified($user->user->emails[0]->verified);
+		if (!is_null($response->emails[0]->verified)) {
+			$this->setVerified($response->emails[0]->verified);
 		}
 
 		if (!is_null($response->type)) {
@@ -566,7 +576,67 @@ trait Data {
 			$this->setUsername($response->username);
 		}
 
+		if (!is_null($response->avatarUrl)) {
+			$this->setAvatarUrl($response->avatarUrl);
+		}
+
 		return $this;
+	}
+
+	/**
+	 * Gets full user data to submit to api
+	 *
+	 * @return array
+	 */
+	public function getUserData() {
+
+		$userData = [
+			"email" => $this->email,
+			"name" => $this->name,
+			"username" => $this->username
+		];
+
+		if (!is_null($this->password)) {
+
+			$userData["password"] = $this->password;
+		}
+
+		if (!is_null($this->active)) {
+
+			$userData["active"] = $this->active;
+		}
+
+		if (!is_null($this->roles)) {
+
+			$userData["roles"] = $this->roles;
+		}
+
+		if (!is_null($this->joinDefaultChannels)) {
+
+			$userData["joinDefaultChannels"] = $this->joinDefaultChannels;
+		}
+
+		if (!is_null($this->requirePasswordChange)) {
+
+			$userData["requirePasswordChange"] = $this->requirePasswordChange;
+		}
+
+		if (!is_null($this->sendWelcomeEmail)) {
+
+			$userData["sendWelcomeEmail"] = $this->sendWelcomeEmail;
+		}
+
+		if (!is_null($this->verified)) {
+
+			$userData["verified"] = $this->verified;
+		}
+
+		if (!is_null($this->customFields)) {
+
+			$userData["customFields"] = $this->customFields;
+		}
+
+		return $userData;
 	}
 
 	/**
@@ -580,7 +650,7 @@ trait Data {
 
 		if (is_string($createdAt)) {
 
-			$this->customFields = $customFields;
+			$this->createdAt = $createdAt;
 		}
 
 		return $this;
@@ -672,58 +742,35 @@ trait Data {
 	}
 
 	/**
-	 * Gets full user data to submit to api
+	 * Sets user avatar url
 	 *
-	 * @return array
+	 * @param string $avatarUrl
+	 *
+	 * @return \ATDev\RocketChat\Users\Data
 	 */
-	private function getUserData() {
+	private function setAvatarUrl($avatarUrl) {
 
-		$userData = [
-			"email" => $this->email,
-			"name" => $this->name,
-			"username" => $this->username
-		];
+		if (is_string($avatarUrl)) {
 
-		if ( !is_null($this->password)) {
-
-			$userData["password"] = $this->password;
+			$this->avatarUrl = $avatarUrl;
 		}
 
-		if ( !is_null($this->active)) {
-
-			$userData["active"] = $this->active;
-		}
-
-		if ( !is_null($this->roles)) {
-
-			$userData["roles"] = $this->roles;
-		}
-
-		if ( !is_null($this->joinDefaultChannels)) {
-
-			$userData["joinDefaultChannels"] = $this->joinDefaultChannels;
-		}
-
-		if ( !is_null($this->requirePasswordChange)) {
-
-			$userData["requirePasswordChange"] = $this->requirePasswordChange;
-		}
-
-		if ( !is_null($this->sendWelcomeEmail)) {
-
-			$userData["sendWelcomeEmail"] = $this->sendWelcomeEmail;
-		}
-
-		if ( !is_null($this->verified)) {
-
-			$userData["verified"] = $this->verified;
-		}
-
-		if ( !is_null($this->customFields)) {
-
-			$userData["customFields"] = $this->customFields;
-		}
-
-		return $userData;
+		return $this;
 	}
+
+	/**
+	 * Gets error
+	 *
+	 * @return string
+	 */
+	protected abstract function setError();
+
+	/**
+	 * Sets error
+	 *
+	 * @param string $error
+	 *
+	 * @return \ATDev\RocketChat\Users\Data
+	 */
+	public abstract function getError();
 }
