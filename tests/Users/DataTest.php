@@ -32,283 +32,307 @@ class DataTest extends TestCase {
 	public function testInvalidUserId() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid user Id"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setUserId(123);
 		$this->assertNull($mock->getUserId());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid user Id");
 	}
 
 	public function testValidUserId() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setUserId("123");
 		$this->assertSame("123", $mock->getUserId());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidEmail() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid email"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setEmail(123);
 		$this->assertNull($mock->getEmail());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid email");
 	}
 
 	public function testInvalidEmailFormat() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid email value"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$validator = test::double("\Egulias\EmailValidator\EmailValidator", ["isValid" => false]);
 		$validation = test::double("\Egulias\EmailValidator\Validation\RFCValidation");
 
 		$mock->setEmail("ajsfsdfasdf");
 		$this->assertNull($mock->getEmail());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid email value");
 	}
 
 	public function testValidEmail() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$validator = test::double("\Egulias\EmailValidator\EmailValidator", ["isValid" => true]);
 		$validation = test::double("\Egulias\EmailValidator\Validation\RFCValidation");
 
 		$mock->setEmail("test@example.com");
 		$this->assertSame("test@example.com", $mock->getEmail());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidName() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid name"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setName(123);
 		$this->assertNull($mock->getName());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid name");
 	}
 
 	public function testValidName() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setName("User Name");
 		$this->assertSame("User Name", $mock->getName());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidPassword() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid password"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setPassword(123);
 		$this->assertNull($mock->getPassword());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid password");
 	}
 
 	public function testValidPassword() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setPassword("sjdfb235$$");
 		$this->assertSame("sjdfb235$$", $mock->getPassword());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidUsername() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid user name"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setUsername(123);
 		$this->assertNull($mock->getUsername());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid user name");
 	}
 
 	public function testValidUsername() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setUsername("userName");
 		$this->assertSame("userName", $mock->getUsername());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidActive() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid active value"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setActive(new \stdClass);
 		$this->assertNull($mock->getActive());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid active value");
 	}
 
 	public function testValidActive() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setActive(false);
 		$this->assertSame(false, $mock->getActive());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidRoles() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid roles value"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setRoles(123);
 		$this->assertNull($mock->getRoles());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid roles value");
 	}
 
 	public function testValidRoles() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setRoles(["admin"]);
 		$this->assertSame(["admin"], $mock->getRoles());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidJoinDefaultChannels() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid join default channels value"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setJoinDefaultChannels(123);
 		$this->assertNull($mock->getJoinDefaultChannels());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid join default channels value");
 	}
 
 	public function testValidJoinDefaultChannels() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setJoinDefaultChannels(false);
 		$this->assertSame(false, $mock->getJoinDefaultChannels());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidRequirePasswordChange() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid require password change value"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setRequirePasswordChange(123);
 		$this->assertNull($mock->getRequirePasswordChange());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid require password change value");
 	}
 
 	public function testValidRequirePasswordChange() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setRequirePasswordChange(false);
 		$this->assertSame(false, $mock->getRequirePasswordChange());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidSendWelcomeEmail() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid send welcome email value"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setSendWelcomeEmail(123);
 		$this->assertNull($mock->getSendWelcomeEmail());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid send welcome email value");
 	}
 
 	public function testValidSendWelcomeEmail() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setSendWelcomeEmail(false);
 		$this->assertSame(false, $mock->getSendWelcomeEmail());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidVerified() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid verified value"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setVerified(123);
 		$this->assertNull($mock->getVerified());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid verified value");
 	}
 
 	public function testValidVerified() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setVerified(false);
 		$this->assertSame(false, $mock->getVerified());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidCustomFields() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->once())
-			->method("setError")
-			->with($this->equalTo("Invalid custom fields name"))
-			->will($this->returnValue($mock));
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setCustomFields(123);
 		$this->assertNull($mock->getCustomFields());
+
+		$stub->verifyInvokedOnce("setDataError", "Invalid custom fields name");
 	}
 
 	public function testValidCustomFields() {
 
 		$mock = $this->getMockForTrait(Data::class);
-		$mock->expects($this->never())
-			->method("setError");
+
+		$stub = test::double($mock, ["setDataError" => $mock]);
 
 		$mock->setCustomFields("asdfasdf");
 		$this->assertSame("asdfasdf", $mock->getCustomFields());
+
+		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testGetUserData() {

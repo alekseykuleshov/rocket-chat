@@ -89,7 +89,7 @@ trait Data {
 
 		if (!is_string($userId)) {
 
-			$this->setError("Invalid user Id");
+			$this->setDataError("Invalid user Id");
 		} else {
 
 			$this->userId = $userId;
@@ -119,13 +119,13 @@ trait Data {
 
 		if (!is_string($email)) {
 
-			$this->setError("Invalid email");
+			$this->setDataError("Invalid email");
 		} else {
 
 			$validator = new EmailValidator();
 			if (!$validator->isValid($email, new RFCValidation())) {
 
-				$this->setError("Invalid email value");
+				$this->setDataError("Invalid email value");
 			} else {
 
 				$this->email = $email;
@@ -156,7 +156,7 @@ trait Data {
 
 		if (!is_string($name)) {
 
-			$this->setError("Invalid name");
+			$this->setDataError("Invalid name");
 		} else {
 
 			$this->name = $name;
@@ -186,7 +186,7 @@ trait Data {
 
 		if (!is_string($password)) {
 
-			$this->setError("Invalid password");
+			$this->setDataError("Invalid password");
 		} else {
 
 			$this->password = $password;
@@ -216,7 +216,7 @@ trait Data {
 
 		if (!is_string($username)) {
 
-			$this->setError("Invalid user name");
+			$this->setDataError("Invalid user name");
 		} else {
 
 			$this->username = $username;
@@ -246,7 +246,7 @@ trait Data {
 
 		if (!is_bool($active)) {
 
-			$this->setError("Invalid active value");
+			$this->setDataError("Invalid active value");
 		} else {
 
 			$this->active = $active;
@@ -276,7 +276,7 @@ trait Data {
 
 		if (!is_array($roles)) {
 
-			$this->setError("Invalid roles value");
+			$this->setDataError("Invalid roles value");
 		} else {
 
 			$this->roles = $roles;
@@ -306,7 +306,7 @@ trait Data {
 
 		if (!is_bool($joinDefaultChannels)) {
 
-			$this->setError("Invalid join default channels value");
+			$this->setDataError("Invalid join default channels value");
 		} else {
 
 			$this->joinDefaultChannels = $joinDefaultChannels;
@@ -336,7 +336,7 @@ trait Data {
 
 		if (!is_bool($requirePasswordChange)) {
 
-			$this->setError("Invalid require password change value");
+			$this->setDataError("Invalid require password change value");
 		} else {
 
 			$this->requirePasswordChange = $requirePasswordChange;
@@ -366,7 +366,7 @@ trait Data {
 
 		if (!is_bool($sendWelcomeEmail)) {
 
-			$this->setError("Invalid send welcome email value");
+			$this->setDataError("Invalid send welcome email value");
 		} else {
 
 			$this->sendWelcomeEmail = $sendWelcomeEmail;
@@ -396,7 +396,7 @@ trait Data {
 
 		if (!is_bool($verified)) {
 
-			$this->setError("Invalid verified value");
+			$this->setDataError("Invalid verified value");
 		} else {
 
 			$this->verified = $verified;
@@ -426,7 +426,7 @@ trait Data {
 
 		if (!is_string($customFields)) {
 
-			$this->setError("Invalid custom fields name");
+			$this->setDataError("Invalid custom fields name");
 		} else {
 
 			$this->customFields = $customFields;
@@ -524,59 +524,59 @@ trait Data {
 	 */
 	public function updateOutOfResponse($response) {
 
-		if (!is_null($response->_id)) {
+		if (isset($response->_id)) {
 			$this->setUserId($response->_id);
 		}
 
-		if (!is_null($response->createdAt)) {
+		if (isset($response->createdAt)) {
 			$this->setCreatedAt($response->createdAt);
 		}
 
-		if (!is_null($response->emails[0]->address)) {
+		if (isset($response->emails[0]->address)) {
 			$this->setEmail($response->emails[0]->address);
 		}
 
-		if (!is_null($response->emails[0]->verified)) {
+		if (isset($response->emails[0]->verified)) {
 			$this->setVerified($response->emails[0]->verified);
 		}
 
-		if (!is_null($response->type)) {
+		if (isset($response->type)) {
 			$this->setType($response->type);
 		}
 
-		if (!is_null($response->status)) {
+		if (isset($response->status)) {
 			$this->setStatus($response->status);
 		}
 
-		if (!is_null($response->active)) {
+		if (isset($response->active)) {
 			$this->setActive($response->active);
 		}
 
-		if (!is_null($response->roles)) {
+		if (isset($response->roles)) {
 			$this->setRoles($response->roles);
 		}
 
-		if (!is_null($response->name)) {
+		if (isset($response->name)) {
 			$this->setName($response->name);
 		}
 
-		if (!is_null($response->lastLogin)) {
+		if (isset($response->lastLogin)) {
 			$this->setLastLogin($response->lastLogin);
 		}
 
-		if (!is_null($response->statusConnection)) {
+		if (isset($response->statusConnection)) {
 			$this->setStatusConnection($response->statusConnection);
 		}
 
-		if (!is_null($response->utcOffset)) {
+		if (isset($response->utcOffset)) {
 			$this->setUtcOffset($response->utcOffset);
 		}
 
-		if (!is_null($response->username)) {
+		if (isset($response->username)) {
 			$this->setUsername($response->username);
 		}
 
-		if (!is_null($response->avatarUrl)) {
+		if (isset($response->avatarUrl)) {
 			$this->setAvatarUrl($response->avatarUrl);
 		}
 
@@ -759,18 +759,16 @@ trait Data {
 	}
 
 	/**
-	 * Gets error
-	 *
-	 * @return string
-	 */
-	protected abstract function setError();
-
-	/**
-	 * Sets error
+	 * Sets data error
 	 *
 	 * @param string $error
 	 *
 	 * @return \ATDev\RocketChat\Users\Data
 	 */
-	public abstract function getError();
+	private function setDataError() {
+
+		static::setError($error);
+
+		return $this;
+	}
 }

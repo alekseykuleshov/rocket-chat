@@ -15,7 +15,7 @@ abstract class Request {
 	private static $authToken;
 
 	/** @var string|null Error message, empty if no error, some text if any */
-	private $error;
+	private static $error;
 
 	/**
 	 * Inits lib with url to chat instance api
@@ -93,13 +93,13 @@ abstract class Request {
 	 */
 	private static function getResult($code, $body) {
 
-		if ( ( $code >= 200 ) && ($code < 300) ) {
+		//if ( ( $code >= 200 ) && ($code < 300) ) { // codes can be error too
 
 			return @json_decode($body);
-		} else {
+		//} else {
 
-			return false;
-		}
+		//	return false;
+		//}
 	}
 
 	/**
@@ -156,9 +156,9 @@ abstract class Request {
 	 *
 	 * @return string
 	 */
-	public function getError() {
+	public static function getError() {
 
-		return $this->error;
+		return static::error;
 	}
 
 	/**
@@ -168,9 +168,9 @@ abstract class Request {
 	 *
 	 * @return \ATDev\RocketChat\Request
 	 */
-	protected function setError($error) {
+	protected static function setError($error) {
 
-		$this->error = $error;
+		static::$error = $error;
 
 		return $this;
 	}

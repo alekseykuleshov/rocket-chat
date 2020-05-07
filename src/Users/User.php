@@ -19,9 +19,15 @@ class User extends Request {
 
 		$user = self::send("login", "POST", ["user" => $userName, "password" => $password]);
 
-		if (is_null($user->status) || ($user->status != "success")) {
+		if (!isset($user->status) || ($user->status != "success")) {
 
-			return false;
+			if (isset($user->error)) {
+
+				static::setError($user->error);
+			} else {
+
+				static::setError("Unknown error occured in api");
+			}
 		}
 
 		if ($auth) {
@@ -42,9 +48,15 @@ class User extends Request {
 
 		$user = self::send("me", "GET");
 
-		if (is_null($user->success) || !$user->success) {
+		if (!isset($user->success) || !$user->success) {
 
-			return false;
+			if (isset($user->error)) {
+
+				static::setError($user->error);
+			} else {
+
+				static::setError("Unknown error occured in api");
+			}
 		}
 
 		return self::createOutOfResponse($user);
@@ -72,7 +84,15 @@ class User extends Request {
 
 		$user = self::send("users.create", "POST", $userData);
 
-		if (is_null($user->success) || !$user->success) {
+		if (!isset($user->success) || !$user->success) {
+
+			if (isset($user->error)) {
+
+				static::setError($user->error);
+			} else {
+
+				static::setError("Unknown error occured in api");
+			}
 
 			return false;
 		}
@@ -91,7 +111,15 @@ class User extends Request {
 
 		$user = self::send("users.update", "POST", ["userId" => $this->getUserId(), "data" => $userData]);
 
-		if (is_null($user->success) || !$user->success) {
+		if (!isset($user->success) || !$user->success) {
+
+			if (isset($user->error)) {
+
+				static::setError($user->error);
+			} else {
+
+				static::setError("Unknown error occured in api");
+			}
 
 			return false;
 		}
@@ -108,7 +136,15 @@ class User extends Request {
 
 		$user = self::send("users.info", "GET", ["userId" => $this->getUserId()]);
 
-		if (is_null($user->success) || !$user->success) {
+		if (!isset($user->success) || !$user->success) {
+
+			if (isset($user->error)) {
+
+				static::setError($user->error);
+			} else {
+
+				static::setError("Unknown error occured in api");
+			}
 
 			return false;
 		}
