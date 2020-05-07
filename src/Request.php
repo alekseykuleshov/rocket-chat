@@ -15,7 +15,7 @@ abstract class Request {
 	private static $authToken;
 
 	/** @var string|null Error message, empty if no error, some text if any */
-	private static $error;
+	protected static $error;
 
 	/**
 	 * Inits lib with url to chat instance api
@@ -171,7 +171,5 @@ abstract class Request {
 	protected static function setError($error) {
 
 		static::$error = $error;
-
-		return $this;
 	}
 }

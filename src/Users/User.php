@@ -28,6 +28,8 @@ class User extends Request {
 
 				static::setError("Unknown error occured in api");
 			}
+
+			return false;
 		}
 
 		if ($auth) {
@@ -57,6 +59,8 @@ class User extends Request {
 
 				static::setError("Unknown error occured in api");
 			}
+
+			return false;
 		}
 
 		return self::createOutOfResponse($user);
