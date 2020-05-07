@@ -1,10 +1,10 @@
-<?php namespace ATDev\RocketChat\User;
+<?php namespace ATDev\RocketChat\Users;
 
-use \ATDev\RocketChat\Base;
+use \ATDev\RocketChat\Request;
 
 class User extends Request {
 
-	use \ATDev\RocketChat\User\Data;
+	use \ATDev\RocketChat\Users\Data;
 
 	/**
 	 * Logs in user with provided credentials, or just get user with these credentials
@@ -13,7 +13,7 @@ class User extends Request {
 	 * @param string $password
 	 * @param boolean $auth
 	 *
-	 * @return \ATDev\RocketChat\User|boolean
+	 * @return \ATDev\RocketChat\Users\User|boolean
 	 */
 	public static function login($userName, $password, $auth = true) {
 
@@ -36,7 +36,7 @@ class User extends Request {
 	/**
 	 * Gets data of currently logged in user
 	 *
-	 * @return \ATDev\RocketChat\User|boolean
+	 * @return \ATDev\RocketChat\Users\User|boolean
 	 */
 	public static function me() {
 
@@ -64,7 +64,7 @@ class User extends Request {
 	/**
 	 * Creates user at api instance
 	 *
-	 * @return \ATDev\RocketChat\User|boolean
+	 * @return \ATDev\RocketChat\Users\User|boolean
 	 */
 	public function create() {
 
@@ -83,7 +83,7 @@ class User extends Request {
 	/**
 	 * Updates user at api instance
 	 *
-	 * @return \ATDev\RocketChat\User|boolean
+	 * @return \ATDev\RocketChat\Users\User|boolean
 	 */
 	public function update() {
 
