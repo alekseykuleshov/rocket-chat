@@ -158,7 +158,7 @@ abstract class Request {
 	 */
 	public static function getError() {
 
-		return static::error;
+		return static::$error;
 	}
 
 	/**
