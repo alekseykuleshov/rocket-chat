@@ -5,6 +5,7 @@ use \ATDev\RocketChat\Request;
 class User extends Request {
 
 	use \ATDev\RocketChat\Users\Data;
+	use \ATDev\RocketChat\Users\Avatar;
 
 	/**
 	 * Logs in user with provided credentials, or just get user with these credentials
@@ -17,16 +18,16 @@ class User extends Request {
 	 */
 	public static function login($userName, $password, $auth = true) {
 
-		$user = self::send("login", "POST", ["user" => $userName, "password" => $password]);
+		self::send("login", "POST", ["user" => $userName, "password" => $password]);
 
-		if (!isset($user->status) || ($user->status != "success")) {
+		if (isset(static::getResponse()->status) && (static::getResponse()->status != "success")) { // Own error structure
 
-			if (isset($user->error)) {
+			if (isset(static::getResponse()->error)) {
 
-				static::setError($user->error);
+				static::setError(static::getResponse()->error);
 			} else {
 
-				static::setError("Unknown error occured in api");
+				static::setError("Unknown error occured while loggin in");
 			}
 
 			return false;
@@ -34,11 +35,11 @@ class User extends Request {
 
 		if ($auth) {
 
-			self::setAuthUserId($user->data->userId);
-			self::setAuthToken($user->data->authToken);
+			self::setAuthUserId(static::getResponse()->data->userId);
+			self::setAuthToken(static::getResponse()->data->authToken);
 		}
 
-		return self::createOutOfResponse($user->data->me);
+		return self::createOutOfResponse(static::getResponse()->data->me);
 	}
 
 	/**
@@ -48,22 +49,14 @@ class User extends Request {
 	 */
 	public static function me() {
 
-		$user = self::send("me", "GET");
+		self::send("me", "GET");
 
-		if (!isset($user->success) || !$user->success) {
-
-			if (isset($user->error)) {
-
-				static::setError($user->error);
-			} else {
-
-				static::setError("Unknown error occured in api");
-			}
+		if (!static::getSuccess()) {
 
 			return false;
 		}
 
-		return self::createOutOfResponse($user);
+		return self::createOutOfResponse(static::getResponse());
 	}
 
 	/**
@@ -71,7 +64,7 @@ class User extends Request {
 	 */
 	public static function logout() {
 
-		$user = self::send("logout", "GET");
+		self::send("logout", "GET");
 
 		self::setAuthUserId(null);
 		self::setAuthToken(null);
@@ -84,24 +77,14 @@ class User extends Request {
 	 */
 	public function create() {
 
-		$userData = $this->getUserData();
+		self::send("users.create", "POST", $this);
 
-		$user = self::send("users.create", "POST", $userData);
-
-		if (!isset($user->success) || !$user->success) {
-
-			if (isset($user->error)) {
-
-				static::setError($user->error);
-			} else {
-
-				static::setError("Unknown error occured in api");
-			}
+		if (!static::getSuccess()) {
 
 			return false;
 		}
 
-		return $this->updateOutOfResponse($user->user);
+		return $this->updateOutOfResponse(static::getResponse()->user);
 	}
 
 	/**
@@ -111,24 +94,14 @@ class User extends Request {
 	 */
 	public function update() {
 
-		$userData = $this->getUserData();
+		self::send("users.update", "POST", ["userId" => $this->getUserId(), "data" => $this]);
 
-		$user = self::send("users.update", "POST", ["userId" => $this->getUserId(), "data" => $userData]);
-
-		if (!isset($user->success) || !$user->success) {
-
-			if (isset($user->error)) {
-
-				static::setError($user->error);
-			} else {
-
-				static::setError("Unknown error occured in api");
-			}
+		if (!static::getSuccess()) {
 
 			return false;
 		}
 
-		return $this->updateOutOfResponse($user->user);
+		return $this->updateOutOfResponse(static::getResponse()->user);
 	}
 
 	/**
@@ -138,21 +111,77 @@ class User extends Request {
 	 */
 	public function info() {
 
-		$user = self::send("users.info", "GET", ["userId" => $this->getUserId()]);
+		self::send("users.info", "GET", ["userId" => $this->getUserId()]);
 
-		if (!isset($user->success) || !$user->success) {
-
-			if (isset($user->error)) {
-
-				static::setError($user->error);
-			} else {
-
-				static::setError("Unknown error occured in api");
-			}
+		if (!static::getSuccess()) {
 
 			return false;
 		}
 
-		return $this->updateOutOfResponse($user->user);
+		return $this->updateOutOfResponse(static::getResponse()->user);
+	}
+
+	/**
+	 * Gets extended info of user
+	 *
+	 * @return boolean|$this
+	 */
+	public function delete() {
+
+		self::send("users.delete", "POST", ["userId" => $this->getUserId()]);
+
+		if (!static::getSuccess()) {
+
+			return false;
+		}
+
+		return $this->setUserId(null);
+	}
+
+	/**
+	 * Sets avatar for user
+	 *
+	 * @return boolean|$this
+	 */
+	public function setAvatar() {
+
+		if (!empty($filepath = $this->getNewAvatarFilepath())) {
+
+			$result = self::send("users.setAvatar", "POST", ["userId" => $this->getUserId()], ["image" => $filepath]);
+
+			if (!static::getSuccess()) {
+
+				return false;
+			}
+		} elseif (!empty($avatarUrl = $this->getNewAvatarUrl())) {
+
+			$result = self::send("users.setAvatar", "POST", ["userId" => $this->getUserId(), "avatarUrl" => $avatarUrl]);
+
+			if (!static::getSuccess()) {
+
+				return false;
+			}
+		}
+
+		// Reset this after update
+		$this->setNewAvatarFilepath(null);
+		$this->setNewAvatarUrl(null);
+	}
+
+	/**
+	 * Gets avatar for user
+	 *
+	 * @return boolean|$this
+	 */
+	public function getAvatar() {
+
+		$result = self::send("users.getAvatar", "GET", ["userId" => $this->getUserId()]);
+
+		if (!static::getSuccess()) {
+
+			return false;
+		}
+
+		$this->setAvatarUrl(static::getResponseUrl());
 	}
 }

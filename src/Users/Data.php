@@ -50,6 +50,8 @@ trait Data {
 	private $statusConnection;
 	/** @var string User utc offset */
 	private $utcOffset;
+	/** @var string Avatar Url */
+	private $avatarUrl;
 
 	/**
 	 * Creates use out of api response
@@ -87,7 +89,7 @@ trait Data {
 	 */
 	public function setUserId($userId) {
 
-		if (!is_string($userId)) {
+		if (!(is_null($userId) || is_string($userId))) {
 
 			$this->setDataError("Invalid user Id");
 		} else {
@@ -117,15 +119,21 @@ trait Data {
 	 */
 	public function setEmail($email) {
 
-		if (!is_string($email)) {
+		if (!(is_null($email) || is_string($email))) {
 
 			$this->setDataError("Invalid email");
 		} else {
 
-			$validator = new EmailValidator();
-			if (!$validator->isValid($email, new RFCValidation())) {
+			if (!is_null($email)) {
 
-				$this->setDataError("Invalid email value");
+				$validator = new EmailValidator();
+				if (!$validator->isValid($email, new RFCValidation())) {
+
+					$this->setDataError("Invalid email value");
+				} else {
+
+					$this->email = $email;
+				}
 			} else {
 
 				$this->email = $email;
@@ -154,7 +162,7 @@ trait Data {
 	 */
 	public function setName($name) {
 
-		if (!is_string($name)) {
+		if (!(is_null($name) || is_string($name))) {
 
 			$this->setDataError("Invalid name");
 		} else {
@@ -184,7 +192,7 @@ trait Data {
 	 */
 	public function setPassword($password) {
 
-		if (!is_string($password)) {
+		if (!(is_null($password) || is_string($password))) {
 
 			$this->setDataError("Invalid password");
 		} else {
@@ -214,7 +222,7 @@ trait Data {
 	 */
 	public function setUsername($username) {
 
-		if (!is_string($username)) {
+		if (!(is_null($username) || is_string($username))) {
 
 			$this->setDataError("Invalid user name");
 		} else {
@@ -244,7 +252,7 @@ trait Data {
 	 */
 	public function setActive($active) {
 
-		if (!is_bool($active)) {
+		if (!(is_null($active) || is_bool($active))) {
 
 			$this->setDataError("Invalid active value");
 		} else {
@@ -274,7 +282,7 @@ trait Data {
 	 */
 	public function setRoles($roles) {
 
-		if (!is_array($roles)) {
+		if (!(is_null($roles) || is_array($roles))) {
 
 			$this->setDataError("Invalid roles value");
 		} else {
@@ -304,7 +312,7 @@ trait Data {
 	 */
 	public function setJoinDefaultChannels($joinDefaultChannels) {
 
-		if (!is_bool($joinDefaultChannels)) {
+		if (!(is_null($joinDefaultChannels) || is_bool($joinDefaultChannels))) {
 
 			$this->setDataError("Invalid join default channels value");
 		} else {
@@ -334,7 +342,7 @@ trait Data {
 	 */
 	public function setRequirePasswordChange($requirePasswordChange) {
 
-		if (!is_bool($requirePasswordChange)) {
+		if (!(is_null($requirePasswordChange) || is_bool($requirePasswordChange))) {
 
 			$this->setDataError("Invalid require password change value");
 		} else {
@@ -364,7 +372,7 @@ trait Data {
 	 */
 	public function setSendWelcomeEmail($sendWelcomeEmail) {
 
-		if (!is_bool($sendWelcomeEmail)) {
+		if (!(is_null($sendWelcomeEmail) || is_bool($sendWelcomeEmail))) {
 
 			$this->setDataError("Invalid send welcome email value");
 		} else {
@@ -394,7 +402,7 @@ trait Data {
 	 */
 	public function setVerified($verified) {
 
-		if (!is_bool($verified)) {
+		if (!(is_null($verified) || is_bool($verified))) {
 
 			$this->setDataError("Invalid verified value");
 		} else {
@@ -424,7 +432,7 @@ trait Data {
 	 */
 	public function setCustomFields($customFields) {
 
-		if (!is_string($customFields)) {
+		if (!(is_null($customFields) || is_string($customFields))) {
 
 			$this->setDataError("Invalid custom fields name");
 		} else {
@@ -588,7 +596,7 @@ trait Data {
 	 *
 	 * @return array
 	 */
-	public function getUserData() {
+	public function jsonSerialize() {
 
 		$userData = [
 			"email" => $this->email,

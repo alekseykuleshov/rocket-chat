@@ -3,7 +3,25 @@
 /**
  * Basic functionality to make a requests to api
  */
-abstract class Request {
+abstract class Request implements \JsonSerializable {
+
+	/** @const string Uri to api */
+	const URI = "/api/v1/";
+
+	/** @var string|null Error message, empty if no error, some text if any */
+	protected static $error;
+
+	/** @var mixed Api response */
+	protected static $response;
+
+	/** @var string Api response code */
+	protected static $responseCode;
+
+	/** @var string Last url accessed in case of redirect */
+	protected static $responseUrl;
+
+	/** @var boolean Indicates if request was successful */
+	protected static $success;
 
 	/** @var \GuzzleHttp\Client client */
 	private static $client;
@@ -14,19 +32,19 @@ abstract class Request {
 	/** @var string Chat user auth token */
 	private static $authToken;
 
-	/** @var string|null Error message, empty if no error, some text if any */
-	protected static $error;
-
 	/**
 	 * Inits lib with url to chat instance api
+	 *
 	 * @param string $instance Protocol and domain, i.e. https://chat.me
-	 * @param string $root path to api, i.e. /api/v1/
+	 *
 	 * @return null
-	 * @throws \Exception
 	 */
-	public static function init($instance, $root) {
+	public static function init($instance) {
 
-		self::$client = new \GuzzleHttp\Client(["base_uri" => $instance . $root]);
+		self::$client = new \GuzzleHttp\Client([
+			"base_uri" => $instance . self::URI,
+			"allow_redirects" => ["track_redirects" => true]
+		]);
 	}
 
 	/**
@@ -55,51 +73,56 @@ abstract class Request {
 	 * @param string $url Url
 	 * @param string $method Method
 	 * @param array|null $data Data
+	 * @param array|null $files Files
 	 *
-	 * @return stdClass|false
+	 * @return boolean
 	 *
 	 * @throws \Exception
 	 */
-	protected static function send($url, $method = "GET", $data = null) {
+	protected static function send($url, $method = "GET", $data = null, $files = null) {
 
 		if ( empty(self::$client) ) {
 
 			throw new \Exception("You should init first");
 		}
 
+		static::$response = null;
+		static::$responseCode = null;
+		static::$responseUrl = null;
+		static::$success = true;
+
 		// Get request options
-		$options = self::getRequestOptions($method, $data);
+		$options = self::getRequestOptions($method, $data, $files);
 
 		// Do request
-		$res = self::$client->request(
+		$res = self::$client->request( // // TODO: Check api is available, catch the guzzle exception
 			$method,
 			$url,
 			$options
 		);
 
-		$code = $res->getStatusCode();
-		$body = $res->getBody()->getContents();
+		$headersRedirect = $res->getHeader(\GuzzleHttp\RedirectMiddleware::HISTORY_HEADER);
+		$responseCode = $res->getStatusCode();
+		$responseBody = $res->getBody()->getContents();
 
-		return self::getResult($code, $body);
-	}
+		static::$response = @json_decode($responseBody);
+		static::$responseCode = $responseCode;
+		static::$responseUrl = (!empty($headersRedirect)) ? $headersRedirect[count($headersRedirect) - 1] : null;
 
-	/**
-	 * Gets result by http code and response body
-	 *
-	 * @param int $code
-	 * @param string $body
-	 *
-	 * @return stdClass|false
-	 */
-	private static function getResult($code, $body) {
+		if (isset(static::$response->success) && (!static::$response->success)) {
 
-		//if ( ( $code >= 200 ) && ($code < 300) ) { // codes can be error too
+			if (isset(static::$response->error)) {
 
-			return @json_decode($body);
-		//} else {
+				static::setError(static::$response->error);
+			} else {
 
-		//	return false;
-		//}
+				static::setError("Unknown error occured in api");
+			}
+
+			static::$success = false;
+		}
+
+		return ((static::$responseCode >= 200) && (static::$responseCode < 300));
 	}
 
 	/**
@@ -110,7 +133,7 @@ abstract class Request {
 	 *
 	 * @return array
 	 */
-	private static function getRequestOptions($method, $data) {
+	private static function getRequestOptions($method, $data, $files) {
 
 		// Default request parameters
 		$options = [
@@ -125,9 +148,37 @@ abstract class Request {
 			$options["query"] = $data;
 		}
 
-		if (($method == "POST") && (!empty($data))) {
+		if (($method == "POST")) {
 
-			$options["json"] = $data;
+			if (!empty($files)) {
+
+				$multipart = [];
+
+				foreach ($files as $key => $value) {
+
+					$multipart[] = [
+						"name" => $key,
+						"contents" => fopen($value, 'r'), // TODO: Check if file is readable
+						"filename" => basename($value)
+					];
+				}
+
+				if (!empty($data)) {
+
+					foreach ($data as $key => $value) {
+
+						$multipart[] = [
+							"name" => $key,
+							"contents" => $value
+						];
+					}
+				}
+
+				$options["multipart"] = $multipart;
+			} elseif (!empty($data)) {
+
+				$options["json"] = $data;
+			}
 		}
 
 		// Set authorization headers
@@ -152,6 +203,46 @@ abstract class Request {
 	}
 
 	/**
+	 * Gets success
+	 *
+	 * @return string
+	 */
+	public static function getSuccess() {
+
+		return static::$success;
+	}
+
+	/**
+	 * Gets response
+	 *
+	 * @return mixed
+	 */
+	public static function getResponse() {
+
+		return static::$response;
+	}
+
+	/**
+	 * Gets response code
+	 *
+	 * @return integer
+	 */
+	public static function getResponseCode() {
+
+		return static::$responseCode;
+	}
+
+	/**
+	 * Gets response url
+	 *
+	 * @return string
+	 */
+	public static function getResponseUrl() {
+
+		return static::$responseUrl;
+	}
+
+	/**
 	 * Gets error
 	 *
 	 * @return string
@@ -171,5 +262,15 @@ abstract class Request {
 	protected static function setError($error) {
 
 		static::$error = $error;
+	}
+
+	/**
+	 * Specifies what has to be returned on serialization to json
+	 *
+	 * @return array Data to serialize
+	 */
+	public function jsonSerialize() {
+
+		return null;
 	}
 }

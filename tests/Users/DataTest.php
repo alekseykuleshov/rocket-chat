@@ -50,6 +50,10 @@ class DataTest extends TestCase {
 		$mock->setUserId("123");
 		$this->assertSame("123", $mock->getUserId());
 
+		// And null value...
+		$mock->setUserId(null);
+		$this->assertSame(null, $mock->getUserId());
+
 		$stub->verifyNeverInvoked("setDataError");
 	}
 
@@ -92,6 +96,10 @@ class DataTest extends TestCase {
 		$mock->setEmail("test@example.com");
 		$this->assertSame("test@example.com", $mock->getEmail());
 
+		// And null value...
+		$mock->setEmail(null);
+		$this->assertSame(null, $mock->getEmail());
+
 		$stub->verifyNeverInvoked("setDataError");
 	}
 
@@ -115,6 +123,10 @@ class DataTest extends TestCase {
 
 		$mock->setName("User Name");
 		$this->assertSame("User Name", $mock->getName());
+
+		// And null value...
+		$mock->setName(null);
+		$this->assertSame(null, $mock->getName());
 
 		$stub->verifyNeverInvoked("setDataError");
 	}
@@ -140,6 +152,10 @@ class DataTest extends TestCase {
 		$mock->setPassword("sjdfb235$$");
 		$this->assertSame("sjdfb235$$", $mock->getPassword());
 
+		// And null value...
+		$mock->setPassword(null);
+		$this->assertSame(null, $mock->getPassword());
+
 		$stub->verifyNeverInvoked("setDataError");
 	}
 
@@ -163,6 +179,10 @@ class DataTest extends TestCase {
 
 		$mock->setUsername("userName");
 		$this->assertSame("userName", $mock->getUsername());
+
+		// And null value...
+		$mock->setUsername(null);
+		$this->assertSame(null, $mock->getUsername());
 
 		$stub->verifyNeverInvoked("setDataError");
 	}
@@ -188,6 +208,10 @@ class DataTest extends TestCase {
 		$mock->setActive(false);
 		$this->assertSame(false, $mock->getActive());
 
+		// And null value...
+		$mock->setActive(null);
+		$this->assertSame(null, $mock->getActive());
+
 		$stub->verifyNeverInvoked("setDataError");
 	}
 
@@ -211,6 +235,10 @@ class DataTest extends TestCase {
 
 		$mock->setRoles(["admin"]);
 		$this->assertSame(["admin"], $mock->getRoles());
+
+		// And null value...
+		$mock->setRoles(null);
+		$this->assertSame(null, $mock->getRoles());
 
 		$stub->verifyNeverInvoked("setDataError");
 	}
@@ -236,6 +264,10 @@ class DataTest extends TestCase {
 		$mock->setJoinDefaultChannels(false);
 		$this->assertSame(false, $mock->getJoinDefaultChannels());
 
+		// And null value...
+		$mock->setJoinDefaultChannels(null);
+		$this->assertSame(null, $mock->getJoinDefaultChannels());
+
 		$stub->verifyNeverInvoked("setDataError");
 	}
 
@@ -259,6 +291,10 @@ class DataTest extends TestCase {
 
 		$mock->setRequirePasswordChange(false);
 		$this->assertSame(false, $mock->getRequirePasswordChange());
+
+		// And null value...
+		$mock->setRequirePasswordChange(null);
+		$this->assertSame(null, $mock->getRequirePasswordChange());
 
 		$stub->verifyNeverInvoked("setDataError");
 	}
@@ -284,6 +320,10 @@ class DataTest extends TestCase {
 		$mock->setSendWelcomeEmail(false);
 		$this->assertSame(false, $mock->getSendWelcomeEmail());
 
+		// And null value...
+		$mock->setSendWelcomeEmail(null);
+		$this->assertSame(null, $mock->getSendWelcomeEmail());
+
 		$stub->verifyNeverInvoked("setDataError");
 	}
 
@@ -307,6 +347,10 @@ class DataTest extends TestCase {
 
 		$mock->setVerified(false);
 		$this->assertSame(false, $mock->getVerified());
+
+		// And null value...
+		$mock->setVerified(null);
+		$this->assertSame(null, $mock->getVerified());
 
 		$stub->verifyNeverInvoked("setDataError");
 	}
@@ -332,10 +376,14 @@ class DataTest extends TestCase {
 		$mock->setCustomFields("asdfasdf");
 		$this->assertSame("asdfasdf", $mock->getCustomFields());
 
+		// And null value...
+		$mock->setCustomFields(null);
+		$this->assertSame(null, $mock->getCustomFields());
+
 		$stub->verifyNeverInvoked("setDataError");
 	}
 
-	public function testGetUserData() {
+	public function testJsonSerialize() {
 
 		$mock = $this->getMockForTrait(Data::class);
 		$mock->setEmail("test@example.com");
@@ -354,7 +402,7 @@ class DataTest extends TestCase {
 			"roles" => ["somebody", "other"],
 			"requirePasswordChange" => false,
 			"verified" => true
-		], $mock->getUserData());
+		], $mock->jsonSerialize());
 
 		$mock = $this->getMockForTrait(Data::class);
 		$mock->setActive(false);
@@ -370,7 +418,7 @@ class DataTest extends TestCase {
 			"joinDefaultChannels" => false,
 			"sendWelcomeEmail" => true,
 			"customFields" => "custom fields"
-		], $mock->getUserData());
+		], $mock->jsonSerialize());
 	}
 
 	public function testUpdateOutOfResponse() {
