@@ -2,6 +2,9 @@
 
 use \ATDev\RocketChat\Request;
 
+/**
+ * User class
+ */
 class User extends Request {
 
 	use \ATDev\RocketChat\Users\Data;
@@ -189,6 +192,8 @@ class User extends Request {
 		// Reset this after update
 		$this->setNewAvatarFilepath(null);
 		$this->setNewAvatarUrl(null);
+
+		return $this;
 	}
 
 	/**
@@ -205,6 +210,11 @@ class User extends Request {
 			return false;
 		}
 
-		$this->setAvatarUrl(static::getResponseUrl());
+		if (!empty(static::getResponseUrl())) {
+
+			$this->setAvatarUrl(static::getResponseUrl());
+		}
+
+		return $this;
 	}
 }

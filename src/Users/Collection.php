@@ -2,6 +2,9 @@
 
 use \Doctrine\Common\Collections\ArrayCollection;
 
+/**
+ * User collection class
+ */
 class Collection extends ArrayCollection {
 
 	public function add($element) {
