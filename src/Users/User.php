@@ -71,6 +71,29 @@ class User extends Request {
 	}
 
 	/**
+	 * Gets user listing
+	 *
+	 * @return \ATDev\RocketChat\Users\Collection|boolean
+	 */
+	public static function listing() {
+
+		self::send("users.list", "GET");
+
+		if (!static::getSuccess()) {
+
+			return false;
+		}
+
+		$users = new Collection();
+		foreach(static::getResponse()->users as $user) {
+
+			$users->add(self::createOutOfResponse($user));
+		}
+
+		return $users;
+	}
+
+	/**
 	 * Creates user at api instance
 	 *
 	 * @return \ATDev\RocketChat\Users\User|boolean
