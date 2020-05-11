@@ -158,7 +158,7 @@ abstract class Request implements \JsonSerializable {
 
 					$multipart[] = [
 						"name" => $key,
-						"contents" => fopen($value, 'r'), // TODO: Check if file is readable
+						"contents" => fopen($value, 'r'), // TODO: Check if file is readable, is_readable function
 						"filename" => basename($value)
 					];
 				}

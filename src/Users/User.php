@@ -21,7 +21,7 @@ class User extends Request {
 	 */
 	public static function login($userName, $password, $auth = true) {
 
-		self::send("login", "POST", ["user" => $userName, "password" => $password]);
+		static::send("login", "POST", ["user" => $userName, "password" => $password]);
 
 		if (isset(static::getResponse()->status) && (static::getResponse()->status != "success")) { // Own error structure
 
@@ -38,11 +38,11 @@ class User extends Request {
 
 		if ($auth) {
 
-			self::setAuthUserId(static::getResponse()->data->userId);
-			self::setAuthToken(static::getResponse()->data->authToken);
+			static::setAuthUserId(static::getResponse()->data->userId);
+			static::setAuthToken(static::getResponse()->data->authToken);
 		}
 
-		return self::createOutOfResponse(static::getResponse()->data->me);
+		return static::createOutOfResponse(static::getResponse()->data->me);
 	}
 
 	/**
@@ -52,14 +52,14 @@ class User extends Request {
 	 */
 	public static function me() {
 
-		self::send("me", "GET");
+		static::send("me", "GET");
 
 		if (!static::getSuccess()) {
 
 			return false;
 		}
 
-		return self::createOutOfResponse(static::getResponse());
+		return static::createOutOfResponse(static::getResponse());
 	}
 
 	/**
@@ -67,10 +67,12 @@ class User extends Request {
 	 */
 	public static function logout() {
 
-		self::send("logout", "GET");
+		static::send("logout", "GET");
 
-		self::setAuthUserId(null);
-		self::setAuthToken(null);
+		static::setAuthUserId(null);
+		static::setAuthToken(null);
+
+		return true;
 	}
 
 	/**
@@ -80,7 +82,7 @@ class User extends Request {
 	 */
 	public static function listing() {
 
-		self::send("users.list", "GET");
+		static::send("users.list", "GET");
 
 		if (!static::getSuccess()) {
 
@@ -90,7 +92,7 @@ class User extends Request {
 		$users = new Collection();
 		foreach(static::getResponse()->users as $user) {
 
-			$users->add(self::createOutOfResponse($user));
+			$users->add(static::createOutOfResponse($user));
 		}
 
 		return $users;
@@ -103,7 +105,7 @@ class User extends Request {
 	 */
 	public function create() {
 
-		self::send("users.create", "POST", $this);
+		static::send("users.create", "POST", $this);
 
 		if (!static::getSuccess()) {
 
@@ -120,7 +122,7 @@ class User extends Request {
 	 */
 	public function update() {
 
-		self::send("users.update", "POST", ["userId" => $this->getUserId(), "data" => $this]);
+		static::send("users.update", "POST", ["userId" => $this->getUserId(), "data" => $this]);
 
 		if (!static::getSuccess()) {
 
@@ -137,7 +139,7 @@ class User extends Request {
 	 */
 	public function info() {
 
-		self::send("users.info", "GET", ["userId" => $this->getUserId()]);
+		static::send("users.info", "GET", ["userId" => $this->getUserId()]);
 
 		if (!static::getSuccess()) {
 
@@ -154,7 +156,7 @@ class User extends Request {
 	 */
 	public function delete() {
 
-		self::send("users.delete", "POST", ["userId" => $this->getUserId()]);
+		static::send("users.delete", "POST", ["userId" => $this->getUserId()]);
 
 		if (!static::getSuccess()) {
 
@@ -173,7 +175,7 @@ class User extends Request {
 
 		if (!empty($filepath = $this->getNewAvatarFilepath())) {
 
-			$result = self::send("users.setAvatar", "POST", ["userId" => $this->getUserId()], ["image" => $filepath]);
+			$result = static::send("users.setAvatar", "POST", ["userId" => $this->getUserId()], ["image" => $filepath]);
 
 			if (!static::getSuccess()) {
 
@@ -181,7 +183,7 @@ class User extends Request {
 			}
 		} elseif (!empty($avatarUrl = $this->getNewAvatarUrl())) {
 
-			$result = self::send("users.setAvatar", "POST", ["userId" => $this->getUserId(), "avatarUrl" => $avatarUrl]);
+			$result = static::send("users.setAvatar", "POST", ["userId" => $this->getUserId(), "avatarUrl" => $avatarUrl]);
 
 			if (!static::getSuccess()) {
 
@@ -190,10 +192,7 @@ class User extends Request {
 		}
 
 		// Reset this after update
-		$this->setNewAvatarFilepath(null);
-		$this->setNewAvatarUrl(null);
-
-		return $this;
+		return $this->setNewAvatarFilepath(null)->setNewAvatarUrl(null);
 	}
 
 	/**
@@ -203,7 +202,7 @@ class User extends Request {
 	 */
 	public function getAvatar() {
 
-		$result = self::send("users.getAvatar", "GET", ["userId" => $this->getUserId()]);
+		$result = static::send("users.getAvatar", "GET", ["userId" => $this->getUserId()]);
 
 		if (!static::getSuccess()) {
 

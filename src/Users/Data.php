@@ -773,7 +773,7 @@ trait Data {
 	 *
 	 * @return \ATDev\RocketChat\Users\Data
 	 */
-	private function setDataError() {
+	private function setDataError($error) {
 
 		static::setError($error);
 

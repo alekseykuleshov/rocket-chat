@@ -26,7 +26,7 @@ class DataTest extends TestCase {
 
 		$stub->construct("asd123asd");
 
-		$stub->verifyInvokedOnce("setUserId", "asd123asd");
+		$stub->verifyInvokedOnce("setUserId", ["asd123asd"]);
 	}
 
 	public function testInvalidUserId() {
@@ -38,7 +38,7 @@ class DataTest extends TestCase {
 		$mock->setUserId(123);
 		$this->assertNull($mock->getUserId());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid user Id");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid user Id"]);
 	}
 
 	public function testValidUserId() {
@@ -66,7 +66,7 @@ class DataTest extends TestCase {
 		$mock->setEmail(123);
 		$this->assertNull($mock->getEmail());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid email");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid email"]);
 	}
 
 	public function testInvalidEmailFormat() {
@@ -81,7 +81,7 @@ class DataTest extends TestCase {
 		$mock->setEmail("ajsfsdfasdf");
 		$this->assertNull($mock->getEmail());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid email value");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid email value"]);
 	}
 
 	public function testValidEmail() {
@@ -112,7 +112,7 @@ class DataTest extends TestCase {
 		$mock->setName(123);
 		$this->assertNull($mock->getName());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid name");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid name"]);
 	}
 
 	public function testValidName() {
@@ -140,7 +140,7 @@ class DataTest extends TestCase {
 		$mock->setPassword(123);
 		$this->assertNull($mock->getPassword());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid password");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid password"]);
 	}
 
 	public function testValidPassword() {
@@ -168,7 +168,7 @@ class DataTest extends TestCase {
 		$mock->setUsername(123);
 		$this->assertNull($mock->getUsername());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid user name");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid user name"]);
 	}
 
 	public function testValidUsername() {
@@ -196,7 +196,7 @@ class DataTest extends TestCase {
 		$mock->setActive(new \stdClass);
 		$this->assertNull($mock->getActive());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid active value");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid active value"]);
 	}
 
 	public function testValidActive() {
@@ -224,7 +224,7 @@ class DataTest extends TestCase {
 		$mock->setRoles(123);
 		$this->assertNull($mock->getRoles());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid roles value");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid roles value"]);
 	}
 
 	public function testValidRoles() {
@@ -252,7 +252,7 @@ class DataTest extends TestCase {
 		$mock->setJoinDefaultChannels(123);
 		$this->assertNull($mock->getJoinDefaultChannels());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid join default channels value");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid join default channels value"]);
 	}
 
 	public function testValidJoinDefaultChannels() {
@@ -280,7 +280,7 @@ class DataTest extends TestCase {
 		$mock->setRequirePasswordChange(123);
 		$this->assertNull($mock->getRequirePasswordChange());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid require password change value");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid require password change value"]);
 	}
 
 	public function testValidRequirePasswordChange() {
@@ -308,7 +308,7 @@ class DataTest extends TestCase {
 		$mock->setSendWelcomeEmail(123);
 		$this->assertNull($mock->getSendWelcomeEmail());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid send welcome email value");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid send welcome email value"]);
 	}
 
 	public function testValidSendWelcomeEmail() {
@@ -336,7 +336,7 @@ class DataTest extends TestCase {
 		$mock->setVerified(123);
 		$this->assertNull($mock->getVerified());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid verified value");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid verified value"]);
 	}
 
 	public function testValidVerified() {
@@ -364,7 +364,7 @@ class DataTest extends TestCase {
 		$mock->setCustomFields(123);
 		$this->assertNull($mock->getCustomFields());
 
-		$stub->verifyInvokedOnce("setDataError", "Invalid custom fields name");
+		$stub->verifyInvokedOnce("setDataError", ["Invalid custom fields name"]);
 	}
 
 	public function testValidCustomFields() {

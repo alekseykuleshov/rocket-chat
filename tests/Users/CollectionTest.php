@@ -28,7 +28,7 @@ class CollectionTest extends TestCase {
 		$result = $collection->add($user);
 
 		$this->assertSame("added", $result);
-		$stub->verifyInvokedOnce("add", $user);
+		$stub->verifyInvokedOnce("add", [$user]);
 	}
 
 	protected function tearDown(): void {

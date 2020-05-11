@@ -16,7 +16,7 @@ class AvatarTest extends TestCase {
 		$mock->setNewAvatarFilepath(123);
 		$this->assertNull($mock->getNewAvatarFilepath());
 
-		$stub->verifyInvokedOnce("setAvatarError", "Invalid avatar filepath value");
+		$stub->verifyInvokedOnce("setAvatarError", ["Invalid avatar filepath value"]);
 	}
 
 	public function testValidNewAvatarFilepath() {
@@ -44,7 +44,7 @@ class AvatarTest extends TestCase {
 		$mock->setNewAvatarUrl(123);
 		$this->assertNull($mock->getNewAvatarUrl());
 
-		$stub->verifyInvokedOnce("setAvatarError", "Invalid avatar url value");
+		$stub->verifyInvokedOnce("setAvatarError", ["Invalid avatar url value"]);
 	}
 
 	public function testValidNewAvatarUrl() {
