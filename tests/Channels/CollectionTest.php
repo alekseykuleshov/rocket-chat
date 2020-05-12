@@ -1,10 +1,10 @@
-<?php namespace ATDev\RocketChat\Tests\Users;
+<?php namespace ATDev\RocketChat\Tests\Channels;
 
 use \PHPUnit\Framework\TestCase;
 use \AspectMock\Test as test;
 
-use \ATDev\RocketChat\Users\Collection;
-use \ATDev\RocketChat\Users\User;
+use \ATDev\RocketChat\Channels\Collection;
+use \ATDev\RocketChat\Channels\Channel;
 
 class CollectionTest extends TestCase {
 
@@ -24,11 +24,11 @@ class CollectionTest extends TestCase {
 		$stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "added"]);
 
 		$collection = new Collection();
-		$user = new User();
-		$result = $collection->add($user);
+		$channel = new Channel();
+		$result = $collection->add($channel);
 
 		$this->assertSame("added", $result);
-		$stub->verifyInvokedOnce("add", [$user]);
+		$stub->verifyInvokedOnce("add", [$channel]);
 	}
 
 	protected function tearDown(): void {

@@ -54,7 +54,7 @@ trait Data {
 	private $avatarUrl;
 
 	/**
-	 * Creates use out of api response
+	 * Creates user out of api response
 	 *
 	 * @param \stdClass $response
 	 *
@@ -70,7 +70,7 @@ trait Data {
 	/**
 	 * Class constructor
 	 *
-	 * @param type $userId
+	 * @param string $userId
 	 */
 	public function __construct($userId = null) {
 
@@ -533,26 +533,32 @@ trait Data {
 	public function updateOutOfResponse($response) {
 
 		if (isset($response->_id)) {
+
 			$this->setUserId($response->_id);
 		}
 
 		if (isset($response->createdAt)) {
+
 			$this->setCreatedAt($response->createdAt);
 		}
 
 		if (isset($response->emails[0]->address)) {
+
 			$this->setEmail($response->emails[0]->address);
 		}
 
 		if (isset($response->emails[0]->verified)) {
+
 			$this->setVerified($response->emails[0]->verified);
 		}
 
 		if (isset($response->type)) {
+
 			$this->setType($response->type);
 		}
 
 		if (isset($response->status)) {
+
 			$this->setStatus($response->status);
 		}
 
@@ -561,30 +567,37 @@ trait Data {
 		}
 
 		if (isset($response->roles)) {
+
 			$this->setRoles($response->roles);
 		}
 
 		if (isset($response->name)) {
+
 			$this->setName($response->name);
 		}
 
 		if (isset($response->lastLogin)) {
+
 			$this->setLastLogin($response->lastLogin);
 		}
 
 		if (isset($response->statusConnection)) {
+
 			$this->setStatusConnection($response->statusConnection);
 		}
 
 		if (isset($response->utcOffset)) {
+
 			$this->setUtcOffset($response->utcOffset);
 		}
 
 		if (isset($response->username)) {
+
 			$this->setUsername($response->username);
 		}
 
 		if (isset($response->avatarUrl)) {
+
 			$this->setAvatarUrl($response->avatarUrl);
 		}
 
