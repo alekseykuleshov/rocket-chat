@@ -6,7 +6,7 @@
 trait Room {
 
 	/** @var string Room id */
-	private $rootId;
+	private $roomId;
 
 	/* Required properties for creation */
 	/** @var string Room name */
