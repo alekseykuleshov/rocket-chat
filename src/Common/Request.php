@@ -33,15 +33,16 @@ abstract class Request implements \JsonSerializable {
 	private static $authToken;
 
 	/**
-	 * Inits lib with url to chat instance api
+	 * Sets chat url
 	 *
 	 * @param string $instance Protocol and domain, i.e. https://chat.me
 	 *
 	 * @return null
 	 */
-	public static function init($instance) {
+	public static function setUrl($instance) {
 
 		self::$client = new \GuzzleHttp\Client([
+
 			"base_uri" => $instance . self::URI,
 			"allow_redirects" => ["track_redirects" => true]
 		]);
@@ -76,14 +77,15 @@ abstract class Request implements \JsonSerializable {
 	 * @param array|null $files Files
 	 *
 	 * @return boolean
-	 *
-	 * @throws \Exception
 	 */
 	protected static function send($url, $method = "GET", $data = null, $files = null) {
 
-		if ( empty(self::$client) ) {
+		if (empty(self::$client) ) {
 
-			throw new \Exception("You should init first");
+			static::setError("Chat url is not set");
+			static::$success = false;
+
+			return false;
 		}
 
 		static::$response = null;
