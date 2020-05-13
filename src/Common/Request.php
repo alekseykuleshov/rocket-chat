@@ -258,8 +258,6 @@ abstract class Request implements \JsonSerializable {
 	 * Sets error
 	 *
 	 * @param string $error
-	 *
-	 * @return \ATDev\RocketChat\Request
 	 */
 	protected static function setError($error) {
 

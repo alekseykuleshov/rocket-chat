@@ -1,86 +1,98 @@
 <?php namespace ATDev\RocketChat\Users;
 
 /**
- * User avatar trait
+ * User new avatar class
  */
-trait Avatar {
+abstract class Avatar {
 
-	/** @var string Filepath of new user avatar to be uploaded */
-	private $newAvatarFilepath;
-	/** @var string Url to new user avatar to be applied */
-	private $newAvatarUrl;
+
+	/** @var boolean Indicates if source is file or domain */
+	const IS_FILE = null;
+	/** @var string Source of new avatar, domain or file */
+	private $source;
+	/** @var string|null Error message, empty if no error, some text if any */
+	private $error;
 
 	/**
-	 * Sets filepath of new user avatar to upload
+	 * Class constructor
+	 *
+	 * @param string $source
+	 */
+	public function __construct($source = null) {
+
+		if (!empty($source)) {
+
+			$this->setSource($source);
+		}
+	}
+
+	/**
+	 * Sets source of new user avatar
 	 *
 	 * @param string $name
 	 *
 	 * @return \ATDev\RocketChat\Users\Avatar
 	 */
-	public function setNewAvatarFilepath($newAvatarFilepath) {
+	public function setSource($source) {
 
-		if (!(is_null($newAvatarFilepath) || is_string($newAvatarFilepath))) {
+		if (!(is_null($source) || is_string($source))) {
 
-			$this->setAvatarError("Invalid avatar filepath value");
+			$this->setError("Invalid avatar source");
 		} else {
 
-			$this->newAvatarFilepath = $newAvatarFilepath;
+			$this->source = $source;
 		}
 
 		return $this;
 	}
 
 	/**
-	 * Gets filepath of new user avatar to upload
+	 * Gets source of new user avatar
 	 *
 	 * @return string
 	 */
-	public function getNewAvatarFilepath() {
+	public function getSource() {
 
-		return $this->newAvatarFilepath;
+		return $this->source;
 	}
 
 	/**
-	 * Sets url of new user avatar to be applied
-	 *
-	 * @param string $name
-	 *
-	 * @return \ATDev\RocketChat\Users\Avatar
-	 */
-	public function setNewAvatarUrl($newAvatarUrl) {
-
-		if (!(is_null($newAvatarUrl) || is_string($newAvatarUrl))) {
-
-			$this->setAvatarError("Invalid avatar url value");
-		} else {
-
-			$this->newAvatarUrl = $newAvatarUrl;
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Gets url of new user avatar to be applied
+	 * Gets error
 	 *
 	 * @return string
 	 */
-	public function getNewAvatarUrl() {
+	public function getError() {
 
-		return $this->newAvatarUrl;
+		return $this->error;
 	}
 
 	/**
-	 * Sets data error
+	 * Sets error
 	 *
 	 * @param string $error
 	 *
-	 * @return \ATDev\RocketChat\Users\Data
+	 * @return \ATDev\RocketChat\Users\Avatar
 	 */
-	private function setAvatarError($error) {
+	private function setError($error) {
 
-		static::setError($error);
-
-		return $this;
+		$this->error = $error;
 	}
+}
+
+/**
+ * User new avatar from file class
+ */
+class AvatarFromFile extends Avatar {
+
+	/** @var boolean Indicates if source is file or domain */
+	const IS_FILE = true;
+}
+
+/**
+ * User new avatar from domain class
+ */
+class AvatarFromDomain extends Avatar {
+
+	/** @var boolean Indicates if source is file or domain */
+	const IS_FILE = false;
 }

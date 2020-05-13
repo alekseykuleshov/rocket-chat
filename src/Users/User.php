@@ -1,6 +1,7 @@
 <?php namespace ATDev\RocketChat\Users;
 
 use \ATDev\RocketChat\Common\Request;
+use \ATDev\RocketChat\Users\Avatar;
 
 /**
  * User class
@@ -8,7 +9,6 @@ use \ATDev\RocketChat\Common\Request;
 class User extends Request {
 
 	use \ATDev\RocketChat\Users\Data;
-	use \ATDev\RocketChat\Users\Avatar;
 
 	/**
 	 * Gets user listing
@@ -104,21 +104,23 @@ class User extends Request {
 	/**
 	 * Sets avatar for user
 	 *
+	 * @param \ATDev\RocketChat\Users\Avatar $avatar
+	 *
 	 * @return boolean|$this
 	 */
-	public function setAvatar() {
+	public function setAvatar(Avatar $avatar) {
 
-		if (!empty($filepath = $this->getNewAvatarFilepath())) {
+		if ($avatar::IS_FILE) {
 
-			$result = static::send("users.setAvatar", "POST", ["userId" => $this->getUserId()], ["image" => $filepath]);
+			$result = static::send("users.setAvatar", "POST", ["userId" => $this->getUserId()], ["image" => $avatar->getSource()]);
 
 			if (!static::getSuccess()) {
 
 				return false;
 			}
-		} elseif (!empty($avatarUrl = $this->getNewAvatarUrl())) {
+		} else {
 
-			$result = static::send("users.setAvatar", "POST", ["userId" => $this->getUserId(), "avatarUrl" => $avatarUrl]);
+			$result = static::send("users.setAvatar", "POST", ["userId" => $this->getUserId(), "avatarUrl" => $avatar->getSource()]);
 
 			if (!static::getSuccess()) {
 
@@ -126,8 +128,7 @@ class User extends Request {
 			}
 		}
 
-		// Reset this after update
-		return $this->setNewAvatarFilepath(null)->setNewAvatarUrl(null);
+		return $this;
 	}
 
 	/**

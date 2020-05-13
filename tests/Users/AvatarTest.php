@@ -4,63 +4,56 @@ use \PHPUnit\Framework\TestCase;
 use \AspectMock\Test as test;
 
 use \ATDev\RocketChat\Users\Avatar;
+use \ATDev\RocketChat\Users\AvatarFromFile;
+use \ATDev\RocketChat\Users\AvatarFromDomain;
 
 class AvatarTest extends TestCase {
 
-	public function testInvalidNewAvatarFilepath() {
+	public function testConstructorNoSource() {
 
-		$mock = $this->getMockForTrait(Avatar::class);
+		$mock = $this->getMockForAbstractClass(Avatar::class);
 
-		$stub = test::double($mock, ["setAvatarError" => $mock]);
+		$stub = test::double(get_class($mock), ["setSource" => $mock]);
 
-		$mock->setNewAvatarFilepath(123);
-		$this->assertNull($mock->getNewAvatarFilepath());
+		$stub->construct();
 
-		$stub->verifyInvokedOnce("setAvatarError", ["Invalid avatar filepath value"]);
+		$stub->verifyNeverInvoked("setSource");
 	}
 
-	public function testValidNewAvatarFilepath() {
+	public function testConstructorWithUserId() {
 
-		$mock = $this->getMockForTrait(Avatar::class);
+		$mock = $this->getMockForAbstractClass(Avatar::class);
 
-		$stub = test::double($mock, ["setAvatarError" => $mock]);
+		$stub = test::double(get_class($mock), ["setSource" => $mock]);
 
-		$mock->setNewAvatarFilepath("some-path");
-		$this->assertSame("some-path", $mock->getNewAvatarFilepath());
+		$stub->construct("some-path");
 
-		// And null value...
-		$mock->setNewAvatarFilepath(null);
-		$this->assertSame(null, $mock->getNewAvatarFilepath());
-
-		$stub->verifyNeverInvoked("setAvatarError");
+		$stub->verifyInvokedOnce("setSource", ["some-path"]);
 	}
 
-	public function testInvalidNewAvatarUrl() {
+	public function testInvalidSource() {
 
-		$mock = $this->getMockForTrait(Avatar::class);
+		$mock = $this->getMockForAbstractClass(Avatar::class);
 
-		$stub = test::double($mock, ["setAvatarError" => $mock]);
+		$mock->setSource(123);
+		$this->assertNull($mock->getSource());
+		$this->assertSame("Invalid avatar source", $mock->getError());
 
-		$mock->setNewAvatarUrl(123);
-		$this->assertNull($mock->getNewAvatarUrl());
-
-		$stub->verifyInvokedOnce("setAvatarError", ["Invalid avatar url value"]);
 	}
 
-	public function testValidNewAvatarUrl() {
+	public function testValidSource() {
 
-		$mock = $this->getMockForTrait(Avatar::class);
+		$mock = $this->getMockForAbstractClass(Avatar::class);
 
-		$stub = test::double($mock, ["setAvatarError" => $mock]);
+		$mock->setSource("some-path");
+		$this->assertSame("some-path", $mock->getSource());
+		$this->assertNull($mock->getError());
+	}
 
-		$mock->setNewAvatarUrl("some-url");
-		$this->assertSame("some-url", $mock->getNewAvatarUrl());
+	public function testIsFile() {
 
-		// And null value...
-		$mock->setNewAvatarUrl(null);
-		$this->assertSame(null, $mock->getNewAvatarUrl());
-
-		$stub->verifyNeverInvoked("setAvatarError");
+		$this->assertSame(true, AvatarFromFile::IS_FILE);
+		$this->assertSame(false, AvatarFromDomain::IS_FILE);
 	}
 
 	protected function tearDown(): void {

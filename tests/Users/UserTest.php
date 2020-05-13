@@ -4,6 +4,8 @@ use \PHPUnit\Framework\TestCase;
 use \AspectMock\Test as test;
 
 use \ATDev\RocketChat\Users\User;
+use ATDev\RocketChat\Users\AvatarFromFile;
+use ATDev\RocketChat\Users\AvatarFromDomain;
 
 class UserTest extends TestCase {
 
@@ -220,21 +222,19 @@ class UserTest extends TestCase {
 
 		$stub = test::double("\ATDev\RocketChat\Users\User", [
 			"getUserId" => "userId123",
-			"getNewAvatarFilepath" => "filepath",
-			"getNewAvatarUrl" => null,
 			"send" => true,
 			"getSuccess" => false,
-			"setNewAvatarFilepath" => $user,
-			"setNewAvatarUrl" => "result"
 		]);
 
-		$result = $user->setAvatar();
+		test::double("\ATDev\RocketChat\Users\AvatarFromFile", [
+			"getSource" => "some-path"
+		]);
+
+		$result = $user->setAvatar(new AvatarFromFile);
 
 		$this->assertSame(false, $result);
-		$stub->verifyInvokedOnce("send", ["users.setAvatar", "POST", ["userId" => "userId123"], ["image" => "filepath"]]);
+		$stub->verifyInvokedOnce("send", ["users.setAvatar", "POST", ["userId" => "userId123"], ["image" => "some-path"]]);
 		$stub->verifyInvokedOnce("getSuccess");
-		$stub->verifyNeverInvoked("setNewAvatarFilepath");
-		$stub->verifyNeverInvoked("setNewAvatarUrl");
 	}
 
 	public function testSetAvatarUrlFailed() {
@@ -243,43 +243,19 @@ class UserTest extends TestCase {
 
 		$stub = test::double("\ATDev\RocketChat\Users\User", [
 			"getUserId" => "userId123",
-			"getNewAvatarFilepath" => null,
-			"getNewAvatarUrl" => "url",
 			"send" => true,
-			"getSuccess" => false,
-			"setNewAvatarFilepath" => $user,
-			"setNewAvatarUrl" => "result"
+			"getSuccess" => false
 		]);
 
-		$result = $user->setAvatar();
+		test::double("\ATDev\RocketChat\Users\AvatarFromDomain", [
+			"getSource" => "some-domain"
+		]);
+
+		$result = $user->setAvatar(new AvatarFromDomain);
 
 		$this->assertSame(false, $result);
-		$stub->verifyInvokedOnce("send", ["users.setAvatar", "POST", ["userId" => "userId123", "avatarUrl" => "url"]]);
+		$stub->verifyInvokedOnce("send", ["users.setAvatar", "POST", ["userId" => "userId123", "avatarUrl" => "some-domain"]]);
 		$stub->verifyInvokedOnce("getSuccess");
-		$stub->verifyNeverInvoked("setNewAvatarFilepath");
-		$stub->verifyNeverInvoked("setNewAvatarUrl");
-	}
-
-	public function testSetAvatarNoData() {
-
-		$user = new User();
-
-		$stub = test::double("\ATDev\RocketChat\Users\User", [
-			"getNewAvatarFilepath" => null,
-			"getNewAvatarUrl" => null,
-			"send" => true,
-			"getSuccess" => false,
-			"setNewAvatarFilepath" => $user,
-			"setNewAvatarUrl" => "result"
-		]);
-
-		$result = $user->setAvatar();
-
-		$this->assertSame("result", $result);
-		$stub->verifyNeverInvoked("send");
-		$stub->verifyNeverInvoked("getSuccess");
-		$stub->verifyInvokedOnce("setNewAvatarFilepath", [null]);
-		$stub->verifyInvokedOnce("setNewAvatarUrl", [null]);
 	}
 
 	public function testSetAvatarFilepathSuccess() {
@@ -288,21 +264,19 @@ class UserTest extends TestCase {
 
 		$stub = test::double("\ATDev\RocketChat\Users\User", [
 			"getUserId" => "userId123",
-			"getNewAvatarFilepath" => "filepath",
-			"getNewAvatarUrl" => null,
 			"send" => true,
-			"getSuccess" => true,
-			"setNewAvatarFilepath" => $user,
-			"setNewAvatarUrl" => "result"
+			"getSuccess" => true
 		]);
 
-		$result = $user->setAvatar();
+		test::double("\ATDev\RocketChat\Users\AvatarFromFile", [
+			"getSource" => "some-path"
+		]);
 
-		$this->assertSame("result", $result);
-		$stub->verifyInvokedOnce("send", ["users.setAvatar", "POST", ["userId" => "userId123"], ["image" => "filepath"]]);
+		$result = $user->setAvatar(new AvatarFromFile);
+
+		$this->assertSame($user, $result);
+		$stub->verifyInvokedOnce("send", ["users.setAvatar", "POST", ["userId" => "userId123"], ["image" => "some-path"]]);
 		$stub->verifyInvokedOnce("getSuccess");
-		$stub->verifyInvokedOnce("setNewAvatarFilepath", [null]);
-		$stub->verifyInvokedOnce("setNewAvatarUrl", [null]);
 	}
 
 	public function testSetAvatarUrlSuccess() {
@@ -311,21 +285,19 @@ class UserTest extends TestCase {
 
 		$stub = test::double("\ATDev\RocketChat\Users\User", [
 			"getUserId" => "userId123",
-			"getNewAvatarFilepath" => null,
-			"getNewAvatarUrl" => "url",
 			"send" => true,
-			"getSuccess" => true,
-			"setNewAvatarFilepath" => $user,
-			"setNewAvatarUrl" => "result"
+			"getSuccess" => true
 		]);
 
-		$result = $user->setAvatar();
+		test::double("\ATDev\RocketChat\Users\AvatarFromDomain", [
+			"getSource" => "some-domain"
+		]);
 
-		$this->assertSame("result", $result);
-		$stub->verifyInvokedOnce("send", ["users.setAvatar", "POST", ["userId" => "userId123", "avatarUrl" => "url"]]);
+		$result = $user->setAvatar(new AvatarFromDomain);
+
+		$this->assertSame($user, $result);
+		$stub->verifyInvokedOnce("send", ["users.setAvatar", "POST", ["userId" => "userId123", "avatarUrl" => "some-domain"]]);
 		$stub->verifyInvokedOnce("getSuccess");
-		$stub->verifyInvokedOnce("setNewAvatarFilepath", [null]);
-		$stub->verifyInvokedOnce("setNewAvatarUrl", [null]);
 	}
 
 	public function testGetAvatarFailed() {
