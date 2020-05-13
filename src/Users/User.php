@@ -1,6 +1,6 @@
 <?php namespace ATDev\RocketChat\Users;
 
-use \ATDev\RocketChat\Request;
+use \ATDev\RocketChat\Common\Request;
 
 /**
  * User class

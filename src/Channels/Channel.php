@@ -1,12 +1,13 @@
 <?php namespace ATDev\RocketChat\Channels;
 
-use \ATDev\RocketChat\Request;
+use \ATDev\RocketChat\Common\Request;
 
 /**
  * Channel class
  */
 class Channel extends Request {
 
+	use \ATDev\RocketChat\Common\Room;
 	use \ATDev\RocketChat\Channels\Data;
 
 	/**

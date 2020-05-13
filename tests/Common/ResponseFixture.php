@@ -1,4 +1,4 @@
-<?php namespace ATDev\RocketChat\Tests\Channels;
+<?php namespace ATDev\RocketChat\Tests\Common;
 
 class ResponseFixture1 extends \stdClass {
 
@@ -16,7 +16,7 @@ class ResponseFixture2 extends \stdClass {
 
 	public function __construct() {
 
-		$this->name = "Channel Name";
+		$this->name = "Room Name";
 		$this->msgs = 6;
 		$this->ro = true;
 		$this->default = false;

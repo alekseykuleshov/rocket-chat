@@ -1,4 +1,4 @@
-<?php namespace ATDev\RocketChat;
+<?php namespace ATDev\RocketChat\Common;
 
 /**
  * Basic functionality to make a requests to api

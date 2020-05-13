@@ -27,8 +27,8 @@ class ChannelTest extends TestCase {
 
 	public function testListingSuccess() {
 
-		$channel1 = new ResponseFixture1();
-		$channel2 = new ResponseFixture2();
+		$channel1 = new \ATDev\RocketChat\Tests\Common\ResponseFixture1();
+		$channel2 = new \ATDev\RocketChat\Tests\Common\ResponseFixture2();
 		$response = (object) ["channels" => [$channel1, $channel2]];
 
 		$stub = test::double("\ATDev\RocketChat\Channels\Channel", [
@@ -50,8 +50,8 @@ class ChannelTest extends TestCase {
 		$stub->verifyInvokedOnce("getResponse");
 		$stub->verifyInvokedOnce("createOutOfResponse", [$channel1]);
 		$stub->verifyInvokedOnce("createOutOfResponse", [$channel2]);
-		$coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Channels\ResponseFixture1"]);
-		$coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Channels\ResponseFixture2"]);
+		$coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture1"]);
+		$coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture2"]);
 	}
 
 	public function testCreateFailed() {

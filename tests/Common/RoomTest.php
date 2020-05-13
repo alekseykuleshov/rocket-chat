@@ -1,65 +1,65 @@
-<?php namespace ATDev\RocketChat\Tests\Channels;
+<?php namespace ATDev\RocketChat\Tests\Common;
 
 use \PHPUnit\Framework\TestCase;
 use \AspectMock\Test as test;
 
-use \ATDev\RocketChat\Channels\Data;
+use \ATDev\RocketChat\Common\Room;
 
-class DataTest extends TestCase {
+class RoomTest extends TestCase {
 
-	public function testConstructorNoChannelId() {
+	public function testConstructorNoRoomId() {
 
-		$mock = $this->getMockForTrait(Data::class);
+		$mock = $this->getMockForTrait(Room::class);
 
-		$stub = test::double(get_class($mock), ["setChannelId" => $mock]);
+		$stub = test::double(get_class($mock), ["setRoomId" => $mock]);
 
 		$stub->construct();
 
-		$stub->verifyNeverInvoked("setChannelId");
+		$stub->verifyNeverInvoked("setRoomId");
 	}
 
-	public function testConstructorWithChannelId() {
+	public function testConstructorWithRoomId() {
 
-		$mock = $this->getMockForTrait(Data::class);
+		$mock = $this->getMockForTrait(Room::class);
 
-		$stub = test::double(get_class($mock), ["setChannelId" => $mock]);
+		$stub = test::double(get_class($mock), ["setRoomId" => $mock]);
 
 		$stub->construct("asd123asd");
 
-		$stub->verifyInvokedOnce("setChannelId", ["asd123asd"]);
+		$stub->verifyInvokedOnce("setRoomId", ["asd123asd"]);
 	}
 
-	public function testInvalidChannelId() {
+	public function testInvalidRoomId() {
 
-		$mock = $this->getMockForTrait(Data::class);
+		$mock = $this->getMockForTrait(Room::class);
 
 		$stub = test::double($mock, ["setDataError" => $mock]);
 
-		$mock->setChannelId(123);
-		$this->assertNull($mock->getChannelId());
+		$mock->setRoomId(123);
+		$this->assertNull($mock->getRoomId());
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid channel Id"]);
+		$stub->verifyInvokedOnce("setDataError", ["Invalid room Id"]);
 	}
 
-	public function testValidChannelId() {
+	public function testValidRoomId() {
 
-		$mock = $this->getMockForTrait(Data::class);
+		$mock = $this->getMockForTrait(Room::class);
 
 		$stub = test::double($mock, ["setDataError" => $mock]);
 
-		$mock->setChannelId("123");
-		$this->assertSame("123", $mock->getChannelId());
+		$mock->setRoomId("123");
+		$this->assertSame("123", $mock->getRoomId());
 
 		// And null value...
-		$mock->setChannelId(null);
-		$this->assertSame(null, $mock->getChannelId());
+		$mock->setRoomId(null);
+		$this->assertSame(null, $mock->getRoomId());
 
 		$stub->verifyNeverInvoked("setDataError");
 	}
 
 	public function testInvalidName() {
 
-		$mock = $this->getMockForTrait(Data::class);
+		$mock = $this->getMockForTrait(Room::class);
 
 		$stub = test::double($mock, ["setDataError" => $mock]);
 
@@ -71,12 +71,12 @@ class DataTest extends TestCase {
 
 	public function testValidName() {
 
-		$mock = $this->getMockForTrait(Data::class);
+		$mock = $this->getMockForTrait(Room::class);
 
 		$stub = test::double($mock, ["setDataError" => $mock]);
 
-		$mock->setName("Channel Name");
-		$this->assertSame("Channel Name", $mock->getName());
+		$mock->setName("Room Name");
+		$this->assertSame("Room Name", $mock->getName());
 
 		// And null value...
 		$mock->setName(null);
@@ -87,14 +87,14 @@ class DataTest extends TestCase {
 
 	public function testJsonSerialize() {
 
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->setName("channelname");
+		$mock = $this->getMockForTrait(Room::class);
+		$mock->setName("roomname");
 
 		$this->assertSame([
-			"name" => "channelname"
+			"name" => "roomname"
 		], $mock->jsonSerialize());
 
-		$mock = $this->getMockForTrait(Data::class);
+		$mock = $this->getMockForTrait(Room::class);
 		$mock->setReadOnly(true);
 
 		$this->assertSame([
@@ -105,13 +105,13 @@ class DataTest extends TestCase {
 
 	public function testUpdateOutOfResponse() {
 
-		$channelFull = new ResponseFixtureFull();
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->updateOutOfResponse($channelFull);
+		$roomFull = new ResponseFixtureFull();
+		$mock = $this->getMockForTrait(Room::class);
+		$mock->updateOutOfResponse($roomFull);
 
-		$this->assertSame("asd123asd", $mock->getChannelId());
+		$this->assertSame("asd123asd", $mock->getRoomId());
 
-		$this->assertSame("Channel Name", $mock->getName());
+		$this->assertSame("Room Name", $mock->getName());
 		$this->assertSame("c", $mock->getT());
 		$this->assertSame(6, $mock->getMsgs());
 		$this->assertSame(3, $mock->getUsersCount());
@@ -120,11 +120,11 @@ class DataTest extends TestCase {
 		$this->assertSame(false, $mock->getDefault());
 		$this->assertSame(true, $mock->getSysMes());
 
-		$channel1 = new ResponseFixture1();
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->updateOutOfResponse($channel1);
+		$room1 = new ResponseFixture1();
+		$mock = $this->getMockForTrait(Room::class);
+		$mock->updateOutOfResponse($room1);
 
-		$this->assertSame("asd123asd", $mock->getChannelId());
+		$this->assertSame("asd123asd", $mock->getRoomId());
 		$this->assertNull($mock->getName());
 		$this->assertSame("c", $mock->getT());
 		$this->assertNull($mock->getMsgs());
@@ -134,12 +134,12 @@ class DataTest extends TestCase {
 		$this->assertNull($mock->getDefault());
 		$this->assertSame(true, $mock->getSysMes());
 
-		$channel2 = new ResponseFixture2();
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->updateOutOfResponse($channel2);
+		$room2 = new ResponseFixture2();
+		$mock = $this->getMockForTrait(Room::class);
+		$mock->updateOutOfResponse($room2);
 
-		$this->assertNull($mock->getChannelId());
-		$this->assertSame("Channel Name", $mock->getName());
+		$this->assertNull($mock->getRoomId());
+		$this->assertSame("Room Name", $mock->getName());
 		$this->assertNull($mock->getT());
 		$this->assertSame(6, $mock->getMsgs());
 		$this->assertNull($mock->getUsersCount());
@@ -151,14 +151,14 @@ class DataTest extends TestCase {
 
 	public function testCreateOutOfResponse() {
 
-		$mock = $this->getMockForTrait(Data::class);
+		$mock = $this->getMockForTrait(Room::class);
 
 		$stub = test::double(get_class($mock), ["updateOutOfResponse" => $mock]);
 
-		$channelFull = new ResponseFixtureFull();
-		$mock->createOutOfResponse($channelFull);
+		$roomFull = new ResponseFixtureFull();
+		$mock->createOutOfResponse($roomFull);
 
-		$stub->verifyInvokedOnce("updateOutOfResponse", [$channelFull]);
+		$stub->verifyInvokedOnce("updateOutOfResponse", [$roomFull]);
 	}
 
 	protected function tearDown(): void {
