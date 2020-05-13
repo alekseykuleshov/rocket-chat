@@ -26,4 +26,21 @@ trait Data {
 
 		return $this->getRoomId();
 	}
+
+
+	/**
+	 * Sets room id
+	 *
+	 * @param string $roomId
+	 *
+	 * @return \ATDev\RocketChat\Channels\Data
+	 */
+	abstract public function setRoomId($roomId);
+
+	/**
+	 * Gets room id
+	 *
+	 * @return string
+	 */
+	abstract public function getRoomId();
 }
