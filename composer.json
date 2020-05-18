@@ -1,15 +1,24 @@
 {
-    "name": "atdev/rocket-chat",
-    "description": "Rocket Chat REST API SDK",
-    "keywords": ["rocketchat"],
-    "homepage": "https://github.com/alekseykuleshov/rocket-chat",
-    "license": "MIT",
-    "autoload": {
-        "classmap": ["src/"]
-    },
-    "minimum-stability": "stable",
-    "require": {
-        "php": ">=5.3.0",
-        "guzzle/guzzle": "~3.0"
-    }
+	"name": "atdev/rocket-chat",
+	"description": "Rocket Chat REST API PHP Wrapper Library",
+	"keywords": ["rocketchat", "rest", "api"],
+	"homepage": "https://github.com/alekseykuleshov/rocket-chat",
+	"license": "MIT",
+	"minimum-stability": "stable",
+	"require": {
+		"php": ">=5.6.0",
+		"guzzlehttp/guzzle": "~6.0",
+		"egulias/email-validator": "~2.0",
+		"doctrine/collections": "~1.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "~9.0",
+		"codeception/aspect-mock": "~3.0"
+	},
+	"autoload": {
+		"classmap": ["src/"]
+	},
+	"autoload-dev": {
+		"classmap": ["tests/"]
+	}
 }
