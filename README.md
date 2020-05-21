@@ -54,3 +54,8 @@ Now, when you are logged in, you can:
 
 [Manage Groups](src/Groups/README.md)
 
+## Unit tests
+
+Tests are run by `./vendor/bin/phpunit tests`. Although the library code is designed to be compatible with `php 5.6`, testing
+requires `php 7.3` as minimum because of `phpunit` version `9`.
+

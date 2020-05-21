@@ -5,7 +5,7 @@ You have to be [logged in](../../README.md) and have relevant permissions.
 ```php
 $listing = \ATDev\RocketChat\Groups\Group::listing();
 
-if (!$result) {
+if (!$listing) {
 
 	// Log the error
 	$error = \ATDev\RocketChat\Groups\Group::getError();
