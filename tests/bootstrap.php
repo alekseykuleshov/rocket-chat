@@ -9,5 +9,5 @@ $am->init([
 		__DIR__ . "/../vendor/egulias",
 		__DIR__ . "/../vendor/doctrine"
 	],
-	"cacheDir"  => "/tmp/rocket-chat"
+	"cacheDir"  => sys_get_temp_dir() . "/rocket-chat"
 ]);
