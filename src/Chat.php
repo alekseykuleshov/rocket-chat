@@ -28,7 +28,7 @@ class Chat extends Request {
 				static::setError(static::getResponse()->error);
 			} else {
 
-				static::setError("Unknown error occured while loggin in");
+				static::setError("Unknown error occurred while logging in");
 			}
 
 			return false;
