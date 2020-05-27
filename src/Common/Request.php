@@ -118,7 +118,7 @@ abstract class Request implements \JsonSerializable {
 				static::setError(static::$response->error);
 			} else {
 
-				static::setError("Unknown error occured in api");
+				static::setError("Unknown error occurred in api");
 			}
 
 			static::$success = false;

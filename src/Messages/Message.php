@@ -35,7 +35,7 @@ class Message extends Request
             static::setError('Invalid room type');
             return false;
         }
-        static::send('chat.postMessage', 'POST', $this->setRoomId($room->getChannelId()));
+        static::send('chat.postMessage', 'POST', $this->setRoomId($room->getRoomId()));
         if (!static::getSuccess()) {
             return false;
         }

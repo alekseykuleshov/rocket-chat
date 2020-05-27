@@ -10,13 +10,13 @@ use \Doctrine\Common\Collections\ArrayCollection;
  */
 class Collection extends ArrayCollection {
     /**
-     * @param Message $message
+     * @param Message $element
      * @return bool|true
      */
-    public function add($message) {
-        if (!($message instanceof Message)) {
+    public function add($element) {
+        if (!($element instanceof Message)) {
             return false;
         }
-        return parent::add($message);
+        return parent::add($element);
     }
 }

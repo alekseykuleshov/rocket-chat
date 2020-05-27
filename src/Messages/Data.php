@@ -28,6 +28,8 @@ trait Data {
     private $groupable;
     /** @var string timestamp */
     private $ts;
+    /** @var string message type */
+    private $t;
     /** @var string message user id */
     private $userId;
     /** @var string message user name */
@@ -89,11 +91,19 @@ trait Data {
     }
 
     /**
-     * @TODO: if should use $this->text both for request and response as far as 'msg' is returned from API response
      * @return string
      */
     public function getMsg() {
-        return $this->text;
+        return $this->msg;
+    }
+
+    /**
+     * @param string|null $msg
+     * @return $this
+     */
+    public function setMsg(string $msg = null) {
+        $this->msg = $msg;
+        return $this;
     }
 
     /**
@@ -211,6 +221,24 @@ trait Data {
     /**
      * @return string
      */
+    public function getT() {
+        return $this->t;
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    private function setT($value) {
+        if (is_string($value)) {
+            $this->t = $value;
+        }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getUserId()
     {
         return $this->userId;
@@ -291,6 +319,9 @@ trait Data {
         }
         if (isset($response->ts)) {
             $this->setTs($response->ts);
+        }
+        if (isset($response->t)) {
+            $this->setT($response->t);
         }
         if (isset($response->_updatedAt)) {
             $this->setUpdatedAt($response->_updatedAt);
