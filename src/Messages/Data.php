@@ -20,8 +20,6 @@ trait Data {
     private $avatar;
 
     /* Readonly properties returned from api */
-    /** @var string Message text */
-    private $msg;
     /** @var bool Indicates if urls from messages are parsed */
     private $parseUrls;
     /** @var bool */
@@ -77,7 +75,7 @@ trait Data {
     }
 
     /**
-     * @param sting $roomId
+     * @param string $roomId
      * @return Data $this
      */
     public function setRoomId($roomId) {
@@ -91,19 +89,10 @@ trait Data {
     }
 
     /**
-     * @return string
+     * @return string The text of the message
      */
     public function getMsg() {
-        return $this->msg;
-    }
-
-    /**
-     * @param string|null $msg
-     * @return $this
-     */
-    public function setMsg(string $msg = null) {
-        $this->msg = $msg;
-        return $this;
+        return $this->text;
     }
 
     /**
@@ -341,7 +330,7 @@ trait Data {
             $messageData['text'] = $this->text;
         }
         if (!is_null($this->avatar)) {
-            $messageData['alias'] = $this->avatar;
+            $messageData['avatar'] = $this->avatar;
         }
         if (!is_null($this->alias)) {
             $messageData['alias'] = $this->alias;
