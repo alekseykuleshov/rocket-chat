@@ -26,7 +26,7 @@ class ChatTest extends TestCase {
 		$this->assertSame(false, $result);
 		$stub->verifyInvokedOnce("send", ["login", "POST", ["user" => "asd", "password" => "zxc"]]);
 		$stub->verifyInvokedMultipleTimes("getResponse", 3);
-		$stub->verifyInvokedOnce("setError", ["Unknown error occured while loggin in"]);
+		$stub->verifyInvokedOnce("setError", ["Unknown error occurred while logging in"]);
 		$stub->verifyNeverInvoked("setAuthUserId");
 		$stub->verifyNeverInvoked("setAuthToken");
 		$user->verifyNeverInvoked("createOutOfResponse");

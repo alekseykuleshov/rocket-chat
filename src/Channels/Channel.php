@@ -1,7 +1,7 @@
 <?php namespace ATDev\RocketChat\Channels;
 
 use \ATDev\RocketChat\Common\Request;
-use ATDev\RocketChat\Messages\Message;
+use \ATDev\RocketChat\Messages\Message;
 use \ATDev\RocketChat\Users\User;
 
 /**
@@ -207,15 +207,17 @@ class Channel extends Request {
 	    static::send(
 	        'channels.messages',
             'GET',
-            ['roomId' => $this->getChannelId(), 'offset' => $offset, 'count' => $count]
+            ['roomId' => $this->getRoomId(), 'offset' => $offset, 'count' => $count]
         );
         if (!static::getSuccess()) {
             return false;
         }
         $response = static::getResponse();
         $messages = new \ATDev\RocketChat\Messages\Collection();
-        foreach($response->messages as $message) {
-            $messages->add(Message::createOutOfResponse($message));
+        if (isset($response->messages)) {
+            foreach ($response->messages as $message) {
+                $messages->add(Message::createOutOfResponse($message));
+            }
         }
 
         return $messages;
