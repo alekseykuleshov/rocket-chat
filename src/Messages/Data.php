@@ -255,11 +255,23 @@ trait Data {
 
     /**
      * @param \stdClass $response
+     * @return Data
+     */
+    public static function createOutOfResponse($response) {
+        $message = new static($response->_id);
+        return $message->updateOutOfResponse($response);
+    }
+
+    /**
+     * @param \stdClass $response
      * @return Data $this
      */
     public function updateOutOfResponse($response) {
         if (isset($response->_id)) {
             $this->setMessageId($response->_id);
+        }
+        if (isset($response->rid)) {
+            $this->setRoomId($response->rid);
         }
         if (isset($response->alias)) {
             $this->setAlias($response->alias);

@@ -1,6 +1,7 @@
 <?php namespace ATDev\RocketChat\Channels;
 
 use \ATDev\RocketChat\Common\Request;
+use ATDev\RocketChat\Messages\Message;
 use \ATDev\RocketChat\Users\User;
 
 /**
@@ -194,4 +195,29 @@ class Channel extends Request {
 
 		return $this;
 	}
+
+    /**
+     * Lists all of the specific channel messages on the server
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Messages\Collection|bool
+     */
+	public function messages($offset = 0, $count = 0) {
+	    static::send(
+	        'channels.messages',
+            'GET',
+            ['roomId' => $this->getChannelId(), 'offset' => $offset, 'count' => $count]
+        );
+        if (!static::getSuccess()) {
+            return false;
+        }
+        $response = static::getResponse();
+        $messages = new \ATDev\RocketChat\Messages\Collection();
+        foreach($response->messages as $message) {
+            $messages->add(Message::createOutOfResponse($message));
+        }
+
+        return $messages;
+    }
 }
