@@ -123,12 +123,26 @@ trait Data {
     }
 
     /**
+     * @return string
+     */
+    public function getEmoji() {
+        return $this->emoji;
+    }
+
+    /**
      * @param string $emoji If provided, this will make the avatar on this message be an emoji.
      * @return Data $this
      */
     public function setEmoji(string $emoji) {
         $this->emoji = $emoji;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAvatar() {
+        return $this->avatar;
     }
 
     /**
@@ -295,6 +309,12 @@ trait Data {
         }
         if (isset($response->msg)) {
             $this->setText($response->msg);
+        }
+        if (isset($response->emoji)) {
+            $this->setEmoji($response->emoji);
+        }
+        if (isset($response->avatar)) {
+            $this->setAvatar($response->avatar);
         }
         if (isset($response->parseUrls)) {
             $this->setParseUrls($response->parseUrls);

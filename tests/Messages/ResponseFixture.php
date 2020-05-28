@@ -6,6 +6,7 @@ class ResponseFixture1 extends \stdClass {
         $this->rid = 'GENERAL';
         $this->alias = 'test alias';
         $this->emoji = ':sunglasses:';
+        $this->avatar = 'http://res.guggy.com/logo_128.png';
         $this->msg = 'This is a test!';
     }
 }
