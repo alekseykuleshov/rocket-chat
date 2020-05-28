@@ -114,11 +114,13 @@ trait Data {
     }
 
     /**
-     * @param string|null $alias This will cause the message's name to appear as the given alias, but your username will still display.
+     * @param string $alias This will cause the message's name to appear as the given alias, but your username will still display.
      * @return Data $this
      */
-    public function setAlias(string $alias = null) {
-        $this->alias = $alias;
+    public function setAlias($alias) {
+        if (is_string($alias)) {
+            $this->alias = $alias;
+        }
         return $this;
     }
 
@@ -133,8 +135,10 @@ trait Data {
      * @param string $emoji If provided, this will make the avatar on this message be an emoji.
      * @return Data $this
      */
-    public function setEmoji(string $emoji) {
-        $this->emoji = $emoji;
+    public function setEmoji($emoji) {
+        if (is_string($emoji)) {
+            $this->emoji = $emoji;
+        }
         return $this;
     }
 
@@ -149,8 +153,10 @@ trait Data {
      * @param string $avatar If provided, this will make the avatar use the provided image url.
      * @return Data $this
      */
-    public function setAvatar(string $avatar) {
-        $this->avatar = $avatar;
+    public function setAvatar($avatar) {
+        if (is_string($avatar)) {
+            $this->avatar = $avatar;
+        }
         return $this;
     }
 
@@ -169,12 +175,12 @@ trait Data {
     }
 
     /**
-     * @param bool|null $parseUrls
+     * @param bool $parseUrls
      * @return Data $this
      */
-    public function setParseUrls($parseUrls) {
+    private function setParseUrls($parseUrls) {
         if (!is_bool($parseUrls)) {
-            $this->setDataError("Invalid parseUrls value");
+            $this->setDataError('Invalid parseUrls value');
         } else {
             $this->parseUrls = $parseUrls;
         }
@@ -190,12 +196,12 @@ trait Data {
     }
 
     /**
-     * @param bool|null $groupable
+     * @param bool $groupable
      * @return Data $this
      */
-    public function setGroupable($groupable) {
+    private function setGroupable($groupable) {
         if (!is_bool($groupable)) {
-            $this->setDataError("Invalid groupable value");
+            $this->setDataError('Invalid groupable value');
         } else {
             $this->groupable = $groupable;
         }
@@ -242,46 +248,55 @@ trait Data {
     /**
      * @return string
      */
-    public function getUserId()
-    {
+    public function getUserId() {
         return $this->userId;
     }
 
     /**
      * @param string $userId
+     * @return $this
      */
-    public function setUserId(string $userId = null) {
-        $this->userId = $userId;
+    private function setUserId($userId) {
+        if (is_string($userId)) {
+            $this->userId = $userId;
+        }
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getUsername()
-    {
+    public function getUsername() {
         return $this->username;
     }
 
     /**
-     * @param string|null $username
+     * @param string $username
+     * @return $this
      */
-    public function setUsername(string $username = null) {
-        $this->username = $username;
+    private function setUsername($username) {
+        if (is_string($username)) {
+            $this->username = $username;
+        }
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getUpdatedAt()
-    {
+    public function getUpdatedAt() {
         return $this->updatedAt;
     }
 
     /**
-     * @param string|null $updatedAt
+     * @param string $updatedAt
+     * @return $this
      */
-    public function setUpdatedAt(string $updatedAt = null) {
-        $this->updatedAt = $updatedAt;
+    private function setUpdatedAt($updatedAt) {
+        if (is_string($updatedAt)) {
+            $this->updatedAt = $updatedAt;
+        }
+        return $this;
     }
 
     /**
@@ -340,7 +355,7 @@ trait Data {
     }
 
     /**
-     * Gets full user data to submit to api
+     * Prepares message data to be sent to API
      *
      * @return array
      */

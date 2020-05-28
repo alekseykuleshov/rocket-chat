@@ -5,6 +5,100 @@ use \PHPUnit\Framework\TestCase;
 use \AspectMock\Test as test;
 
 class DataTest extends TestCase {
+    public function testConstructorNoMessageId() {
+        $mock = $this->getMockForTrait(Data::class);
+        $stub = test::double(get_class($mock), ['setMessageId' => $mock]);
+        $stub->construct();
+        $stub->verifyNeverInvoked('setMessageId');
+    }
+
+    public function testConstructorWithMessageId() {
+        $mock = $this->getMockForTrait(Data::class);
+        $stub = test::double(get_class($mock), ['setMessageId' => $mock]);
+        $stub->construct('message_id');
+        $stub->verifyInvokedOnce('setMessageId', ['message_id']);
+    }
+
+    public function testInvalidMessageId() {
+        $mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ['setDataError' => $mock]);
+
+        $mock->setMessageId(123);
+        $this->assertNull($mock->getMessageId());
+        $stub->verifyInvokedOnce('setDataError', ['Invalid message Id']);
+    }
+
+    public function testValidMessageId() {
+        $mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ['setDataError' => $mock]);
+
+        $mock->setMessageId('message_id');
+        $this->assertSame('message_id', $mock->getMessageId());
+
+        $mock->setMessageId(null);
+        $this->assertNull($mock->getMessageId());
+
+        $stub->verifyNeverInvoked('setDataError');
+    }
+
+    public function testInvalidRoomId() {
+        $mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ['setDataError' => $mock]);
+
+        $mock->setRoomId(123);
+        $this->assertNull($mock->getRoomId());
+        $stub->verifyInvokedOnce('setDataError', ['Invalid room Id']);
+    }
+
+    public function testValidRoomId() {
+        $mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ['setDataError' => $mock]);
+
+        $mock->setRoomId('room_id');
+        $this->assertSame('room_id', $mock->getRoomId());
+
+        $mock->setRoomId(null);
+        $this->assertNull($mock->getRoomId());
+
+        $stub->verifyNeverInvoked('setDataError');
+    }
+
+    public function testSetText() {
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setText(['invalid_text_argument']);
+        $this->assertNull($mock->getMsg());
+
+        $mock->setText('valid_text');
+        $this->assertSame('valid_text', $mock->getMsg());
+    }
+
+    public function testSetAlias() {
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setAlias(00000);
+        $this->assertNull($mock->getAlias());
+
+        $mock->setAlias('valid_alias');
+        $this->assertSame('valid_alias', $mock->getAlias());
+    }
+
+    public function testSetEmoji() {
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setEmoji(00000);
+        $this->assertNull($mock->getEmoji());
+
+        $mock->setEmoji('valid_emoji');
+        $this->assertSame('valid_emoji', $mock->getEmoji());
+    }
+
+    public function testSetAvatar() {
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setAvatar(00000);
+        $this->assertNull($mock->getAvatar());
+
+        $mock->setAvatar('valid_avatar_url');
+        $this->assertSame('valid_avatar_url', $mock->getAvatar());
+    }
+
     public function testJsonSerialize() {
         $mock = $this->getMockForTrait(Data::class);
         $mock->setRoomId('roomId');
