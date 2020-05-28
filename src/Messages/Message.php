@@ -26,16 +26,10 @@ class Message extends Request
     }
 
     /**
-     * @todo if $room should be instance of Room (abstract)
-     * @param Channel|Group $room
      * @return Message|bool
      */
-    public function postMessage($room) {
-        if (!($room instanceof Channel) && !($room instanceof Group)) {
-            static::setError('Invalid room type');
-            return false;
-        }
-        static::send('chat.postMessage', 'POST', $this->setRoomId($room->getRoomId()));
+    public function postMessage() {
+        static::send('chat.postMessage', 'POST', $this);
         if (!static::getSuccess()) {
             return false;
         }
