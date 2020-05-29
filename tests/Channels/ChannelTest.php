@@ -373,6 +373,62 @@ class ChannelTest extends TestCase {
 		$stub->verifyInvokedOnce("getSuccess");
 	}
 
+	public function testMessagesFailed() {
+	    $stub = test::double('\ATDev\RocketChat\Channels\Channel', [
+	        'getRoomId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+	    $messageStub = test::double('\ATDev\RocketChat\Messages\Message', ['createOutOfResponse' => 'nothing']);
+
+        $channel = new Channel();
+        $result = $channel->messages();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['channels.messages', 'GET', ['roomId' => 'channelId123', 'offset' => 0, 'count' => 0]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $messageStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testMessagesSuccess() {
+	    $message1 = new \ATDev\RocketChat\Tests\Messages\ResponseFixture1();
+        $message2 = new \ATDev\RocketChat\Tests\Messages\ResponseFixture2();
+        $response = (object) ['messages' => [$message1, $message2]];
+        $stub = test::double('\ATDev\RocketChat\Channels\Channel', [
+            'getRoomId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $messageStub = test::double(
+            '\ATDev\RocketChat\Messages\Message',
+            ['createOutOfResponse' => function($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Messages\Collection', ['add' => true]);
+
+        $channel = new Channel();
+        $result = $channel->messages(2, 10);
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Messages\Collection', $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['channels.messages', 'GET', ['roomId' => 'channelId123', 'offset' => 2, 'count' => 10]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$message1]);
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$message2]);
+        $collection->verifyInvokedOnce('add', [$message1]);
+        $collection->verifyInvokedOnce('add', [$message2]);
+    }
+
 	protected function tearDown(): void {
 
 		test::clean(); // remove all registered test doubles
