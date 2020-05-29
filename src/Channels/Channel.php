@@ -17,9 +17,9 @@ class Channel extends Request {
 	 *
 	 * @return \ATDev\RocketChat\Channels\Collection|boolean
 	 */
-	public static function listing() {
+	public static function listing($offset = 0, $count = 0) {
 
-		static::send("channels.list", "GET");
+		static::send("channels.list", "GET", ['offset' => $offset, 'count' => $count]);
 
 		if (!static::getSuccess()) {
 
@@ -28,9 +28,17 @@ class Channel extends Request {
 
 		$channels = new Collection();
 		foreach(static::getResponse()->channels as $channel) {
-
 			$channels->add(static::createOutOfResponse($channel));
 		}
+        if (isset($response->total)) {
+            $channels->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $channels->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $channels->setOffset($response->offset);
+        }
 
 		return $channels;
 	}
@@ -218,6 +226,15 @@ class Channel extends Request {
             foreach ($response->messages as $message) {
                 $messages->add(Message::createOutOfResponse($message));
             }
+        }
+        if (isset($response->total)) {
+            $messages->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $messages->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $messages->setOffset($response->offset);
         }
 
         return $messages;

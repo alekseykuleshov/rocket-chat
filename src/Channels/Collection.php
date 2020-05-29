@@ -1,16 +1,16 @@
 <?php namespace ATDev\RocketChat\Channels;
 
-use \Doctrine\Common\Collections\ArrayCollection;
-
 /**
  * Channel collection class
  */
-class Collection extends ArrayCollection {
+class Collection extends \ATDev\RocketChat\Common\Collection {
 
+    /**
+     * @param Channel $element
+     * @return bool|true
+     */
 	public function add($element) {
-
 		if (!($element instanceof Channel)) {
-
 			return false;
 		}
 

@@ -12,25 +12,33 @@ class Group extends Request {
 	use \ATDev\RocketChat\Common\Room;
 	use \ATDev\RocketChat\Groups\Data;
 
-	/**
-	 * Gets groups listing
-	 *
-	 * @return \ATDev\RocketChat\Groups\Collection|boolean
-	 */
-	public static function listing() {
-
-		static::send("groups.list", "GET");
+    /**
+     * Gets groups listing
+     *
+     * @param int $offset
+     * @param int $count
+     * @return Collection|bool
+     */
+	public static function listing($offset = 0, $count = 0) {
+		static::send("groups.list", "GET", ['offset' => $offset, 'count' => $count]);
 
 		if (!static::getSuccess()) {
-
 			return false;
 		}
 
 		$groups = new Collection();
 		foreach(static::getResponse()->groups as $group) {
-
 			$groups->add(static::createOutOfResponse($group));
 		}
+        if (isset($response->total)) {
+            $groups->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $groups->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $groups->setOffset($response->offset);
+        }
 
 		return $groups;
 	}

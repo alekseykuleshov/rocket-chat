@@ -2,13 +2,11 @@
 
 namespace ATDev\RocketChat\Messages;
 
-use \Doctrine\Common\Collections\ArrayCollection;
-
 /**
  * Messages Collection
  * @package ATDev\RocketChat\Messages
  */
-class Collection extends ArrayCollection {
+class Collection extends \ATDev\RocketChat\Common\Collection {
     /**
      * @param Message $element
      * @return bool|true
