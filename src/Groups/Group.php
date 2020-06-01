@@ -27,7 +27,8 @@ class Group extends Request {
 		}
 
 		$groups = new Collection();
-		foreach(static::getResponse()->groups as $group) {
+        $response =static::getResponse();
+		foreach($response->groups as $group) {
 			$groups->add(static::createOutOfResponse($group));
 		}
         if (isset($response->total)) {

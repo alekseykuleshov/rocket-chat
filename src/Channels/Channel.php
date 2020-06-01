@@ -12,11 +12,13 @@ class Channel extends Request {
 	use \ATDev\RocketChat\Common\Room;
 	use \ATDev\RocketChat\Channels\Data;
 
-	/**
-	 * Gets channel listing
-	 *
-	 * @return \ATDev\RocketChat\Channels\Collection|boolean
-	 */
+    /**
+     * Gets channel listing
+     *
+     * @param int $offset
+     * @param int $count
+     * @return Collection|bool
+     */
 	public static function listing($offset = 0, $count = 0) {
 
 		static::send("channels.list", "GET", ['offset' => $offset, 'count' => $count]);
@@ -27,7 +29,8 @@ class Channel extends Request {
 		}
 
 		$channels = new Collection();
-		foreach(static::getResponse()->channels as $channel) {
+		$response = static::getResponse();
+		foreach($response->channels as $channel) {
 			$channels->add(static::createOutOfResponse($channel));
 		}
         if (isset($response->total)) {

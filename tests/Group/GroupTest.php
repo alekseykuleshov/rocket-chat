@@ -30,7 +30,12 @@ class GroupTest extends TestCase {
 
 		$group1 = new \ATDev\RocketChat\Tests\Common\ResponseFixture1();
 		$group2 = new \ATDev\RocketChat\Tests\Common\ResponseFixture2();
-		$response = (object) ["groups" => [$group1, $group2]];
+		$response = (object) [
+		    "groups" => [$group1, $group2],
+            "offset" => 2,
+            "count" => 10,
+            "total" => 30
+        ];
 
 		$stub = test::double("\ATDev\RocketChat\Groups\Group", [
 			"send" => true,
@@ -53,6 +58,9 @@ class GroupTest extends TestCase {
 		$stub->verifyInvokedOnce("createOutOfResponse", [$group2]);
 		$coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture1"]);
 		$coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture2"]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
 	}
 
 	public function testCreateFailed() {

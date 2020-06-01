@@ -30,7 +30,12 @@ class ChannelTest extends TestCase {
 
 		$channel1 = new \ATDev\RocketChat\Tests\Common\ResponseFixture1();
 		$channel2 = new \ATDev\RocketChat\Tests\Common\ResponseFixture2();
-		$response = (object) ["channels" => [$channel1, $channel2]];
+		$response = (object) [
+		    "channels" => [$channel1, $channel2],
+            "offset" => 2,
+            "count" => 10,
+            "total" => 30
+        ];
 
 		$stub = test::double("\ATDev\RocketChat\Channels\Channel", [
 			"send" => true,
@@ -53,6 +58,9 @@ class ChannelTest extends TestCase {
 		$stub->verifyInvokedOnce("createOutOfResponse", [$channel2]);
 		$coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture1"]);
 		$coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture2"]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
 	}
 
 	public function testCreateFailed() {
