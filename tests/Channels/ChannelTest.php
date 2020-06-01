@@ -398,7 +398,12 @@ class ChannelTest extends TestCase {
     public function testMessagesSuccess() {
 	    $message1 = new \ATDev\RocketChat\Tests\Messages\ResponseFixture1();
         $message2 = new \ATDev\RocketChat\Tests\Messages\ResponseFixture2();
-        $response = (object) ['messages' => [$message1, $message2]];
+        $response = (object) [
+            'messages' => [$message1, $message2],
+            'offset' => 2,
+            'count' => 10,
+            'total' => 30
+        ];
         $stub = test::double('\ATDev\RocketChat\Channels\Channel', [
             'getRoomId' => 'channelId123',
             'send' => true,
@@ -427,6 +432,9 @@ class ChannelTest extends TestCase {
         $messageStub->verifyInvokedOnce('createOutOfResponse', [$message2]);
         $collection->verifyInvokedOnce('add', [$message1]);
         $collection->verifyInvokedOnce('add', [$message2]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
     }
 
 	protected function tearDown(): void {

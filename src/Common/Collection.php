@@ -21,9 +21,13 @@ class Collection extends ArrayCollection {
 
     /**
      * @param int $total
+     * @return $this
      */
     public function setTotal($total) {
-        $this->total = $total;
+        if (is_int($total)) {
+            $this->total = $total;
+        }
+        return $this;
     }
 
     /**
@@ -35,9 +39,13 @@ class Collection extends ArrayCollection {
 
     /**
      * @param int $count
+     * @return $this
      */
     public function setCount($count) {
-        $this->count = $count;
+        if (is_int($count)) {
+            $this->count = $count;
+        }
+        return $this;
     }
 
     /**
@@ -48,9 +56,13 @@ class Collection extends ArrayCollection {
     }
 
     /**
-     * @param int $offset
+     * @param $offset
+     * @return $this
      */
     public function setOffset($offset) {
-        $this->offset = $offset;
+        if (is_int($offset)) {
+            $this->offset = $offset;
+        }
+        return $this;
     }
 }

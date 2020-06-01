@@ -224,9 +224,18 @@ class Group extends Request {
         $response = static::getResponse();
         $messages = new \ATDev\RocketChat\Messages\Collection();
         if (isset($response->messages)) {
-            foreach($response->messages as $message) {
+            foreach ($response->messages as $message) {
                 $messages->add(Message::createOutOfResponse($message));
             }
+        }
+        if (isset($response->total)) {
+            $messages->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $messages->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $messages->setOffset($response->offset);
         }
 
         return $messages;
