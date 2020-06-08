@@ -1,168 +1,170 @@
-<?php namespace ATDev\RocketChat\Tests\Common;
+<?php
 
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+namespace ATDev\RocketChat\Tests\Common;
 
-use \ATDev\RocketChat\Common\Room;
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 
-class RoomTest extends TestCase {
+use ATDev\RocketChat\Common\Room;
 
-	public function testConstructorNoRoomId() {
+class RoomTest extends TestCase
+{
+    public function testConstructorNoRoomId()
+    {
+        $mock = $this->getMockForTrait(Room::class);
 
-		$mock = $this->getMockForTrait(Room::class);
+        $stub = test::double(get_class($mock), ["setRoomId" => $mock]);
 
-		$stub = test::double(get_class($mock), ["setRoomId" => $mock]);
+        $stub->construct();
 
-		$stub->construct();
+        $stub->verifyNeverInvoked("setRoomId");
+    }
 
-		$stub->verifyNeverInvoked("setRoomId");
-	}
+    public function testConstructorWithRoomId()
+    {
+        $mock = $this->getMockForTrait(Room::class);
 
-	public function testConstructorWithRoomId() {
+        $stub = test::double(get_class($mock), ["setRoomId" => $mock]);
 
-		$mock = $this->getMockForTrait(Room::class);
+        $stub->construct("asd123asd");
 
-		$stub = test::double(get_class($mock), ["setRoomId" => $mock]);
+        $stub->verifyInvokedOnce("setRoomId", ["asd123asd"]);
+    }
 
-		$stub->construct("asd123asd");
+    public function testInvalidRoomId()
+    {
+        $mock = $this->getMockForTrait(Room::class);
 
-		$stub->verifyInvokedOnce("setRoomId", ["asd123asd"]);
-	}
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-	public function testInvalidRoomId() {
+        $mock->setRoomId(123);
+        $this->assertNull($mock->getRoomId());
 
-		$mock = $this->getMockForTrait(Room::class);
+        $stub->verifyInvokedOnce("setDataError", ["Invalid room Id"]);
+    }
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+    public function testValidRoomId()
+    {
+        $mock = $this->getMockForTrait(Room::class);
 
-		$mock->setRoomId(123);
-		$this->assertNull($mock->getRoomId());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid room Id"]);
-	}
+        $mock->setRoomId("123");
+        $this->assertSame("123", $mock->getRoomId());
 
-	public function testValidRoomId() {
+        // And null value...
+        $mock->setRoomId(null);
+        $this->assertSame(null, $mock->getRoomId());
 
-		$mock = $this->getMockForTrait(Room::class);
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+    public function testInvalidName()
+    {
+        $mock = $this->getMockForTrait(Room::class);
 
-		$mock->setRoomId("123");
-		$this->assertSame("123", $mock->getRoomId());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		// And null value...
-		$mock->setRoomId(null);
-		$this->assertSame(null, $mock->getRoomId());
+        $mock->setName(123);
+        $this->assertNull($mock->getName());
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $stub->verifyInvokedOnce("setDataError", ["Invalid name"]);
+    }
 
-	public function testInvalidName() {
+    public function testValidName()
+    {
+        $mock = $this->getMockForTrait(Room::class);
 
-		$mock = $this->getMockForTrait(Room::class);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $mock->setName("Room Name");
+        $this->assertSame("Room Name", $mock->getName());
 
-		$mock->setName(123);
-		$this->assertNull($mock->getName());
+        // And null value...
+        $mock->setName(null);
+        $this->assertSame(null, $mock->getName());
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid name"]);
-	}
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-	public function testValidName() {
+    public function testJsonSerialize()
+    {
+        $mock = $this->getMockForTrait(Room::class);
+        $mock->setName("roomname");
 
-		$mock = $this->getMockForTrait(Room::class);
+        $this->assertSame([
+            "name" => "roomname"
+        ], $mock->jsonSerialize());
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $mock = $this->getMockForTrait(Room::class);
+        $mock->setReadOnly(true);
 
-		$mock->setName("Room Name");
-		$this->assertSame("Room Name", $mock->getName());
+        $this->assertSame([
+            "name" => null,
+            "readOnly" => true
+        ], $mock->jsonSerialize());
+    }
 
-		// And null value...
-		$mock->setName(null);
-		$this->assertSame(null, $mock->getName());
+    public function testUpdateOutOfResponse()
+    {
+        $roomFull = new ResponseFixtureFull();
+        $mock = $this->getMockForTrait(Room::class);
+        $mock->updateOutOfResponse($roomFull);
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $this->assertSame("asd123asd", $mock->getRoomId());
 
-	public function testJsonSerialize() {
+        $this->assertSame("Room Name", $mock->getName());
+        $this->assertSame("c", $mock->getT());
+        $this->assertSame(6, $mock->getMsgs());
+        $this->assertSame(3, $mock->getUsersCount());
+        $this->assertSame("2020-05-12T15:24:04.977Z", $mock->getTs());
+        $this->assertSame(true, $mock->getReadOnly());
+        $this->assertSame(false, $mock->getDefault());
+        $this->assertSame(true, $mock->getSysMes());
 
-		$mock = $this->getMockForTrait(Room::class);
-		$mock->setName("roomname");
+        $room1 = new ResponseFixture1();
+        $mock = $this->getMockForTrait(Room::class);
+        $mock->updateOutOfResponse($room1);
 
-		$this->assertSame([
-			"name" => "roomname"
-		], $mock->jsonSerialize());
+        $this->assertSame("asd123asd", $mock->getRoomId());
+        $this->assertNull($mock->getName());
+        $this->assertSame("c", $mock->getT());
+        $this->assertNull($mock->getMsgs());
+        $this->assertSame(3, $mock->getUsersCount());
+        $this->assertSame("2020-05-12T15:24:04.977Z", $mock->getTs());
+        $this->assertNull($mock->getReadOnly());
+        $this->assertNull($mock->getDefault());
+        $this->assertSame(true, $mock->getSysMes());
 
-		$mock = $this->getMockForTrait(Room::class);
-		$mock->setReadOnly(true);
+        $room2 = new ResponseFixture2();
+        $mock = $this->getMockForTrait(Room::class);
+        $mock->updateOutOfResponse($room2);
 
-		$this->assertSame([
-			"name" => null,
-			"readOnly" => true
-		], $mock->jsonSerialize());
-	}
+        $this->assertNull($mock->getRoomId());
+        $this->assertSame("Room Name", $mock->getName());
+        $this->assertNull($mock->getT());
+        $this->assertSame(6, $mock->getMsgs());
+        $this->assertNull($mock->getUsersCount());
+        $this->assertNull($mock->getTs());
+        $this->assertSame(true, $mock->getReadOnly());
+        $this->assertSame(false, $mock->getDefault());
+        $this->assertNull($mock->getSysMes());
+    }
 
-	public function testUpdateOutOfResponse() {
+    public function testCreateOutOfResponse()
+    {
+        $mock = $this->getMockForTrait(Room::class);
 
-		$roomFull = new ResponseFixtureFull();
-		$mock = $this->getMockForTrait(Room::class);
-		$mock->updateOutOfResponse($roomFull);
+        $stub = test::double(get_class($mock), ["updateOutOfResponse" => $mock]);
 
-		$this->assertSame("asd123asd", $mock->getRoomId());
+        $roomFull = new ResponseFixtureFull();
+        $mock->createOutOfResponse($roomFull);
 
-		$this->assertSame("Room Name", $mock->getName());
-		$this->assertSame("c", $mock->getT());
-		$this->assertSame(6, $mock->getMsgs());
-		$this->assertSame(3, $mock->getUsersCount());
-		$this->assertSame("2020-05-12T15:24:04.977Z", $mock->getTs());
-		$this->assertSame(true, $mock->getReadOnly());
-		$this->assertSame(false, $mock->getDefault());
-		$this->assertSame(true, $mock->getSysMes());
+        $stub->verifyInvokedOnce("updateOutOfResponse", [$roomFull]);
+    }
 
-		$room1 = new ResponseFixture1();
-		$mock = $this->getMockForTrait(Room::class);
-		$mock->updateOutOfResponse($room1);
-
-		$this->assertSame("asd123asd", $mock->getRoomId());
-		$this->assertNull($mock->getName());
-		$this->assertSame("c", $mock->getT());
-		$this->assertNull($mock->getMsgs());
-		$this->assertSame(3, $mock->getUsersCount());
-		$this->assertSame("2020-05-12T15:24:04.977Z", $mock->getTs());
-		$this->assertNull($mock->getReadOnly());
-		$this->assertNull($mock->getDefault());
-		$this->assertSame(true, $mock->getSysMes());
-
-		$room2 = new ResponseFixture2();
-		$mock = $this->getMockForTrait(Room::class);
-		$mock->updateOutOfResponse($room2);
-
-		$this->assertNull($mock->getRoomId());
-		$this->assertSame("Room Name", $mock->getName());
-		$this->assertNull($mock->getT());
-		$this->assertSame(6, $mock->getMsgs());
-		$this->assertNull($mock->getUsersCount());
-		$this->assertNull($mock->getTs());
-		$this->assertSame(true, $mock->getReadOnly());
-		$this->assertSame(false, $mock->getDefault());
-		$this->assertNull($mock->getSysMes());
-	}
-
-	public function testCreateOutOfResponse() {
-
-		$mock = $this->getMockForTrait(Room::class);
-
-		$stub = test::double(get_class($mock), ["updateOutOfResponse" => $mock]);
-
-		$roomFull = new ResponseFixtureFull();
-		$mock->createOutOfResponse($roomFull);
-
-		$stub->verifyInvokedOnce("updateOutOfResponse", [$roomFull]);
-	}
-
-	protected function tearDown(): void {
-
-		test::clean(); // remove all registered test doubles
-	}
+    protected function tearDown(): void
+    {
+        test::clean(); // remove all registered test doubles
+    }
 }

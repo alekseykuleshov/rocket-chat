@@ -1,500 +1,502 @@
-<?php namespace ATDev\RocketChat\Tests\Users;
+<?php
 
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+namespace ATDev\RocketChat\Tests\Users;
 
-use \ATDev\RocketChat\Users\Data;
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 
-class DataTest extends TestCase {
+use ATDev\RocketChat\Users\Data;
 
-	public function testConstructorNoUserId() {
+class DataTest extends TestCase
+{
+    public function testConstructorNoUserId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double(get_class($mock), ["setUserId" => $mock]);
 
-		$stub = test::double(get_class($mock), ["setUserId" => $mock]);
+        $stub->construct();
 
-		$stub->construct();
+        $stub->verifyNeverInvoked("setUserId");
+    }
 
-		$stub->verifyNeverInvoked("setUserId");
-	}
+    public function testConstructorWithUserId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-	public function testConstructorWithUserId() {
+        $stub = test::double(get_class($mock), ["setUserId" => $mock]);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub->construct("asd123asd");
 
-		$stub = test::double(get_class($mock), ["setUserId" => $mock]);
+        $stub->verifyInvokedOnce("setUserId", ["asd123asd"]);
+    }
 
-		$stub->construct("asd123asd");
+    public function testInvalidUserId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$stub->verifyInvokedOnce("setUserId", ["asd123asd"]);
-	}
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-	public function testInvalidUserId() {
+        $mock->setUserId(123);
+        $this->assertNull($mock->getUserId());
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub->verifyInvokedOnce("setDataError", ["Invalid user Id"]);
+    }
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+    public function testValidUserId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock->setUserId(123);
-		$this->assertNull($mock->getUserId());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid user Id"]);
-	}
+        $mock->setUserId("123");
+        $this->assertSame("123", $mock->getUserId());
 
-	public function testValidUserId() {
+        // And null value...
+        $mock->setUserId(null);
+        $this->assertSame(null, $mock->getUserId());
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+    public function testInvalidEmail()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock->setUserId("123");
-		$this->assertSame("123", $mock->getUserId());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		// And null value...
-		$mock->setUserId(null);
-		$this->assertSame(null, $mock->getUserId());
+        $mock->setEmail(123);
+        $this->assertNull($mock->getEmail());
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $stub->verifyInvokedOnce("setDataError", ["Invalid email"]);
+    }
 
-	public function testInvalidEmail() {
+    public function testInvalidEmailFormat()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $validator = test::double("\Egulias\EmailValidator\EmailValidator", ["isValid" => false]);
+        $validation = test::double("\Egulias\EmailValidator\Validation\RFCValidation");
 
-		$mock->setEmail(123);
-		$this->assertNull($mock->getEmail());
+        $mock->setEmail("ajsfsdfasdf");
+        $this->assertNull($mock->getEmail());
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid email"]);
-	}
+        $stub->verifyInvokedOnce("setDataError", ["Invalid email value"]);
+    }
 
-	public function testInvalidEmailFormat() {
+    public function testValidEmail()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $validator = test::double("\Egulias\EmailValidator\EmailValidator", ["isValid" => true]);
+        $validation = test::double("\Egulias\EmailValidator\Validation\RFCValidation");
 
-		$validator = test::double("\Egulias\EmailValidator\EmailValidator", ["isValid" => false]);
-		$validation = test::double("\Egulias\EmailValidator\Validation\RFCValidation");
+        $mock->setEmail("test@example.com");
+        $this->assertSame("test@example.com", $mock->getEmail());
 
-		$mock->setEmail("ajsfsdfasdf");
-		$this->assertNull($mock->getEmail());
+        // And null value...
+        $mock->setEmail(null);
+        $this->assertSame(null, $mock->getEmail());
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid email value"]);
-	}
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-	public function testValidEmail() {
+    public function testInvalidName()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $mock->setName(123);
+        $this->assertNull($mock->getName());
 
-		$validator = test::double("\Egulias\EmailValidator\EmailValidator", ["isValid" => true]);
-		$validation = test::double("\Egulias\EmailValidator\Validation\RFCValidation");
+        $stub->verifyInvokedOnce("setDataError", ["Invalid name"]);
+    }
 
-		$mock->setEmail("test@example.com");
-		$this->assertSame("test@example.com", $mock->getEmail());
+    public function testValidName()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		// And null value...
-		$mock->setEmail(null);
-		$this->assertSame(null, $mock->getEmail());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $mock->setName("User Name");
+        $this->assertSame("User Name", $mock->getName());
 
-	public function testInvalidName() {
+        // And null value...
+        $mock->setName(null);
+        $this->assertSame(null, $mock->getName());
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+    public function testInvalidPassword()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock->setName(123);
-		$this->assertNull($mock->getName());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid name"]);
-	}
+        $mock->setPassword(123);
+        $this->assertNull($mock->getPassword());
 
-	public function testValidName() {
+        $stub->verifyInvokedOnce("setDataError", ["Invalid password"]);
+    }
 
-		$mock = $this->getMockForTrait(Data::class);
+    public function testValidPassword()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$mock->setName("User Name");
-		$this->assertSame("User Name", $mock->getName());
+        $mock->setPassword("sjdfb235$$");
+        $this->assertSame("sjdfb235$$", $mock->getPassword());
 
-		// And null value...
-		$mock->setName(null);
-		$this->assertSame(null, $mock->getName());
+        // And null value...
+        $mock->setPassword(null);
+        $this->assertSame(null, $mock->getPassword());
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-	public function testInvalidPassword() {
+    public function testInvalidUsername()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $mock->setUsername(123);
+        $this->assertNull($mock->getUsername());
 
-		$mock->setPassword(123);
-		$this->assertNull($mock->getPassword());
+        $stub->verifyInvokedOnce("setDataError", ["Invalid user name"]);
+    }
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid password"]);
-	}
+    public function testValidUsername()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-	public function testValidPassword() {
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $mock->setUsername("userName");
+        $this->assertSame("userName", $mock->getUsername());
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        // And null value...
+        $mock->setUsername(null);
+        $this->assertSame(null, $mock->getUsername());
 
-		$mock->setPassword("sjdfb235$$");
-		$this->assertSame("sjdfb235$$", $mock->getPassword());
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		// And null value...
-		$mock->setPassword(null);
-		$this->assertSame(null, $mock->getPassword());
+    public function testInvalidActive()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-	public function testInvalidUsername() {
+        $mock->setActive(new \stdClass());
+        $this->assertNull($mock->getActive());
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub->verifyInvokedOnce("setDataError", ["Invalid active value"]);
+    }
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+    public function testValidActive()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock->setUsername(123);
-		$this->assertNull($mock->getUsername());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid user name"]);
-	}
+        $mock->setActive(false);
+        $this->assertSame(false, $mock->getActive());
 
-	public function testValidUsername() {
+        // And null value...
+        $mock->setActive(null);
+        $this->assertSame(null, $mock->getActive());
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+    public function testInvalidRoles()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock->setUsername("userName");
-		$this->assertSame("userName", $mock->getUsername());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		// And null value...
-		$mock->setUsername(null);
-		$this->assertSame(null, $mock->getUsername());
+        $mock->setRoles(123);
+        $this->assertNull($mock->getRoles());
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $stub->verifyInvokedOnce("setDataError", ["Invalid roles value"]);
+    }
 
-	public function testInvalidActive() {
+    public function testValidRoles()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $mock->setRoles(["admin"]);
+        $this->assertSame(["admin"], $mock->getRoles());
 
-		$mock->setActive(new \stdClass);
-		$this->assertNull($mock->getActive());
+        // And null value...
+        $mock->setRoles(null);
+        $this->assertSame(null, $mock->getRoles());
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid active value"]);
-	}
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-	public function testValidActive() {
+    public function testInvalidJoinDefaultChannels()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $mock->setJoinDefaultChannels(123);
+        $this->assertNull($mock->getJoinDefaultChannels());
 
-		$mock->setActive(false);
-		$this->assertSame(false, $mock->getActive());
+        $stub->verifyInvokedOnce("setDataError", ["Invalid join default channels value"]);
+    }
 
-		// And null value...
-		$mock->setActive(null);
-		$this->assertSame(null, $mock->getActive());
+    public function testValidJoinDefaultChannels()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-	public function testInvalidRoles() {
+        $mock->setJoinDefaultChannels(false);
+        $this->assertSame(false, $mock->getJoinDefaultChannels());
 
-		$mock = $this->getMockForTrait(Data::class);
+        // And null value...
+        $mock->setJoinDefaultChannels(null);
+        $this->assertSame(null, $mock->getJoinDefaultChannels());
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$mock->setRoles(123);
-		$this->assertNull($mock->getRoles());
+    public function testInvalidRequirePasswordChange()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid roles value"]);
-	}
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-	public function testValidRoles() {
+        $mock->setRequirePasswordChange(123);
+        $this->assertNull($mock->getRequirePasswordChange());
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub->verifyInvokedOnce("setDataError", ["Invalid require password change value"]);
+    }
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+    public function testValidRequirePasswordChange()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock->setRoles(["admin"]);
-		$this->assertSame(["admin"], $mock->getRoles());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		// And null value...
-		$mock->setRoles(null);
-		$this->assertSame(null, $mock->getRoles());
+        $mock->setRequirePasswordChange(false);
+        $this->assertSame(false, $mock->getRequirePasswordChange());
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        // And null value...
+        $mock->setRequirePasswordChange(null);
+        $this->assertSame(null, $mock->getRequirePasswordChange());
 
-	public function testInvalidJoinDefaultChannels() {
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$mock = $this->getMockForTrait(Data::class);
+    public function testInvalidSendWelcomeEmail()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$mock->setJoinDefaultChannels(123);
-		$this->assertNull($mock->getJoinDefaultChannels());
+        $mock->setSendWelcomeEmail(123);
+        $this->assertNull($mock->getSendWelcomeEmail());
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid join default channels value"]);
-	}
+        $stub->verifyInvokedOnce("setDataError", ["Invalid send welcome email value"]);
+    }
 
-	public function testValidJoinDefaultChannels() {
+    public function testValidSendWelcomeEmail()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $mock->setSendWelcomeEmail(false);
+        $this->assertSame(false, $mock->getSendWelcomeEmail());
 
-		$mock->setJoinDefaultChannels(false);
-		$this->assertSame(false, $mock->getJoinDefaultChannels());
+        // And null value...
+        $mock->setSendWelcomeEmail(null);
+        $this->assertSame(null, $mock->getSendWelcomeEmail());
 
-		// And null value...
-		$mock->setJoinDefaultChannels(null);
-		$this->assertSame(null, $mock->getJoinDefaultChannels());
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+    public function testInvalidVerified()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-	public function testInvalidRequirePasswordChange() {
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $mock->setVerified(123);
+        $this->assertNull($mock->getVerified());
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $stub->verifyInvokedOnce("setDataError", ["Invalid verified value"]);
+    }
 
-		$mock->setRequirePasswordChange(123);
-		$this->assertNull($mock->getRequirePasswordChange());
+    public function testValidVerified()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid require password change value"]);
-	}
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-	public function testValidRequirePasswordChange() {
+        $mock->setVerified(false);
+        $this->assertSame(false, $mock->getVerified());
 
-		$mock = $this->getMockForTrait(Data::class);
+        // And null value...
+        $mock->setVerified(null);
+        $this->assertSame(null, $mock->getVerified());
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$mock->setRequirePasswordChange(false);
-		$this->assertSame(false, $mock->getRequirePasswordChange());
+    public function testInvalidCustomFields()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		// And null value...
-		$mock->setRequirePasswordChange(null);
-		$this->assertSame(null, $mock->getRequirePasswordChange());
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+        $mock->setCustomFields(123);
+        $this->assertNull($mock->getCustomFields());
 
-	public function testInvalidSendWelcomeEmail() {
+        $stub->verifyInvokedOnce("setDataError", ["Invalid custom fields name"]);
+    }
 
-		$mock = $this->getMockForTrait(Data::class);
+    public function testValidCustomFields()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $stub = test::double($mock, ["setDataError" => $mock]);
 
-		$mock->setSendWelcomeEmail(123);
-		$this->assertNull($mock->getSendWelcomeEmail());
+        $mock->setCustomFields("asdfasdf");
+        $this->assertSame("asdfasdf", $mock->getCustomFields());
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid send welcome email value"]);
-	}
+        // And null value...
+        $mock->setCustomFields(null);
+        $this->assertSame(null, $mock->getCustomFields());
 
-	public function testValidSendWelcomeEmail() {
+        $stub->verifyNeverInvoked("setDataError");
+    }
 
-		$mock = $this->getMockForTrait(Data::class);
+    public function testJsonSerialize()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setEmail("test@example.com");
+        $mock->setName("John Doe");
+        $mock->setUsername("jDoe");
+        $mock->setPassword("#@$%");
+        $mock->setRoles(["somebody", "other"]);
+        $mock->setRequirePasswordChange(false);
+        $mock->setVerified(true);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $this->assertSame([
+            "email" => "test@example.com",
+            "name" => "John Doe",
+            "username" => "jDoe",
+            "password" => "#@$%",
+            "roles" => ["somebody", "other"],
+            "requirePasswordChange" => false,
+            "verified" => true
+        ], $mock->jsonSerialize());
 
-		$mock->setSendWelcomeEmail(false);
-		$this->assertSame(false, $mock->getSendWelcomeEmail());
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setActive(false);
+        $mock->setJoinDefaultChannels(false);
+        $mock->setSendWelcomeEmail(true);
+        $mock->setCustomFields("custom fields");
 
-		// And null value...
-		$mock->setSendWelcomeEmail(null);
-		$this->assertSame(null, $mock->getSendWelcomeEmail());
+        $this->assertSame([
+            "email" => null,
+            "name" => null,
+            "username" => null,
+            "active" => false,
+            "joinDefaultChannels" => false,
+            "sendWelcomeEmail" => true,
+            "customFields" => "custom fields"
+        ], $mock->jsonSerialize());
+    }
 
-		$stub->verifyNeverInvoked("setDataError");
-	}
+    public function testUpdateOutOfResponse()
+    {
+        $userFull = new ResponseFixtureFull();
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->updateOutOfResponse($userFull);
 
-	public function testInvalidVerified() {
+        $this->assertSame("asd123asd", $mock->getUserId());
+        $this->assertSame("2018-01-12T00:12:22.167Z", $mock->getCreatedAt());
+        $this->assertSame("test@example.com", $mock->getEmail());
+        $this->assertSame(true, $mock->getVerified());
+        $this->assertSame("user", $mock->getType());
+        $this->assertSame("some", $mock->getStatus());
+        $this->assertSame(true, $mock->getActive());
+        $this->assertSame(["admin", "guest"], $mock->getRoles());
+        $this->assertSame("John Doe", $mock->getName());
+        $this->assertSame("2016-12-08T00:22:15.167Z", $mock->getLastLogin());
+        $this->assertSame("offline", $mock->getStatusConnection());
+        $this->assertSame(-3.5, $mock->getUtcOffset());
+        $this->assertSame("jDoe", $mock->getUserName());
+        $this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
 
-		$mock = $this->getMockForTrait(Data::class);
+        $user1 = new ResponseFixture1();
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->updateOutOfResponse($user1);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $this->assertSame("asd123asd", $mock->getUserId());
+        $this->assertNull($mock->getCreatedAt());
+        $this->assertSame("test@example.com", $mock->getEmail());
+        $this->assertNull($mock->getVerified());
+        $this->assertNull($mock->getType());
+        $this->assertSame("some", $mock->getStatus());
+        $this->assertNull($mock->getActive());
+        $this->assertSame(["admin", "guest"], $mock->getRoles());
+        $this->assertNull($mock->getName());
+        $this->assertSame("2016-12-08T00:22:15.167Z", $mock->getLastLogin());
+        $this->assertNull($mock->getStatusConnection());
+        $this->assertSame(-3.5, $mock->getUtcOffset());
+        $this->assertNull($mock->getUserName());
+        $this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
 
-		$mock->setVerified(123);
-		$this->assertNull($mock->getVerified());
+        $user2 = new ResponseFixture2();
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->updateOutOfResponse($user2);
 
-		$stub->verifyInvokedOnce("setDataError", ["Invalid verified value"]);
-	}
+        $this->assertNull($mock->getUserId());
+        $this->assertSame("2018-01-12T00:12:22.167Z", $mock->getCreatedAt());
+        $this->assertNull($mock->getEmail());
+        $this->assertNull($mock->getVerified());
+        $this->assertSame("user", $mock->getType());
+        $this->assertNull($mock->getStatus());
+        $this->assertSame(true, $mock->getActive());
+        $this->assertNull($mock->getRoles());
+        $this->assertSame("John Doe", $mock->getName());
+        $this->assertNull($mock->getLastLogin());
+        $this->assertSame("offline", $mock->getStatusConnection());
+        $this->assertNull($mock->getUtcOffset());
+        $this->assertSame("jDoe", $mock->getUserName());
+        $this->assertNull($mock->getAvatarUrl());
+    }
 
-	public function testValidVerified() {
+    public function testCreateOutOfResponse()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $stub = test::double(get_class($mock), ["updateOutOfResponse" => $mock]);
 
-		$stub = test::double($mock, ["setDataError" => $mock]);
+        $userFull = new ResponseFixtureFull();
+        $mock->createOutOfResponse($userFull);
 
-		$mock->setVerified(false);
-		$this->assertSame(false, $mock->getVerified());
+        $stub->verifyInvokedOnce("updateOutOfResponse", [$userFull]);
+    }
 
-		// And null value...
-		$mock->setVerified(null);
-		$this->assertSame(null, $mock->getVerified());
-
-		$stub->verifyNeverInvoked("setDataError");
-	}
-
-	public function testInvalidCustomFields() {
-
-		$mock = $this->getMockForTrait(Data::class);
-
-		$stub = test::double($mock, ["setDataError" => $mock]);
-
-		$mock->setCustomFields(123);
-		$this->assertNull($mock->getCustomFields());
-
-		$stub->verifyInvokedOnce("setDataError", ["Invalid custom fields name"]);
-	}
-
-	public function testValidCustomFields() {
-
-		$mock = $this->getMockForTrait(Data::class);
-
-		$stub = test::double($mock, ["setDataError" => $mock]);
-
-		$mock->setCustomFields("asdfasdf");
-		$this->assertSame("asdfasdf", $mock->getCustomFields());
-
-		// And null value...
-		$mock->setCustomFields(null);
-		$this->assertSame(null, $mock->getCustomFields());
-
-		$stub->verifyNeverInvoked("setDataError");
-	}
-
-	public function testJsonSerialize() {
-
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->setEmail("test@example.com");
-		$mock->setName("John Doe");
-		$mock->setUsername("jDoe");
-		$mock->setPassword("#@$%");
-		$mock->setRoles(["somebody", "other"]);
-		$mock->setRequirePasswordChange(false);
-		$mock->setVerified(true);
-
-		$this->assertSame([
-			"email" => "test@example.com",
-			"name" => "John Doe",
-			"username" => "jDoe",
-			"password" => "#@$%",
-			"roles" => ["somebody", "other"],
-			"requirePasswordChange" => false,
-			"verified" => true
-		], $mock->jsonSerialize());
-
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->setActive(false);
-		$mock->setJoinDefaultChannels(false);
-		$mock->setSendWelcomeEmail(true);
-		$mock->setCustomFields("custom fields");
-
-		$this->assertSame([
-			"email" => null,
-			"name" => null,
-			"username" => null,
-			"active" => false,
-			"joinDefaultChannels" => false,
-			"sendWelcomeEmail" => true,
-			"customFields" => "custom fields"
-		], $mock->jsonSerialize());
-	}
-
-	public function testUpdateOutOfResponse() {
-
-		$userFull = new ResponseFixtureFull();
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->updateOutOfResponse($userFull);
-
-		$this->assertSame("asd123asd", $mock->getUserId());
-		$this->assertSame("2018-01-12T00:12:22.167Z", $mock->getCreatedAt());
-		$this->assertSame("test@example.com", $mock->getEmail());
-		$this->assertSame(true, $mock->getVerified());
-		$this->assertSame("user", $mock->getType());
-		$this->assertSame("some", $mock->getStatus());
-		$this->assertSame(true, $mock->getActive());
-		$this->assertSame(["admin", "guest"], $mock->getRoles());
-		$this->assertSame("John Doe", $mock->getName());
-		$this->assertSame("2016-12-08T00:22:15.167Z", $mock->getLastLogin());
-		$this->assertSame("offline", $mock->getStatusConnection());
-		$this->assertSame(-3.5, $mock->getUtcOffset());
-		$this->assertSame("jDoe", $mock->getUserName());
-		$this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
-
-		$user1 = new ResponseFixture1();
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->updateOutOfResponse($user1);
-
-		$this->assertSame("asd123asd", $mock->getUserId());
-		$this->assertNull($mock->getCreatedAt());
-		$this->assertSame("test@example.com", $mock->getEmail());
-		$this->assertNull($mock->getVerified());
-		$this->assertNull($mock->getType());
-		$this->assertSame("some", $mock->getStatus());
-		$this->assertNull($mock->getActive());
-		$this->assertSame(["admin", "guest"], $mock->getRoles());
-		$this->assertNull($mock->getName());
-		$this->assertSame("2016-12-08T00:22:15.167Z", $mock->getLastLogin());
-		$this->assertNull($mock->getStatusConnection());
-		$this->assertSame(-3.5, $mock->getUtcOffset());
-		$this->assertNull($mock->getUserName());
-		$this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
-
-		$user2 = new ResponseFixture2();
-		$mock = $this->getMockForTrait(Data::class);
-		$mock->updateOutOfResponse($user2);
-
-		$this->assertNull($mock->getUserId());
-		$this->assertSame("2018-01-12T00:12:22.167Z", $mock->getCreatedAt());
-		$this->assertNull($mock->getEmail());
-		$this->assertNull($mock->getVerified());
-		$this->assertSame("user", $mock->getType());
-		$this->assertNull($mock->getStatus());
-		$this->assertSame(true, $mock->getActive());
-		$this->assertNull($mock->getRoles());
-		$this->assertSame("John Doe", $mock->getName());
-		$this->assertNull($mock->getLastLogin());
-		$this->assertSame("offline", $mock->getStatusConnection());
-		$this->assertNull($mock->getUtcOffset());
-		$this->assertSame("jDoe", $mock->getUserName());
-		$this->assertNull($mock->getAvatarUrl());
-	}
-
-	public function testCreateOutOfResponse() {
-
-		$mock = $this->getMockForTrait(Data::class);
-
-		$stub = test::double(get_class($mock), ["updateOutOfResponse" => $mock]);
-
-		$userFull = new ResponseFixtureFull();
-		$mock->createOutOfResponse($userFull);
-
-		$stub->verifyInvokedOnce("updateOutOfResponse", [$userFull]);
-	}
-
-	protected function tearDown(): void {
-
-		test::clean(); // remove all registered test doubles
-	}
+    protected function tearDown(): void
+    {
+        test::clean(); // remove all registered test doubles
+    }
 }

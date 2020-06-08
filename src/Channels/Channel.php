@@ -1,16 +1,18 @@
-<?php namespace ATDev\RocketChat\Channels;
+<?php
 
-use \ATDev\RocketChat\Common\Request;
-use \ATDev\RocketChat\Messages\Message;
-use \ATDev\RocketChat\Users\User;
+namespace ATDev\RocketChat\Channels;
+
+use ATDev\RocketChat\Common\Request;
+use ATDev\RocketChat\Messages\Message;
+use ATDev\RocketChat\Users\User;
 
 /**
  * Channel class
  */
-class Channel extends Request {
-
-	use \ATDev\RocketChat\Common\Room;
-	use \ATDev\RocketChat\Channels\Data;
+class Channel extends Request
+{
+    use \ATDev\RocketChat\Common\Room;
+    use \ATDev\RocketChat\Channels\Data;
 
     /**
      * Gets channel listing
@@ -19,20 +21,19 @@ class Channel extends Request {
      * @param int $count
      * @return Collection|bool
      */
-	public static function listing($offset = 0, $count = 0) {
+    public static function listing($offset = 0, $count = 0)
+    {
+        static::send("channels.list", "GET", ['offset' => $offset, 'count' => $count]);
 
-		static::send("channels.list", "GET", ['offset' => $offset, 'count' => $count]);
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-		if (!static::getSuccess()) {
-
-			return false;
-		}
-
-		$channels = new Collection();
-		$response = static::getResponse();
-		foreach($response->channels as $channel) {
-			$channels->add(static::createOutOfResponse($channel));
-		}
+        $channels = new Collection();
+        $response = static::getResponse();
+        foreach ($response->channels as $channel) {
+            $channels->add(static::createOutOfResponse($channel));
+        }
         if (isset($response->total)) {
             $channels->setTotal($response->total);
         }
@@ -43,169 +44,160 @@ class Channel extends Request {
             $channels->setOffset($response->offset);
         }
 
-		return $channels;
-	}
+        return $channels;
+    }
 
-	/**
-	 * Creates channel at api instance
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function create() {
+    /**
+     * Creates channel at api instance
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function create()
+    {
+        static::send("channels.create", "POST", $this);
 
-		static::send("channels.create", "POST", $this);
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-		if (!static::getSuccess()) {
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
 
-			return false;
-		}
+    /**
+     * Deletes channel
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function delete()
+    {
+        static::send("channels.delete", "POST", ["roomId" => $this->getChannelId()]);
 
-		return $this->updateOutOfResponse(static::getResponse()->channel);
-	}
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-	/**
-	 * Deletes channel
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function delete() {
+        return $this->setChannelId(null);
+    }
 
-		static::send("channels.delete", "POST", ["roomId" => $this->getChannelId()]);
+    /**
+     * Gets channel info
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function info()
+    {
+        static::send("channels.info", "GET", ["roomId" => $this->getChannelId()]);
 
-		if (!static::getSuccess()) {
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-			return false;
-		}
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
 
-		return $this->setChannelId(null);
-	}
+    /**
+     * Adds channel back to user list of channels
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function open()
+    {
+        static::send("channels.open", "POST", ["roomId" => $this->getChannelId()]);
 
-	/**
-	 * Gets channel info
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function info() {
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-		static::send("channels.info", "GET", ["roomId" => $this->getChannelId()]);
+        return $this;
+    }
 
-		if (!static::getSuccess()) {
+    /**
+     * Removes channel from user list of channels
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function close()
+    {
+        static::send("channels.close", "POST", ["roomId" => $this->getChannelId()]);
 
-			return false;
-		}
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-		return $this->updateOutOfResponse(static::getResponse()->channel);
-	}
+        return $this;
+    }
 
-	/**
-	 * Adds channel back to user list of channels
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function open() {
+    /**
+     * Invite user to channel
+     *
+     * @param \ATDev\RocketChat\Users\User $user
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function invite(User $user)
+    {
+        static::send("channels.invite", "POST", ["roomId" => $this->getChannelId(), "userId" => $user->getUserId()]);
 
-		static::send("channels.open", "POST", ["roomId" => $this->getChannelId()]);
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-		if (!static::getSuccess()) {
+        return $this;
+    }
 
-			return false;
-		}
+    /**
+     * Kicks user out of the channel
+     *
+     * @param \ATDev\RocketChat\Users\User $user
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function kick(User $user)
+    {
+        static::send("channels.kick", "POST", ["roomId" => $this->getChannelId(), "userId" => $user->getUserId()]);
 
-		return $this;
-	}
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-	/**
-	 * Removes channel from user list of channels
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function close() {
+        return $this;
+    }
 
-		static::send("channels.close", "POST", ["roomId" => $this->getChannelId()]);
+    /**
+     * Adds owner of the channel
+     *
+     * @param \ATDev\RocketChat\Users\User $user
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function addOwner(User $user)
+    {
+        static::send("channels.addOwner", "POST", ["roomId" => $this->getChannelId(), "userId" => $user->getUserId()]);
 
-		if (!static::getSuccess()) {
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-			return false;
-		}
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Removes owner of the channel
+     *
+     * @param \ATDev\RocketChat\Users\User $user
+     *
+     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     */
+    public function removeOwner(User $user)
+    {
+        static::send("channels.removeOwner", "POST", ["roomId" => $this->getChannelId(), "userId" => $user->getUserId()]);
 
-	/**
-	 * Invite user to channel
-	 *
-	 * @param \ATDev\RocketChat\Users\User $user
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function invite(User $user) {
+        if (!static::getSuccess()) {
+            return false;
+        }
 
-		static::send("channels.invite", "POST", ["roomId" => $this->getChannelId(), "userId" => $user->getUserId()]);
-
-		if (!static::getSuccess()) {
-
-			return false;
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Kicks user out of the channel
-	 *
-	 * @param \ATDev\RocketChat\Users\User $user
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function kick(User $user) {
-
-		static::send("channels.kick", "POST", ["roomId" => $this->getChannelId(), "userId" => $user->getUserId()]);
-
-		if (!static::getSuccess()) {
-
-			return false;
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Adds owner of the channel
-	 *
-	 * @param \ATDev\RocketChat\Users\User $user
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function addOwner(User $user) {
-
-		static::send("channels.addOwner", "POST", ["roomId" => $this->getChannelId(), "userId" => $user->getUserId()]);
-
-		if (!static::getSuccess()) {
-
-			return false;
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Removes owner of the channel
-	 *
-	 * @param \ATDev\RocketChat\Users\User $user
-	 *
-	 * @return \ATDev\RocketChat\Channels\Channel|boolean
-	 */
-	public function removeOwner(User $user) {
-
-		static::send("channels.removeOwner", "POST", ["roomId" => $this->getChannelId(), "userId" => $user->getUserId()]);
-
-		if (!static::getSuccess()) {
-
-			return false;
-		}
-
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Lists all of the specific channel messages on the server
@@ -214,9 +206,10 @@ class Channel extends Request {
      * @param int $count
      * @return \ATDev\RocketChat\Messages\Collection|bool
      */
-	public function messages($offset = 0, $count = 0) {
-	    static::send(
-	        'channels.messages',
+    public function messages($offset = 0, $count = 0)
+    {
+        static::send(
+            'channels.messages',
             'GET',
             ['roomId' => $this->getRoomId(), 'offset' => $offset, 'count' => $count]
         );

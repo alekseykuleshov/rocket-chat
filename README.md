@@ -48,11 +48,13 @@ if (!$who) {
 
 Now, when you are logged in, you can:
 
-[Manage Users](src/Users/README.md)
+[Manage Users](src/Users)
 
-[Manage Channels](src/Channels/README.md)
+[Manage Channels](src/Channels)
 
-[Manage Groups](src/Groups/README.md)
+[Manage Groups](src/Groups)
+
+[Manage Messages](src/Messages)
 
 ## Unit tests
 

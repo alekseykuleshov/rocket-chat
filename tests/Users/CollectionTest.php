@@ -1,38 +1,40 @@
-<?php namespace ATDev\RocketChat\Tests\Users;
+<?php
 
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+namespace ATDev\RocketChat\Tests\Users;
 
-use \ATDev\RocketChat\Users\Collection;
-use \ATDev\RocketChat\Users\User;
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 
-class CollectionTest extends TestCase {
+use ATDev\RocketChat\Users\Collection;
+use ATDev\RocketChat\Users\User;
 
-	public function testInvalidAdd() {
+class CollectionTest extends TestCase
+{
+    public function testInvalidAdd()
+    {
+        $stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "not_added"]);
 
-		$stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "not_added"]);
+        $collection = new Collection();
+        $result = $collection->add(123);
 
-		$collection = new Collection();
-		$result = $collection->add(123);
+        $this->assertSame(false, $result);
+        $stub->verifyNeverInvoked("add");
+    }
 
-		$this->assertSame(false, $result);
-		$stub->verifyNeverInvoked("add");
-	}
+    public function testValidAdd()
+    {
+        $stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "added"]);
 
-	public function testValidAdd() {
+        $collection = new Collection();
+        $user = new User();
+        $result = $collection->add($user);
 
-		$stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "added"]);
+        $this->assertSame("added", $result);
+        $stub->verifyInvokedOnce("add", [$user]);
+    }
 
-		$collection = new Collection();
-		$user = new User();
-		$result = $collection->add($user);
-
-		$this->assertSame("added", $result);
-		$stub->verifyInvokedOnce("add", [$user]);
-	}
-
-	protected function tearDown(): void {
-
-		test::clean(); // remove all registered test doubles
-	}
+    protected function tearDown(): void
+    {
+        test::clean(); // remove all registered test doubles
+    }
 }

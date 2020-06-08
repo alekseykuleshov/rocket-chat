@@ -1,63 +1,64 @@
-<?php namespace ATDev\RocketChat\Tests\Users;
+<?php
 
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+namespace ATDev\RocketChat\Tests\Users;
 
-use \ATDev\RocketChat\Users\Avatar;
-use \ATDev\RocketChat\Users\AvatarFromFile;
-use \ATDev\RocketChat\Users\AvatarFromDomain;
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 
-class AvatarTest extends TestCase {
+use ATDev\RocketChat\Users\Avatar;
+use ATDev\RocketChat\Users\AvatarFromFile;
+use ATDev\RocketChat\Users\AvatarFromDomain;
 
-	public function testConstructorNoSource() {
+class AvatarTest extends TestCase
+{
+    public function testConstructorNoSource()
+    {
+        $mock = $this->getMockForAbstractClass(Avatar::class);
 
-		$mock = $this->getMockForAbstractClass(Avatar::class);
+        $stub = test::double(get_class($mock), ["setSource" => $mock]);
 
-		$stub = test::double(get_class($mock), ["setSource" => $mock]);
+        $stub->construct();
 
-		$stub->construct();
+        $stub->verifyNeverInvoked("setSource");
+    }
 
-		$stub->verifyNeverInvoked("setSource");
-	}
+    public function testConstructorWithUserId()
+    {
+        $mock = $this->getMockForAbstractClass(Avatar::class);
 
-	public function testConstructorWithUserId() {
+        $stub = test::double(get_class($mock), ["setSource" => $mock]);
 
-		$mock = $this->getMockForAbstractClass(Avatar::class);
+        $stub->construct("some-path");
 
-		$stub = test::double(get_class($mock), ["setSource" => $mock]);
+        $stub->verifyInvokedOnce("setSource", ["some-path"]);
+    }
 
-		$stub->construct("some-path");
+    public function testInvalidSource()
+    {
+        $mock = $this->getMockForAbstractClass(Avatar::class);
 
-		$stub->verifyInvokedOnce("setSource", ["some-path"]);
-	}
+        $mock->setSource(123);
+        $this->assertNull($mock->getSource());
+        $this->assertSame("Invalid avatar source", $mock->getError());
+    }
 
-	public function testInvalidSource() {
+    public function testValidSource()
+    {
+        $mock = $this->getMockForAbstractClass(Avatar::class);
 
-		$mock = $this->getMockForAbstractClass(Avatar::class);
+        $mock->setSource("some-path");
+        $this->assertSame("some-path", $mock->getSource());
+        $this->assertNull($mock->getError());
+    }
 
-		$mock->setSource(123);
-		$this->assertNull($mock->getSource());
-		$this->assertSame("Invalid avatar source", $mock->getError());
+    public function testIsFile()
+    {
+        $this->assertSame(true, AvatarFromFile::IS_FILE);
+        $this->assertSame(false, AvatarFromDomain::IS_FILE);
+    }
 
-	}
-
-	public function testValidSource() {
-
-		$mock = $this->getMockForAbstractClass(Avatar::class);
-
-		$mock->setSource("some-path");
-		$this->assertSame("some-path", $mock->getSource());
-		$this->assertNull($mock->getError());
-	}
-
-	public function testIsFile() {
-
-		$this->assertSame(true, AvatarFromFile::IS_FILE);
-		$this->assertSame(false, AvatarFromDomain::IS_FILE);
-	}
-
-	protected function tearDown(): void {
-
-		test::clean(); // remove all registered test doubles
-	}
+    protected function tearDown(): void
+    {
+        test::clean(); // remove all registered test doubles
+    }
 }

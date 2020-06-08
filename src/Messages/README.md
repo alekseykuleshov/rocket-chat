@@ -1,4 +1,4 @@
-You have to be [logged in](../../README.md) and have relevant permissions.
+You have to be [logged in](../..) and have relevant permissions.
 
 ### GET MESSAGE
 

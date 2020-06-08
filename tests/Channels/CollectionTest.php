@@ -1,38 +1,40 @@
-<?php namespace ATDev\RocketChat\Tests\Channels;
+<?php
 
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+namespace ATDev\RocketChat\Tests\Channels;
 
-use \ATDev\RocketChat\Channels\Collection;
-use \ATDev\RocketChat\Channels\Channel;
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 
-class CollectionTest extends TestCase {
+use ATDev\RocketChat\Channels\Collection;
+use ATDev\RocketChat\Channels\Channel;
 
-	public function testInvalidAdd() {
+class CollectionTest extends TestCase
+{
+    public function testInvalidAdd()
+    {
+        $stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "not_added"]);
 
-		$stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "not_added"]);
+        $collection = new Collection();
+        $result = $collection->add(123);
 
-		$collection = new Collection();
-		$result = $collection->add(123);
+        $this->assertSame(false, $result);
+        $stub->verifyNeverInvoked("add");
+    }
 
-		$this->assertSame(false, $result);
-		$stub->verifyNeverInvoked("add");
-	}
+    public function testValidAdd()
+    {
+        $stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "added"]);
 
-	public function testValidAdd() {
+        $collection = new Collection();
+        $channel = new Channel();
+        $result = $collection->add($channel);
 
-		$stub = test::double("\Doctrine\Common\Collections\ArrayCollection", ["add" => "added"]);
+        $this->assertSame("added", $result);
+        $stub->verifyInvokedOnce("add", [$channel]);
+    }
 
-		$collection = new Collection();
-		$channel = new Channel();
-		$result = $collection->add($channel);
-
-		$this->assertSame("added", $result);
-		$stub->verifyInvokedOnce("add", [$channel]);
-	}
-
-	protected function tearDown(): void {
-
-		test::clean(); // remove all registered test doubles
-	}
+    protected function tearDown(): void
+    {
+        test::clean(); // remove all registered test doubles
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace ATDev\RocketChat\Common;
 
-use \Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class Collection extends ArrayCollection
 {

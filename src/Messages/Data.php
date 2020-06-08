@@ -11,8 +11,6 @@ trait Data
     /* Required properties for creation */
     /** @var string The room id of where the message is to be sent */
     private $roomId;
-    /** @var string */
-    private $channel;
     /** @var string The text of the message to send */
     private $text;
     /** @var string This will cause the message's name to appear as the given alias */
@@ -174,14 +172,6 @@ trait Data
             $this->avatar = $avatar;
         }
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getChannel()
-    {
-        return $this->channel;
     }
 
     /**
@@ -418,6 +408,7 @@ trait Data
     private function setDataError($error)
     {
         static::setError($error);
+		
         return $this;
     }
 }

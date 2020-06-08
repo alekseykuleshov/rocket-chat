@@ -1,19 +1,23 @@
-<?php namespace ATDev\RocketChat\Groups;
+<?php
+
+namespace ATDev\RocketChat\Groups;
 
 /**
  * Group collection class
  */
-class Collection extends \ATDev\RocketChat\Common\Collection {
+class Collection extends \ATDev\RocketChat\Common\Collection
+{
 
     /**
      * @param Group $element
      * @return bool|true
      */
-	public function add($element) {
-		if (!($element instanceof Group)) {
-			return false;
-		}
+    public function add($element)
+    {
+        if (!($element instanceof Group)) {
+            return false;
+        }
 
-		return parent::add($element);
-	}
+        return parent::add($element);
+    }
 }
