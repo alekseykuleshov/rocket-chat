@@ -1,37 +1,39 @@
-<?php namespace ATDev\RocketChat\Tests\Groups;
+<?php
 
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+namespace ATDev\RocketChat\Tests\Groups;
 
-use \ATDev\RocketChat\Groups\Data;
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 
-class DataTest extends TestCase {
+use ATDev\RocketChat\Groups\Data;
 
-	public function testSetGroupId() {
+class DataTest extends TestCase
+{
+    public function testSetGroupId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $mock->expects($this->once())
+            ->method("setRoomId")
+            ->with($this->equalTo("123"))
+            ->will($this->returnValue($mock));
 
-		$mock->expects($this->once())
-			->method("setRoomId")
-			->with($this->equalTo("123"))
-			->will($this->returnValue($mock));
+        $mock->setGroupId("123");
+    }
 
-		$mock->setGroupId("123");
-	}
+    public function testGetGroupId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-	public function testGetGroupId() {
+        $mock->expects($this->once())
+            ->method("getRoomId")
+            ->will($this->returnValue($mock));
 
-		$mock = $this->getMockForTrait(Data::class);
+        $mock->getGroupId();
+    }
 
-		$mock->expects($this->once())
-			->method("getRoomId")
-			->will($this->returnValue($mock));
-
-		$mock->getGroupId();
-	}
-
-	protected function tearDown(): void {
-
-		test::clean(); // remove all registered test doubles
-	}
+    protected function tearDown(): void
+    {
+        test::clean(); // remove all registered test doubles
+    }
 }

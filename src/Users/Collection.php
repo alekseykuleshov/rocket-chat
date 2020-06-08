@@ -1,19 +1,20 @@
-<?php namespace ATDev\RocketChat\Users;
+<?php
 
-use \Doctrine\Common\Collections\ArrayCollection;
+namespace ATDev\RocketChat\Users;
+
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * User collection class
  */
-class Collection extends ArrayCollection {
+class Collection extends ArrayCollection
+{
+    public function add($element)
+    {
+        if (!($element instanceof User)) {
+            return false;
+        }
 
-	public function add($element) {
-
-		if (!($element instanceof User)) {
-
-			return false;
-		}
-
-		return parent::add($element);
-	}
+        return parent::add($element);
+    }
 }

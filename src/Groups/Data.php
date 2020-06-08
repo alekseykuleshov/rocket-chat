@@ -1,46 +1,49 @@
-<?php namespace ATDev\RocketChat\Groups;
+<?php
+
+namespace ATDev\RocketChat\Groups;
 
 /**
  * Group data trait
  */
-trait Data {
+trait Data
+{
 
-	/**
-	 * Sets group id
-	 *
-	 * @param string $groupId
-	 *
-	 * @return \ATDev\RocketChat\Groups\Data
-	 */
-	public function setGroupId($groupId) {
+    /**
+     * Sets group id
+     *
+     * @param string $groupId
+     *
+     * @return \ATDev\RocketChat\Groups\Data
+     */
+    public function setGroupId($groupId)
+    {
+        return $this->setRoomId($groupId);
+    }
 
-		return $this->setRoomId($groupId);
-	}
-
-	/**
-	 * Gets group id
-	 *
-	 * @return string
-	 */
-	public function getGroupId() {
-
-		return $this->getRoomId();
-	}
+    /**
+     * Gets group id
+     *
+     * @return string
+     */
+    public function getGroupId()
+    {
+        return $this->getRoomId();
+    }
 
 
-	/**
-	 * Sets room id
-	 *
-	 * @param string $roomId
-	 *
-	 * @return \ATDev\RocketChat\Channels\Data
-	 */
-	abstract public function setRoomId($roomId);
+    /**
+     * Sets room id
+     *
+     * @param string $roomId
+     *
+     * @return \ATDev\RocketChat\Channels\Data
+     */
+    abstract public function setRoomId($roomId);
 
-	/**
-	 * Gets room id
-	 *
-	 * @return string
-	 */
-	abstract public function getRoomId();
+    /**
+     * Gets room id
+     *
+     * @return string
+     */
+    abstract public function getRoomId();
 }

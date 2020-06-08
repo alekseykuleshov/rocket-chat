@@ -1,37 +1,39 @@
-<?php namespace ATDev\RocketChat\Tests\Channels;
+<?php
 
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+namespace ATDev\RocketChat\Tests\Channels;
 
-use \ATDev\RocketChat\Channels\Data;
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 
-class DataTest extends TestCase {
+use ATDev\RocketChat\Channels\Data;
 
-	public function testSetChannelId() {
+class DataTest extends TestCase
+{
+    public function testSetChannelId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-		$mock = $this->getMockForTrait(Data::class);
+        $mock->expects($this->once())
+            ->method("setRoomId")
+            ->with($this->equalTo("123"))
+            ->will($this->returnValue($mock));
 
-		$mock->expects($this->once())
-			->method("setRoomId")
-			->with($this->equalTo("123"))
-			->will($this->returnValue($mock));
+        $mock->setChannelId("123");
+    }
 
-		$mock->setChannelId("123");
-	}
+    public function testGetChannelId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
 
-	public function testGetChannelId() {
+        $mock->expects($this->once())
+            ->method("getRoomId")
+            ->will($this->returnValue($mock));
 
-		$mock = $this->getMockForTrait(Data::class);
+        $mock->getChannelId();
+    }
 
-		$mock->expects($this->once())
-			->method("getRoomId")
-			->will($this->returnValue($mock));
-
-		$mock->getChannelId();
-	}
-
-	protected function tearDown(): void {
-
-		test::clean(); // remove all registered test doubles
-	}
+    protected function tearDown(): void
+    {
+        test::clean(); // remove all registered test doubles
+    }
 }

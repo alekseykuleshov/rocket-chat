@@ -1,4 +1,4 @@
-You have to be [logged in](../../README.md) and have relevant permissions.
+You have to be [logged in](../..) and have relevant permissions.
 
 ### GROUP LISTING
 
@@ -144,3 +144,14 @@ if (!$result) {
 }
 ```
 
+### LISTS ALL THE GROUP MESSAGES ON THE SERVER
+
+```php
+$group = new \ATDev\RocketChat\Groups\Group("[GROUP ID]");
+$result = $group->messages();
+
+if (!$result) {
+    // Log the error
+    $error = $group->getError();
+}
+```
