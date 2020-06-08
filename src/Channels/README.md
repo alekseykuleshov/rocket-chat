@@ -144,3 +144,14 @@ if (!$result) {
 }
 ```
 
+### LISTS ALL THE CHANNEL MESSAGES ON THE SERVER
+
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->messages();
+
+if (!$result) {
+    // Log the error
+    $error = $channel->getError();
+}
+```
