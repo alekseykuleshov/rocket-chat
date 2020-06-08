@@ -21,8 +21,5 @@
 	},
 	"autoload-dev": {
 		"classmap": ["tests/"]
-	},
-	"scripts": {
-		"php-cs-fixer": "php-cs-fixer --config=./.php_cs.dist"
 	}
 }

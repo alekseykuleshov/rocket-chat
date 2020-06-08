@@ -1,4 +1,6 @@
-<?php namespace ATDev\RocketChat\Messages;
+<?php
+
+namespace ATDev\RocketChat\Messages;
 
 trait Data
 {

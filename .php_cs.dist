@@ -4,7 +4,6 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__);
 
 return PhpCsFixer\Config::create()
-    ->setCacheFile(__DIR__ . '/.php_cs.cache')
     ->setRules([
         '@PSR2' => true,
         'blank_line_after_opening_tag' => true,

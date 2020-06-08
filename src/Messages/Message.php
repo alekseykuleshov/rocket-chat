@@ -1,8 +1,8 @@
-<?php namespace ATDev\RocketChat\Messages;
+<?php
 
-use ATDev\RocketChat\Channels\Channel;
+namespace ATDev\RocketChat\Messages;
+
 use ATDev\RocketChat\Common\Request;
-use ATDev\RocketChat\Groups\Group;
 
 /**
  * Class Message
@@ -16,7 +16,8 @@ class Message extends Request
      * Gets a single chat message
      * @return Message|bool
      */
-    public function getMessage() {
+    public function getMessage()
+    {
         static::send('chat.getMessage', 'GET', ['msgId' => $this->getMessageId()]);
         if (!static::getSuccess()) {
             return false;
@@ -28,7 +29,8 @@ class Message extends Request
     /**
      * @return Message|bool
      */
-    public function postMessage() {
+    public function postMessage()
+    {
         static::send('chat.postMessage', 'POST', $this);
         if (!static::getSuccess()) {
             return false;
@@ -41,7 +43,8 @@ class Message extends Request
      * Updates chat message
      * @return Message|bool
      */
-    public function update() {
+    public function update()
+    {
         static::send(
             'chat.update',
             'POST',
@@ -59,7 +62,8 @@ class Message extends Request
      * @param bool $asUser Whether the message should be deleted as the user who sent it
      * @return Message|bool
      */
-    public function delete($asUser = false) {
+    public function delete($asUser = false)
+    {
         static::send(
             'chat.delete',
             'POST',

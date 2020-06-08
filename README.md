@@ -59,3 +59,9 @@ Now, when you are logged in, you can:
 Tests are run by `./vendor/bin/phpunit tests`. Although the library code is designed to be compatible with `php 5.6`, testing
 requires `php 7.3` as minimum because of `phpunit` version `9`.
 
+## PHP Code Fixer
+
+[PHP-CS-Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer) is used to fix automatically coding standard issues.
+`.php_cs.dist` is set to handle [PSR-12](https://www.php-fig.org/psr/psr-12/) coding style.
+To lint code against code style run `./vendor/bin/php-cs-fixer fix --verbose --show-progress=estimating --dry-run`.
+To fix code styles automatically run above command without `--dry-run` option.
