@@ -1,12 +1,16 @@
-<?php namespace ATDev\RocketChat\Tests\Messages;
+<?php
+
+namespace ATDev\RocketChat\Tests\Messages;
 
 use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+use AspectMock\Test as test;
 use ATDev\RocketChat\Messages\Collection;
 use ATDev\RocketChat\Messages\Message;
 
-class CollectionTest extends TestCase {
-    public function testInvalidAdd() {
+class CollectionTest extends TestCase
+{
+    public function testInvalidAdd()
+    {
         $stub = test::double('\Doctrine\Common\Collections\ArrayCollection', ['add' => 'not_added']);
 
         $collection = new Collection();
@@ -16,7 +20,8 @@ class CollectionTest extends TestCase {
         $stub->verifyNeverInvoked('add');
     }
 
-    public function testValidAdd() {
+    public function testValidAdd()
+    {
         $stub = test::double('\Doctrine\Common\Collections\ArrayCollection', ['add' => 'added']);
 
         $collection = new Collection();
@@ -27,7 +32,8 @@ class CollectionTest extends TestCase {
         $stub->verifyInvokedOnce('add', [$message]);
     }
 
-    protected function tearDown(): void {
+    protected function tearDown(): void
+    {
         test::clean(); // remove all registered test doubles
     }
 }

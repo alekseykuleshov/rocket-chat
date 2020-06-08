@@ -1,12 +1,15 @@
-<?php namespace ATDev\RocketChat\Tests\Messages;
+<?php
 
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+namespace ATDev\RocketChat\Tests\Messages;
+
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 use ATDev\RocketChat\Messages\Message;
 
-
-class MessageTest extends TestCase {
-    public function testGetMessageFailed() {
+class MessageTest extends TestCase
+{
+    public function testGetMessageFailed()
+    {
         $stub = test::double('ATDev\RocketChat\Messages\Message', [
             'getMessageId' => 'messageId123',
             'send' => true,
@@ -25,7 +28,8 @@ class MessageTest extends TestCase {
         $stub->verifyNeverInvoked('updateOutOfResponse');
     }
 
-    public function testGetMessageSuccess() {
+    public function testGetMessageSuccess()
+    {
         $response = (object) ['message' => 'message_content'];
         $stub = test::double('ATDev\RocketChat\Messages\Message', [
             'getMessageId' => 'messageId123',
@@ -45,7 +49,8 @@ class MessageTest extends TestCase {
         $stub->verifyInvokedOnce('updateOutOfResponse', ['message_content']);
     }
 
-    public function testPostMessageFailed() {
+    public function testPostMessageFailed()
+    {
         $stub = test::double('ATDev\RocketChat\Messages\Message', [
             'send' => true,
             'getSuccess' => false,
@@ -63,7 +68,8 @@ class MessageTest extends TestCase {
         $stub->verifyNeverInvoked('updateOutOfResponse');
     }
 
-    public function testPostMessageSuccess() {
+    public function testPostMessageSuccess()
+    {
         $response = (object) ['message' => 'message content'];
         $stub = test::double('ATDev\RocketChat\Messages\Message', [
             'send' => true,
@@ -82,7 +88,8 @@ class MessageTest extends TestCase {
         $stub->verifyInvokedOnce('updateOutOfResponse', ['message content']);
     }
 
-    public function testUpdateFailed() {
+    public function testUpdateFailed()
+    {
         $stub = test::double('ATDev\RocketChat\Messages\Message', [
             'getRoomId' => 'roomIdw',
             'getMessageId' => 'messageIda',
@@ -105,7 +112,8 @@ class MessageTest extends TestCase {
         $stub->verifyNeverInvoked('updateOutOfResponse', ['message updated content']);
     }
 
-    public function testUpdateSuccess() {
+    public function testUpdateSuccess()
+    {
         $response = (object) ['message' => 'message updated content'];
         $stub = test::double('ATDev\RocketChat\Messages\Message', [
             'getRoomId' => 'roomIdw',
@@ -129,7 +137,8 @@ class MessageTest extends TestCase {
         $stub->verifyInvokedOnce('updateOutOfResponse', ['message updated content']);
     }
 
-    public function testDeleteFailed() {
+    public function testDeleteFailed()
+    {
         $stub = test::double('\ATDev\RocketChat\Messages\Message', [
             'getRoomId' => 'roomId123w',
             'getMessageId' => 'messageId123a',
@@ -148,7 +157,8 @@ class MessageTest extends TestCase {
         $stub->verifyNeverInvoked('setMessageId');
     }
 
-    public function testDeleteSuccess() {
+    public function testDeleteSuccess()
+    {
         $stub = test::double('\ATDev\RocketChat\Messages\Message', [
             'getRoomId' => 'roomId123w',
             'getMessageId' => 'messageId123a',
@@ -167,7 +177,8 @@ class MessageTest extends TestCase {
         $stub->verifyInvokedOnce('setMessageId', [null]);
     }
 
-    protected function tearDown(): void {
+    protected function tearDown(): void
+    {
         test::clean(); // remove all registered test doubles
     }
 }

@@ -4,7 +4,8 @@ namespace ATDev\RocketChat\Common;
 
 use \Doctrine\Common\Collections\ArrayCollection;
 
-class Collection extends ArrayCollection {
+class Collection extends ArrayCollection
+{
     /** @var int */
     private $total;
     /** @var int */
@@ -15,7 +16,8 @@ class Collection extends ArrayCollection {
     /**
      * @return int
      */
-    public function getTotal() {
+    public function getTotal()
+    {
         return $this->total;
     }
 
@@ -23,7 +25,8 @@ class Collection extends ArrayCollection {
      * @param int $total
      * @return $this
      */
-    public function setTotal($total) {
+    public function setTotal($total)
+    {
         if (is_int($total)) {
             $this->total = $total;
         }
@@ -33,7 +36,8 @@ class Collection extends ArrayCollection {
     /**
      * @return int
      */
-    public function getCount() {
+    public function getCount()
+    {
         return $this->count;
     }
 
@@ -41,7 +45,8 @@ class Collection extends ArrayCollection {
      * @param int $count
      * @return $this
      */
-    public function setCount($count) {
+    public function setCount($count)
+    {
         if (is_int($count)) {
             $this->count = $count;
         }
@@ -51,7 +56,8 @@ class Collection extends ArrayCollection {
     /**
      * @return int
      */
-    public function getOffset() {
+    public function getOffset()
+    {
         return $this->offset;
     }
 
@@ -59,7 +65,8 @@ class Collection extends ArrayCollection {
      * @param $offset
      * @return $this
      */
-    public function setOffset($offset) {
+    public function setOffset($offset)
+    {
         if (is_int($offset)) {
             $this->offset = $offset;
         }

@@ -1,6 +1,7 @@
 <?php namespace ATDev\RocketChat\Messages;
 
-trait Data {
+trait Data
+{
 
     /** @var string Message id from api */
     private $messageId;
@@ -40,7 +41,8 @@ trait Data {
      *
      * @param string $messageId
      */
-    public function __construct($messageId = null) {
+    public function __construct($messageId = null)
+    {
         if (!empty($messageId)) {
             $this->setMessageId($messageId);
         }
@@ -49,7 +51,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getMessageId() {
+    public function getMessageId()
+    {
         return $this->messageId;
     }
 
@@ -57,7 +60,8 @@ trait Data {
      * @param string $messageId
      * @return Data $this
      */
-    public function setMessageId($messageId) {
+    public function setMessageId($messageId)
+    {
         if (!(is_null($messageId) || is_string($messageId))) {
             $this->setDataError("Invalid message Id");
         } else {
@@ -70,7 +74,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getRoomId() {
+    public function getRoomId()
+    {
         return $this->roomId;
     }
 
@@ -78,7 +83,8 @@ trait Data {
      * @param string $roomId
      * @return Data $this
      */
-    public function setRoomId($roomId) {
+    public function setRoomId($roomId)
+    {
         if (!(is_null($roomId) || is_string($roomId))) {
             $this->setDataError("Invalid room Id");
         } else {
@@ -91,7 +97,8 @@ trait Data {
     /**
      * @return string The text of the message
      */
-    public function getMsg() {
+    public function getMsg()
+    {
         return $this->text;
     }
 
@@ -99,7 +106,8 @@ trait Data {
      * @param string $text The text of the message to send, is optional because of attachments.
      * @return Data $this
      */
-    public function setText($text) {
+    public function setText($text)
+    {
         if (is_string($text)) {
             $this->text = $text;
         }
@@ -109,7 +117,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getAlias() {
+    public function getAlias()
+    {
         return $this->alias;
     }
 
@@ -117,7 +126,8 @@ trait Data {
      * @param string $alias This will cause the message's name to appear as the given alias, but your username will still display.
      * @return Data $this
      */
-    public function setAlias($alias) {
+    public function setAlias($alias)
+    {
         if (is_string($alias)) {
             $this->alias = $alias;
         }
@@ -127,7 +137,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getEmoji() {
+    public function getEmoji()
+    {
         return $this->emoji;
     }
 
@@ -135,7 +146,8 @@ trait Data {
      * @param string $emoji If provided, this will make the avatar on this message be an emoji.
      * @return Data $this
      */
-    public function setEmoji($emoji) {
+    public function setEmoji($emoji)
+    {
         if (is_string($emoji)) {
             $this->emoji = $emoji;
         }
@@ -145,7 +157,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getAvatar() {
+    public function getAvatar()
+    {
         return $this->avatar;
     }
 
@@ -153,7 +166,8 @@ trait Data {
      * @param string $avatar If provided, this will make the avatar use the provided image url.
      * @return Data $this
      */
-    public function setAvatar($avatar) {
+    public function setAvatar($avatar)
+    {
         if (is_string($avatar)) {
             $this->avatar = $avatar;
         }
@@ -163,14 +177,16 @@ trait Data {
     /**
      * @return string
      */
-    public function getChannel() {
+    public function getChannel()
+    {
         return $this->channel;
     }
 
     /**
      * @return bool
      */
-    public function isParseUrls() {
+    public function isParseUrls()
+    {
         return $this->parseUrls;
     }
 
@@ -178,7 +194,8 @@ trait Data {
      * @param bool $parseUrls
      * @return Data $this
      */
-    private function setParseUrls($parseUrls) {
+    private function setParseUrls($parseUrls)
+    {
         if (!is_bool($parseUrls)) {
             $this->setDataError('Invalid parseUrls value');
         } else {
@@ -191,7 +208,8 @@ trait Data {
     /**
      * @return bool
      */
-    public function isGroupable() {
+    public function isGroupable()
+    {
         return $this->groupable;
     }
 
@@ -199,7 +217,8 @@ trait Data {
      * @param bool $groupable
      * @return Data $this
      */
-    private function setGroupable($groupable) {
+    private function setGroupable($groupable)
+    {
         if (!is_bool($groupable)) {
             $this->setDataError('Invalid groupable value');
         } else {
@@ -212,7 +231,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getTs() {
+    public function getTs()
+    {
         return $this->ts;
     }
 
@@ -220,7 +240,8 @@ trait Data {
      * @param string $value
      * @return $this
      */
-    private function setTs($value) {
+    private function setTs($value)
+    {
         if (is_string($value)) {
             $this->ts = $value;
         }
@@ -230,7 +251,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getT() {
+    public function getT()
+    {
         return $this->t;
     }
 
@@ -238,7 +260,8 @@ trait Data {
      * @param string $value
      * @return $this
      */
-    private function setT($value) {
+    private function setT($value)
+    {
         if (is_string($value)) {
             $this->t = $value;
         }
@@ -248,7 +271,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getUserId() {
+    public function getUserId()
+    {
         return $this->userId;
     }
 
@@ -256,7 +280,8 @@ trait Data {
      * @param string $userId
      * @return $this
      */
-    private function setUserId($userId) {
+    private function setUserId($userId)
+    {
         if (is_string($userId)) {
             $this->userId = $userId;
         }
@@ -266,7 +291,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
@@ -274,7 +300,8 @@ trait Data {
      * @param string $username
      * @return $this
      */
-    private function setUsername($username) {
+    private function setUsername($username)
+    {
         if (is_string($username)) {
             $this->username = $username;
         }
@@ -284,7 +311,8 @@ trait Data {
     /**
      * @return string
      */
-    public function getUpdatedAt() {
+    public function getUpdatedAt()
+    {
         return $this->updatedAt;
     }
 
@@ -292,7 +320,8 @@ trait Data {
      * @param string $updatedAt
      * @return $this
      */
-    private function setUpdatedAt($updatedAt) {
+    private function setUpdatedAt($updatedAt)
+    {
         if (is_string($updatedAt)) {
             $this->updatedAt = $updatedAt;
         }
@@ -303,7 +332,8 @@ trait Data {
      * @param \stdClass $response
      * @return Data
      */
-    public static function createOutOfResponse($response) {
+    public static function createOutOfResponse($response)
+    {
         $message = new static($response->_id);
         return $message->updateOutOfResponse($response);
     }
@@ -312,7 +342,8 @@ trait Data {
      * @param \stdClass $response
      * @return Data $this
      */
-    public function updateOutOfResponse($response) {
+    public function updateOutOfResponse($response)
+    {
         if (isset($response->_id)) {
             $this->setMessageId($response->_id);
         }
@@ -359,7 +390,8 @@ trait Data {
      *
      * @return array
      */
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         $messageData = ['roomId' => $this->roomId];
         if (!is_null($this->text)) {
             $messageData['text'] = $this->text;
@@ -381,7 +413,8 @@ trait Data {
      * @param string $error
      * @return Data $this
      */
-    private function setDataError($error) {
+    private function setDataError($error)
+    {
         static::setError($error);
         return $this;
     }

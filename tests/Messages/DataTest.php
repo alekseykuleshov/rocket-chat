@@ -1,25 +1,31 @@
-<?php namespace ATDev\RocketChat\Tests\Messages;
+<?php
+
+namespace ATDev\RocketChat\Tests\Messages;
 
 use ATDev\RocketChat\Messages\Data;
-use \PHPUnit\Framework\TestCase;
-use \AspectMock\Test as test;
+use PHPUnit\Framework\TestCase;
+use AspectMock\Test as test;
 
-class DataTest extends TestCase {
-    public function testConstructorNoMessageId() {
+class DataTest extends TestCase
+{
+    public function testConstructorNoMessageId()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $stub = test::double(get_class($mock), ['setMessageId' => $mock]);
         $stub->construct();
         $stub->verifyNeverInvoked('setMessageId');
     }
 
-    public function testConstructorWithMessageId() {
+    public function testConstructorWithMessageId()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $stub = test::double(get_class($mock), ['setMessageId' => $mock]);
         $stub->construct('message_id');
         $stub->verifyInvokedOnce('setMessageId', ['message_id']);
     }
 
-    public function testInvalidMessageId() {
+    public function testInvalidMessageId()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $stub = test::double($mock, ['setDataError' => $mock]);
 
@@ -28,7 +34,8 @@ class DataTest extends TestCase {
         $stub->verifyInvokedOnce('setDataError', ['Invalid message Id']);
     }
 
-    public function testValidMessageId() {
+    public function testValidMessageId()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $stub = test::double($mock, ['setDataError' => $mock]);
 
@@ -41,7 +48,8 @@ class DataTest extends TestCase {
         $stub->verifyNeverInvoked('setDataError');
     }
 
-    public function testInvalidRoomId() {
+    public function testInvalidRoomId()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $stub = test::double($mock, ['setDataError' => $mock]);
 
@@ -50,7 +58,8 @@ class DataTest extends TestCase {
         $stub->verifyInvokedOnce('setDataError', ['Invalid room Id']);
     }
 
-    public function testValidRoomId() {
+    public function testValidRoomId()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $stub = test::double($mock, ['setDataError' => $mock]);
 
@@ -63,7 +72,8 @@ class DataTest extends TestCase {
         $stub->verifyNeverInvoked('setDataError');
     }
 
-    public function testSetText() {
+    public function testSetText()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $mock->setText(['invalid_text_argument']);
         $this->assertNull($mock->getMsg());
@@ -72,7 +82,8 @@ class DataTest extends TestCase {
         $this->assertSame('valid_text', $mock->getMsg());
     }
 
-    public function testSetAlias() {
+    public function testSetAlias()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $mock->setAlias(00000);
         $this->assertNull($mock->getAlias());
@@ -81,7 +92,8 @@ class DataTest extends TestCase {
         $this->assertSame('valid_alias', $mock->getAlias());
     }
 
-    public function testSetEmoji() {
+    public function testSetEmoji()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $mock->setEmoji(00000);
         $this->assertNull($mock->getEmoji());
@@ -90,7 +102,8 @@ class DataTest extends TestCase {
         $this->assertSame('valid_emoji', $mock->getEmoji());
     }
 
-    public function testSetAvatar() {
+    public function testSetAvatar()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $mock->setAvatar(00000);
         $this->assertNull($mock->getAvatar());
@@ -99,7 +112,8 @@ class DataTest extends TestCase {
         $this->assertSame('valid_avatar_url', $mock->getAvatar());
     }
 
-    public function testJsonSerialize() {
+    public function testJsonSerialize()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $mock->setRoomId('roomId');
         $this->assertSame(['roomId' => 'roomId'], $mock->jsonSerialize());
@@ -121,7 +135,8 @@ class DataTest extends TestCase {
         $this->assertSame(['roomId' => null, 'emoji' => 'emoji'], $mock->jsonSerialize());
     }
 
-    public function testUpdateOutOfResponse1() {
+    public function testUpdateOutOfResponse1()
+    {
         $messageFull = new ResponseFixture1();
         $mock = $this->getMockForTrait(Data::class);
         $mock->updateOutOfResponse($messageFull);
@@ -142,7 +157,8 @@ class DataTest extends TestCase {
         $this->assertNull($mock->getUpdatedAt());
     }
 
-    public function testUpdateOutOfResponse2() {
+    public function testUpdateOutOfResponse2()
+    {
         $messageFull = new ResponseFixture2();
         $mock = $this->getMockForTrait(Data::class);
         $mock->updateOutOfResponse($messageFull);
@@ -163,7 +179,8 @@ class DataTest extends TestCase {
         $this->assertSame('2018-10-05T13:48:49.535Z', $mock->getUpdatedAt());
     }
 
-    public function testUpdateOutOfResponseFull() {
+    public function testUpdateOutOfResponseFull()
+    {
         $messageFull = new ResponseFixtureFull();
         $mock = $this->getMockForTrait(Data::class);
         $mock->updateOutOfResponse($messageFull);
@@ -184,7 +201,8 @@ class DataTest extends TestCase {
         $this->assertSame('2018-10-05T13:48:49.535Z', $mock->getUpdatedAt());
     }
 
-    public function testCreateOutOfResponse() {
+    public function testCreateOutOfResponse()
+    {
         $mock = $this->getMockForTrait(Data::class);
         $stub = test::double(get_class($mock), ['updateOutOfResponse' => $mock]);
 
@@ -194,7 +212,8 @@ class DataTest extends TestCase {
         $stub->verifyInvokedOnce('updateOutOfResponse', [$messageFull]);
     }
 
-    protected function tearDown(): void {
+    protected function tearDown(): void
+    {
         test::clean(); // remove all registered test doubles
     }
 }
