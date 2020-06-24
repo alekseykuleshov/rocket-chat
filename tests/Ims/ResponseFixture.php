@@ -22,6 +22,7 @@ class ResponseFixture2 extends \stdClass
         $this->topic = 'Discuss all of the testing';
         $this->usernames = ['graywolf336', 'graywolf337'];
         $this->lastMessage = (object) ['msg' => 'Last message'];
+        $this->usersCount = 2;
     }
 }
 

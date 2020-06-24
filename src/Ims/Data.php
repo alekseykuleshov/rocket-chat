@@ -27,6 +27,8 @@ trait Data
 
     private $lastMessage;
 
+    private $usersCount;
+
     /**
      * Creates im out of api response
      *
@@ -235,6 +237,19 @@ trait Data
         return $this;
     }
 
+    public function getUsersCount()
+    {
+        return $this->usersCount;
+    }
+
+    private function setUsersCount($usersCount)
+    {
+        if (is_int($usersCount)) {
+            $this->usersCount = $usersCount;
+        }
+        return $this;
+    }
+
     /**
      * Updates current im out of api response
      *
@@ -277,6 +292,10 @@ trait Data
 
         if (isset($response->lastMessage)) {
             $this->setLastMessage($response->lastMessage->msg);
+        }
+
+        if (isset($response->usersCount)) {
+            $this->setUsersCount($response->usersCount);
         }
 
         return $this;

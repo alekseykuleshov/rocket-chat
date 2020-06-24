@@ -63,6 +63,7 @@ class DataTest extends TestCase
         $this->assertSame("Discuss all of the testing", $mock->getTopic());
         $this->assertSame(["graywolf336", "graywolf337"], $mock->getUsernames());
         $this->assertSame("Last message", $mock->getLastMessage());
+        $this->assertSame(2, $mock->getUsersCount());
 
         $im1 = new ResponseFixture1();
         $mock = $this->getMockForTrait(Data::class);
@@ -77,6 +78,7 @@ class DataTest extends TestCase
         $this->assertSame(7, $mock->getMsgs());
         $this->assertNull($mock->getLastMessage());
         $this->assertSame("2020-06-22T09:21:24.884Z", $mock->getTs());
+        $this->assertNull($mock->getUsersCount());
 
         $im2 = new ResponseFixture2();
         $mock = $this->getMockForTrait(Data::class);
@@ -91,6 +93,7 @@ class DataTest extends TestCase
         $this->assertNull($mock->getMsgs());
         $this->assertSame("Last message", $mock->getLastMessage());
         $this->assertNull($mock->getTs());
+        $this->assertSame(2, $mock->getUsersCount());
     }
 
     protected function tearDown(): void
