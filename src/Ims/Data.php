@@ -29,6 +29,8 @@ trait Data
 
     private $usersCount;
 
+    private $username;
+
     /**
      * Creates im out of api response
      *
@@ -205,13 +207,15 @@ trait Data
     }
 
     /**
-     * @param array $value
+     * @param string|array $usernames
      * @return $this
      */
-    private function setUsernames($value)
+    public function setUsernames($usernames)
     {
-        if (is_array($value)) {
-            $this->usernames = $value;
+        if (!(is_string($usernames) || is_array($usernames))) {
+            $this->setDataError("Invalid usernames");
+        } else {
+            $this->usernames = $usernames;
         }
 
         return $this;
@@ -237,16 +241,46 @@ trait Data
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getUsersCount()
     {
         return $this->usersCount;
     }
 
+    /**
+     * @param int $usersCount
+     * @return $this
+     */
     private function setUsersCount($usersCount)
     {
         if (is_int($usersCount)) {
             $this->usersCount = $usersCount;
         }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param $username
+     * @return $this
+     */
+    public function setUsername($username)
+    {
+        if (!is_string($username)) {
+            $this->setDataError("Invalid username");
+        } else {
+            $this->username = $username;
+        }
+
         return $this;
     }
 

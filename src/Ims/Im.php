@@ -44,4 +44,19 @@ class Im extends Request
 
         return $ims;
     }
+
+    public function create()
+    {
+        static::send(
+            "im.create",
+            "POST",
+            ["username" => $this->getUsername(), "usernames" => $this->getUsernames()]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->room);
+    }
 }
