@@ -25,6 +25,8 @@ trait Data
 
     private $usernames;
 
+    private $lastMessage;
+
     /**
      * Creates im out of api response
      *
@@ -214,6 +216,26 @@ trait Data
     }
 
     /**
+     * @return string
+     */
+    public function getLastMessage()
+    {
+        return $this->lastMessage;
+    }
+
+    /**
+     * @param string $lastMessage
+     * @return $this
+     */
+    private function setLastMessage($lastMessage)
+    {
+        if (is_string($lastMessage)) {
+            $this->lastMessage = $lastMessage;
+        }
+        return $this;
+    }
+
+    /**
      * Updates current im out of api response
      *
      * @param \stdClass $response
@@ -252,6 +274,24 @@ trait Data
         if (isset($response->usernames)) {
             $this->setUsernames($response->usernames);
         }
+
+        if (isset($response->lastMessage)) {
+            $this->setLastMessage($response->lastMessage->msg);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets data error
+     *
+     * @param string $error
+     *
+     * @return \ATDev\RocketChat\Ims\Data
+     */
+    private function setDataError($error)
+    {
+        static::setError($error);
 
         return $this;
     }
