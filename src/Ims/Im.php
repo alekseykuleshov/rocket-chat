@@ -46,7 +46,7 @@ class Im extends Request
     }
 
     /**
-     * Creates direct message at api instance
+     * Creates direct message session with another user
      *
      * @return \ATDev\RocketChat\Ims\Im|boolean
      */
@@ -59,5 +59,21 @@ class Im extends Request
         }
 
         return $this->updateOutOfResponse(static::getResponse()->room);
+    }
+
+    /**
+     * Removes direct message from user list of direct messages
+     *
+     * @return \ATDev\RocketChat\Ims\Im|boolean
+     */
+    public function close()
+    {
+        static::send("im.close", "POST", ["roomId" => $this->getDirectMessageId()]);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
     }
 }

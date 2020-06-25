@@ -32,6 +32,18 @@ trait Data
     private $username;
 
     /**
+     * Class constructor
+     *
+     * @param string $roomId
+     */
+    public function __construct($roomId = null)
+    {
+        if (!empty($roomId)) {
+            $this->setRoomId($roomId);
+        }
+    }
+
+    /**
      * Gets full im data to submit to api
      *
      * @return array
@@ -297,6 +309,14 @@ trait Data
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirectMessageId()
+    {
+        return $this->roomId;
     }
 
     /**
