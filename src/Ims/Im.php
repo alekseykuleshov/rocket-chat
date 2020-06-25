@@ -62,6 +62,22 @@ class Im extends Request
     }
 
     /**
+     * Adds direct message back to user list of direct messages
+     *
+     * @return $this|bool
+     */
+    public function open()
+    {
+        static::send("im.open", "POST", ["roomId" => $this->getDirectMessageId()]);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+    /**
      * Removes direct message from user list of direct messages
      *
      * @return \ATDev\RocketChat\Ims\Im|boolean

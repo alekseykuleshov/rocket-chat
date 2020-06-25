@@ -125,6 +125,38 @@ class ImTest extends TestCase
         $stub->verifyInvokedOnce("updateOutOfResponse", ["room content"]);
     }
 
+    public function testOpenFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "getDirectMessageId" => "directMessageId123",
+            "send" => true,
+            "getSuccess" => false
+        ]);
+
+        $im = new Im();
+        $result = $im->open();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["im.open", "POST", ["roomId" => "directMessageId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testOpenSuccess()
+    {
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "getDirectMessageId" => "directMessageId123",
+            "send" => true,
+            "getSuccess" => true
+        ]);
+
+        $im = new Im();
+        $result = $im->open();
+
+        $this->assertSame($im, $result);
+        $stub->verifyInvokedOnce("send", ["im.open", "POST", ["roomId" => "directMessageId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
     public function testCloseFailed()
     {
         $stub = test::double("\ATDev\RocketChat\Ims\Im", [

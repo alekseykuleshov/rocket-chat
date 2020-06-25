@@ -41,3 +41,31 @@ if (!$result) {
 	$error = $im->getError();
 }
 ```
+
+### OPEN DIRECT MESSAGE
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im("[DIRECT MESSAGE ID]");
+
+$result = $im->open();
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```
+
+### CLOSE DIRECT MESSAGE
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im("[DIRECT MESSAGE ID]");
+
+$result = $im->close();
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```
