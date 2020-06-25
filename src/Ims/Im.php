@@ -12,7 +12,7 @@ class Im extends Request
     use \ATDev\RocketChat\Ims\Data;
 
     /**
-     * Gets im listing
+     * Gets direct message listing
      *
      * @param int $offset
      * @param int $count
@@ -45,13 +45,14 @@ class Im extends Request
         return $ims;
     }
 
+    /**
+     * Creates direct message at api instance
+     *
+     * @return \ATDev\RocketChat\Ims\Im|boolean
+     */
     public function create()
     {
-        static::send(
-            "im.create",
-            "POST",
-            ["username" => $this->getUsername(), "usernames" => $this->getUsernames()]
-        );
+        static::send("im.create", "POST", $this);
 
         if (!static::getSuccess()) {
             return false;

@@ -64,6 +64,67 @@ class ImTest extends TestCase
         $this->assertSame(30, $result->getTotal());
     }
 
+    public function testCreateFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "send" => true,
+            "getSuccess" => false,
+            "getResponse" => (object) [],
+            "updateOutOfResponse" => "nothing"
+        ]);
+
+        $im = new Im();
+        $result = $im->create();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["im.create", "POST", $im]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testCreateSuccess()
+    {
+        $response = (object) ["room" => "room content"];
+
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "updateOutOfResponse" => "result"
+        ]);
+
+        $im = new Im();
+        $result = $im->create();
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["im.create", "POST", $im]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("updateOutOfResponse", ["room content"]);
+    }
+
+    public function testCreateManyUsersSuccess()
+    {
+        $response = (object) ["room" => "room content"];
+
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "updateOutOfResponse" => "result"
+        ]);
+
+        $im = new Im();
+        $result = $im->create();
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["im.create", "POST", $im]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("updateOutOfResponse", ["room content"]);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

@@ -32,6 +32,21 @@ trait Data
     private $username;
 
     /**
+     * Gets full im data to submit to api
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $imData = [
+            "username" => $this->username,
+            "usernames" => $this->usernames
+        ];
+
+        return $imData;
+    }
+
+    /**
      * Creates im out of api response
      *
      * @param \stdClass $response
