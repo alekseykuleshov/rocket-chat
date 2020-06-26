@@ -3,6 +3,7 @@
 namespace ATDev\RocketChat\Ims;
 
 use ATDev\RocketChat\Common\Request;
+use ATDev\RocketChat\Ims\ImCounters;
 
 /**
  * Im class
@@ -91,5 +92,25 @@ class Im extends Request
         }
 
         return $this;
+    }
+
+    /**
+     * Gets counters of direct messages
+     *
+     * @return \ATDev\RocketChat\Ims\ImCounters|boolean
+     */
+    public function counters()
+    {
+        static::send(
+            "im.counters",
+            "GET",
+            ["roomId" => $this->getDirectMessageId(), "username" => $this->getUsername()]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return (new ImCounters)->updateOutOfResponse(static::getResponse());
     }
 }

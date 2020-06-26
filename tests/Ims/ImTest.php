@@ -189,6 +189,65 @@ class ImTest extends TestCase
         $stub->verifyInvokedOnce("getSuccess");
     }
 
+    public function testCountersFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "getDirectMessageId" => "directMessageId123",
+            "getUsername" => "graywolf337",
+            "send" => true,
+            "getSuccess" => false,
+            "getResponse" => (object) []
+        ]);
+
+        $imCounters = test::double("\ATDev\RocketChat\Ims\ImCounters", [
+            "updateOutOfResponse" => "result"
+        ]);
+
+        $im = new Im();
+        $result = $im->counters();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["im.counters", "GET", ["roomId" => "directMessageId123", "username" => "graywolf337"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $imCounters->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testCountersSuccess()
+    {
+        $response = (object) [
+            "joined" => true,
+            "members" => 2,
+            "unreads" => 0,
+            "unreadsFrom" => "2018-02-21T21:08:51.026Z",
+            "msgs" => 0,
+            "latest" => "2018-02-21T21:08:51.026Z",
+            "userMentions" => 0,
+            "success" => true
+        ];
+
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "getDirectMessageId" => "directMessageId123",
+            "getUsername" => "graywolf337",
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response
+        ]);
+
+        $imCounters = test::double("\ATDev\RocketChat\Ims\ImCounters", [
+            "updateOutOfResponse" => "result"
+        ]);
+
+        $im = new Im();
+        $result = $im->counters();
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["im.counters", "GET", ["roomId" => "directMessageId123", "username" => "graywolf337"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $imCounters->verifyInvokedOnce("updateOutOfResponse", $response);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

@@ -69,3 +69,18 @@ if (!$result) {
 	$error = $im->getError();
 }
 ```
+
+### GET COUNTERS OF DIRECT MESSAGES
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im("[DIRECT MESSAGE ID]");
+$im->setUsername("[USERNAME]");
+
+$result = $im->counters();
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```
