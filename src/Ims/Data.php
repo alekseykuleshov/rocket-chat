@@ -10,36 +10,44 @@ trait Data
 
     /** @var string Room id */
     private $roomId;
-
+    /** @var string */
     private $updatedAt;
-
+    /** @var string */
     private $t;
-
+    /** @var integer  */
     private $msgs;
-
+    /** @var string */
     private $ts;
-
+    /** @var string */
     private $lm;
-
+    /** @var string */
     private $topic;
-
+    /** @var string|array */
     private $usernames;
-
+    /** @var string */
     private $lastMessage;
-
+    /** @var string */
+    private $lastMessageId;
+    /** @var string */
+    private $lastUserId;
+    /** @var string */
+    private $lastUserName;
+    /** @var integer */
     private $usersCount;
-
+    /** @var string */
     private $username;
-
+    /** @var string */
     private $latest;
-
+    /** @var string */
     private $oldest;
-
+    /** @var boolean */
     private $inclusive;
-
+    /** @var boolean */
     private $unreads;
-
-    private $unreadNotLoaded;
+    /** @var boolean */
+    private $sysMes;
+    /** @var boolean */
+    private $readOnly;
 
     /**
      * Class constructor
@@ -410,6 +418,106 @@ trait Data
     }
 
     /**
+     * @return bool
+     */
+    public function getSysMes()
+    {
+        return $this->sysMes;
+    }
+
+    /**
+     * @param bool $sysMes
+     * @return $this
+     */
+    public function setSysMes($sysMes)
+    {
+        if (is_bool($sysMes)) {
+            $this->sysMes = $sysMes;
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getReadOnly()
+    {
+        return $this->readOnly;
+    }
+
+    /**
+     * @param bool $readOnly
+     * @return $this
+     */
+    public function setReadOnly($readOnly)
+    {
+        if (is_bool($readOnly)) {
+            $this->readOnly = $readOnly;
+        }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastMessageId()
+    {
+        return $this->lastMessageId;
+    }
+
+    /**
+     * @param string $lastMessageId
+     * @return $this
+     */
+    public function setLastMessageId($lastMessageId)
+    {
+        if (is_string($lastMessageId)) {
+            $this->lastMessageId = $lastMessageId;
+        }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastUserId()
+    {
+        return $this->lastUserId;
+    }
+
+    /**
+     * @param string $lastUserId
+     * @return $this
+     */
+    public function setLastUserId($lastUserId)
+    {
+        if (is_string($lastUserId)) {
+            $this->lastUserId = $lastUserId;
+        }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastUserName()
+    {
+        return $this->lastUserName;
+    }
+
+    /**
+     * @param string $lastUserName
+     * @return $this
+     */
+    public function setLastUserName($lastUserName)
+    {
+        if (is_string($lastUserName)) {
+            $this->lastUserName = $lastUserName;
+        }
+        return $this;
+    }
+
+    /**
      * Updates current im out of api response
      *
      * @param \stdClass $response
@@ -450,11 +558,22 @@ trait Data
         }
 
         if (isset($response->lastMessage)) {
+            $this->setLastMessageId($response->lastMessage->_id);
             $this->setLastMessage($response->lastMessage->msg);
+            $this->setLastUserId($response->lastMessage->u->_id);
+            $this->setLastUserName($response->lastMessage->u->username);
         }
 
         if (isset($response->usersCount)) {
             $this->setUsersCount($response->usersCount);
+        }
+
+        if (isset($response->sysMes)) {
+            $this->setSysMes($response->sysMes);
+        }
+
+        if (isset($response->ro)) {
+            $this->setReadOnly($response->ro);
         }
 
         return $this;

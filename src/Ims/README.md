@@ -88,3 +88,17 @@ if (!$result) {
 	$error = $im->getError();
 }
 ```
+
+### LISTS ALL THE DIRECT MESSAGES ON THE SERVER
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im();
+
+$result = $im->listEveryone();
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```

@@ -152,4 +152,31 @@ class Im extends Request
 
         return $messages;
     }
+
+    public function listEveryone($offset = 0, $count = 0)
+    {
+        static::send("im.list.everyone", "GET", ['offset' => $offset, 'count' => $count]);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $ims = new Collection();
+        $response = static::getResponse();
+
+        foreach ($response->ims as $im) {
+            $ims->add(static::createOutOfResponse($im));
+        }
+        if (isset($response->total)) {
+            $ims->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $ims->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $ims->setOffset($response->offset);
+        }
+
+        return $ims;
+    }
 }

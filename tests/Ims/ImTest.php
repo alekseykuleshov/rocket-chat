@@ -318,6 +318,61 @@ class ImTest extends TestCase
         $this->assertSame(2, $result->getUnreadNotLoaded());
     }
 
+    public function testListEveryoneFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "send" => true,
+            "getSuccess" => false,
+            "getResponse" => (object) [],
+            "createOutOfResponse" => "nothing"
+        ]);
+
+        $im = new Im();
+        $result = $im->listEveryone();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["im.list.everyone", "GET", ['offset' => 0, 'count' => 0]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("createOutOfResponse");
+    }
+
+    public function testListEveryoneSuccess()
+    {
+        $im1 = new \ATDev\RocketChat\Tests\Ims\ResponseFixture1();
+        $im2 = new \ATDev\RocketChat\Tests\Ims\ResponseFixture2();
+        $response = (object) [
+            "ims" => [$im1, $im2],
+            "offset" => 2,
+            "count" => 10,
+            "total" => 30
+        ];
+
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "createOutOfResponse" => function ($arg) { return get_class($arg); }
+        ]);
+
+        $collection = test::double("\ATDev\RocketChat\Ims\Collection", ["add" => true]);
+
+        $im = new Im();
+        $result = $im->listEveryone(2, 10);
+
+        $this->assertInstanceOf("\ATDev\RocketChat\Ims\Collection", $result);
+        $stub->verifyInvokedOnce("send", ["im.list.everyone", "GET", ["offset" => 2, "count" => 10]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("createOutOfResponse", [$im1]);
+        $stub->verifyInvokedOnce("createOutOfResponse", [$im2]);
+        $collection->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Ims\ResponseFixture1"]);
+        $collection->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Ims\ResponseFixture2"]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

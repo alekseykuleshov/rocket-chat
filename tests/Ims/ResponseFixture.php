@@ -21,8 +21,13 @@ class ResponseFixture2 extends \stdClass
         $this->lm = '2020-06-23T15:22:46.020Z';
         $this->topic = 'Discuss all of the testing';
         $this->usernames = ['graywolf336', 'graywolf337'];
-        $this->lastMessage = (object) ['msg' => 'Last message'];
+        $this->lastMessage = (object) [
+            '_id' => 'lastMessageId123', 'msg' => 'Last message',
+            'u' => (object) ['_id' => 'lastUserId123', 'username' => 'lastUserName123']
+        ];
         $this->usersCount = 2;
+        $this->sysMes = false;
+        $this->ro = false;
     }
 }
 

@@ -62,8 +62,13 @@ class DataTest extends TestCase
         $this->assertSame("2020-06-23T15:22:46.020Z", $mock->getLm());
         $this->assertSame("Discuss all of the testing", $mock->getTopic());
         $this->assertSame(["graywolf336", "graywolf337"], $mock->getUsernames());
+        $this->assertSame("lastMessageId123", $mock->getLastMessageId());
         $this->assertSame("Last message", $mock->getLastMessage());
+        $this->assertSame("lastUserId123", $mock->getLastUserId());
+        $this->assertSame("lastUserName123", $mock->getLastUserName());
         $this->assertSame(2, $mock->getUsersCount());
+        $this->assertSame(false, $mock->getSysMes());
+        $this->assertSame(false, $mock->getReadOnly());
 
         $im1 = new ResponseFixture1();
         $mock = $this->getMockForTrait(Data::class);
