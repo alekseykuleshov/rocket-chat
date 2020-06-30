@@ -31,6 +31,16 @@ trait Data
 
     private $username;
 
+    private $latest;
+
+    private $oldest;
+
+    private $inclusive;
+
+    private $unreads;
+
+    private $unreadNotLoaded;
+
     /**
      * Class constructor
      *
@@ -317,6 +327,86 @@ trait Data
     public function getDirectMessageId()
     {
         return $this->roomId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLatest()
+    {
+        return $this->latest;
+    }
+
+    /**
+     * @param string $latest
+     * @return $this
+     */
+    public function setLatest($latest)
+    {
+        if (is_string($latest)) {
+            $this->latest = $latest;
+        }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOldest()
+    {
+        return $this->oldest;
+    }
+
+    /**
+     * @param string $oldest
+     * @return $this
+     */
+    public function setOldest($oldest)
+    {
+        if (is_string($oldest)) {
+            $this->oldest = $oldest;
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInclusive()
+    {
+        return $this->inclusive;
+    }
+
+    /**
+     * @param bool $inclusive
+     * @return $this
+     */
+    public function setInclusive($inclusive)
+    {
+        if (is_bool($inclusive)) {
+            $this->inclusive = $inclusive;
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUnreads()
+    {
+        return $this->unreads;
+    }
+
+    /**
+     * @param bool $unreads
+     * @return $this
+     */
+    public function setUnreads($unreads)
+    {
+        if (is_bool($unreads)) {
+            $this->unreads = $unreads;
+        }
+        return $this;
     }
 
     /**

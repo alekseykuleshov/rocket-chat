@@ -248,6 +248,76 @@ class ImTest extends TestCase
         $imCounters->verifyInvokedOnce("updateOutOfResponse", $response);
     }
 
+    public function testHistoryFailed()
+    {
+        $stub = test::double('\ATDev\RocketChat\Ims\Im', [
+            'getDirectMessageId' => 'directMessageId123',
+            'getLatest' => '2019-09-30T13:42:25.304Z',
+            'getOldest' => '2019-05-30T13:42:25.304Z',
+            'getInclusive' => true,
+            'getUnreads' => true,
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+        $messageStub = test::double('\ATDev\RocketChat\Messages\Message', ['createOutOfResponse' => 'nothing']);
+
+        $im = new Im();
+        $result = $im->history();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['im.history', 'GET', ['roomId' => 'directMessageId123', 'offset' => 0, 'count' => 0, 'latest' => '2019-09-30T13:42:25.304Z', 'oldest' => '2019-05-30T13:42:25.304Z', 'inclusive' => true, 'unreads' => true]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $messageStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testHistorySuccess()
+    {
+        $message1 = new \ATDev\RocketChat\Tests\Messages\ResponseFixture1();
+        $message2 = new \ATDev\RocketChat\Tests\Messages\ResponseFixture2();
+        $response = (object) [
+            "messages" => [$message1, $message2],
+            "unreadNotLoaded" => 2
+        ];
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            'getDirectMessageId' => 'directMessageId123',
+            'getLatest' => '2019-09-30T13:42:25.304Z',
+            'getOldest' => '2019-05-30T13:42:25.304Z',
+            'getInclusive' => true,
+            'getUnreads' => true,
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $messageStub = test::double(
+            '\ATDev\RocketChat\Messages\Message',
+            ['createOutOfResponse' => function ($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Messages\Collection', ['add' => true]);
+
+        $im = new Im();
+        $result = $im->history(2, 10);
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Messages\Collection', $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['im.history', 'GET', ['roomId' => 'directMessageId123', 'offset' => 2, 'count' => 10, 'latest' => '2019-09-30T13:42:25.304Z', 'oldest' => '2019-05-30T13:42:25.304Z', 'inclusive' => true, 'unreads' => true]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$message1]);
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$message2]);
+        $collection->verifyInvokedOnce('add', [$message1]);
+        $collection->verifyInvokedOnce('add', [$message2]);
+        $this->assertSame(2, $result->getUnreadNotLoaded());
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

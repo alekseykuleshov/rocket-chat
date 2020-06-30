@@ -12,6 +12,8 @@ class Collection extends ArrayCollection
     private $count;
     /** @var int */
     private $offset;
+    /** @var int */
+    private $unreadNotLoaded;
 
     /**
      * @return int
@@ -69,6 +71,26 @@ class Collection extends ArrayCollection
     {
         if (is_int($offset)) {
             $this->offset = $offset;
+        }
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUnreadNotLoaded()
+    {
+        return $this->unreadNotLoaded;
+    }
+
+    /**
+     * @param $unreadNotLoaded
+     * @return $this
+     */
+    public function setUnreadNotLoaded($unreadNotLoaded)
+    {
+        if (is_int($unreadNotLoaded)) {
+            $this->unreadNotLoaded = $unreadNotLoaded;
         }
         return $this;
     }

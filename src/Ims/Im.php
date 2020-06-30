@@ -4,6 +4,7 @@ namespace ATDev\RocketChat\Ims;
 
 use ATDev\RocketChat\Common\Request;
 use ATDev\RocketChat\Ims\ImCounters;
+use ATDev\RocketChat\Messages\Message;
 
 /**
  * Im class
@@ -112,5 +113,43 @@ class Im extends Request
         }
 
         return (new ImCounters)->updateOutOfResponse(static::getResponse());
+    }
+
+    /**
+     * Retrieves the messages from a direct message
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Messages\Collection|bool
+     */
+    public function history($offset = 0, $count = 0)
+    {
+        static::send(
+            "im.history",
+            "GET",
+            [
+                "roomId" => $this->getDirectMessageId(), "offset" => $offset, "count" => $count,
+                "latest" => $this->getLatest(), "oldest" => $this->getOldest(), "inclusive" => $this->getInclusive(),
+                "unreads" => $this->getUnreads()
+            ]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $response = static::getResponse();
+        $messages = new \ATDev\RocketChat\Messages\Collection();
+
+        if (isset($response->messages)) {
+            foreach ($response->messages as $message) {
+                $messages->add(Message::createOutOfResponse($message));
+            }
+        }
+        if (isset($response->unreadNotLoaded)) {
+            $messages->setUnreadNotLoaded($response->unreadNotLoaded);
+        }
+
+        return $messages;
     }
 }

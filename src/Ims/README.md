@@ -17,20 +17,6 @@ if (!$listing) {
 ```php
 $im = new \ATDev\RocketChat\Ims\Im();
 $im->setUsername("[USERNAME]");
-
-$result = $im->create();
-
-if (!$result) {
-
-	// Log the error
-	$error = $im->getError();
-}
-```
-
-### CREATE MULTIPLE DIRECT MESSAGE SESSION
-
-```php
-$im = new \ATDev\RocketChat\Ims\Im();
 $im->setUsernames("username_first, username_second, username_third");
 
 $result = $im->create();
@@ -77,6 +63,24 @@ $im = new \ATDev\RocketChat\Ims\Im("[DIRECT MESSAGE ID]");
 $im->setUsername("[USERNAME]");
 
 $result = $im->counters();
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```
+
+### GET MESSAGES FROM A DIRECT MESSAGE
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im("[DIRECT MESSAGE ID]");
+$im->setLatest("2016-09-30T13:42:25.304Z");
+$im->setOldest("2016-05-30T13:42:25.304Z");
+$im->setInclusive(true);
+$im->setUnreads(true);
+
+$result = $im->history();
 
 if (!$result) {
 
