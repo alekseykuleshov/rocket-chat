@@ -518,6 +518,15 @@ trait Data
     }
 
     /**
+     * @param $directMessageId
+     * @return Data
+     */
+    public function setDirectMessageId($directMessageId)
+    {
+        return $this->setRoomId($directMessageId);
+    }
+
+    /**
      * Updates current im out of api response
      *
      * @param \stdClass $response

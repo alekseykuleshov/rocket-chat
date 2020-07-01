@@ -5,6 +5,7 @@ namespace ATDev\RocketChat\Ims;
 use ATDev\RocketChat\Common\Request;
 use ATDev\RocketChat\Ims\ImCounters;
 use ATDev\RocketChat\Messages\Message;
+use ATDev\RocketChat\Users\User;
 
 /**
  * Im class
@@ -153,6 +154,13 @@ class Im extends Request
         return $messages;
     }
 
+    /**
+     * Lists all of the direct messages in the server, requires the permission view-room-administration permission.
+     *
+     * @param int $offset
+     * @param int $count
+     * @return Collection|bool
+     */
     public function listEveryone($offset = 0, $count = 0)
     {
         static::send("im.list.everyone", "GET", ['offset' => $offset, 'count' => $count]);
@@ -178,5 +186,46 @@ class Im extends Request
         }
 
         return $ims;
+    }
+
+    /**
+     * Lists the users of participants of a direct message
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Users\Collection|bool
+     */
+    public function members($offset = 0, $count = 0)
+    {
+        static::send(
+            'im.members',
+            'GET',
+            [
+                'offset' => $offset, 'count' => $count,
+                'roomId' => $this->getDirectMessageId(), 'username' => $this->getUsername()
+            ]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $members = new \ATDev\RocketChat\Users\Collection();
+        $response = static::getResponse();
+
+        foreach ($response->members as $member) {
+            $members->add(User::createOutOfResponse($member));
+        }
+        if (isset($response->total)) {
+            $members->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $members->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $members->setOffset($response->offset);
+        }
+
+        return $members;
     }
 }

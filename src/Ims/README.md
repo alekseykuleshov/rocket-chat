@@ -102,3 +102,19 @@ if (!$result) {
 	$error = $im->getError();
 }
 ```
+
+### LISTS THE USERS OF PARTICIPANTS OF A DIRECT MESSAGE
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im();
+$im->setDirectMessageId("[DIRECT MESSAGE ID");
+$im->setUsername("[USERNAME]");
+
+$result = $im->members();
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```

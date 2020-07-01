@@ -373,6 +373,82 @@ class ImTest extends TestCase
         $this->assertSame(30, $result->getTotal());
     }
 
+    public function testMembersFailed()
+    {
+        $stub = test::double('\ATDev\RocketChat\Ims\Im', [
+            'getDirectMessageId' => 'directMessageId123',
+            'getUsername' => 'username123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+        $memberStub = test::double('\ATDev\RocketChat\Users\User', ['createOutOfResponse' => 'nothing']);
+
+        $im = new Im();
+        $result = $im->members();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            [
+                'im.members',
+                'GET',
+                ['offset' => 0, 'count' => 0, 'roomId' => 'directMessageId123', 'username' => 'username123']
+            ]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $memberStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testMembersSuccess()
+    {
+        $member1 = new \ATDev\RocketChat\Tests\Users\ResponseFixture1();
+        $member2 = new \ATDev\RocketChat\Tests\Users\ResponseFixture2();
+        $response = (object) [
+            "members" => [$member1, $member2],
+            "offset" => 2,
+            "count" => 10,
+            "total" => 30
+        ];
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            'getDirectMessageId' => 'directMessageId123',
+            'getUsername' => 'username123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $memberStub = test::double(
+            '\ATDev\RocketChat\Users\User',
+            ['createOutOfResponse' => function ($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
+
+        $im = new Im();
+        $result = $im->members(2, 10);
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            [
+                'im.members',
+                'GET',
+                ['offset' => 2, 'count' => 10, 'roomId' => 'directMessageId123', 'username' => 'username123']
+            ]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $memberStub->verifyInvokedOnce('createOutOfResponse', [$member1]);
+        $memberStub->verifyInvokedOnce('createOutOfResponse', [$member2]);
+        $collection->verifyInvokedOnce('add', [$member1]);
+        $collection->verifyInvokedOnce('add', [$member2]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

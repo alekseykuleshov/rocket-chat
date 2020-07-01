@@ -28,6 +28,7 @@ class ResponseFixture2 extends \stdClass
         $this->name = "John Doe";
         $this->statusConnection = "offline";
         $this->username = "jDoe";
+        $this->statusText = "some text";
     }
 }
 

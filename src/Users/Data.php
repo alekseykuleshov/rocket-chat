@@ -51,10 +51,12 @@ trait Data
     private $lastLogin;
     /** @var string User status connection of the api */
     private $statusConnection;
-    /** @var string User utc offset */
+    /** @var int|float User utc offset */
     private $utcOffset;
     /** @var string Avatar Url */
     private $avatarUrl;
+    /** @var string User status text */
+    private $statusText;
 
     /**
      * Creates user out of api response
@@ -480,7 +482,7 @@ trait Data
     /**
      * Gets user utc offset
      *
-     * @return float
+     * @return int|float
      */
     public function getUtcOffset()
     {
@@ -495,6 +497,16 @@ trait Data
     public function getAvatarUrl()
     {
         return $this->avatarUrl;
+    }
+
+    /**
+     * Gets user status text
+     *
+     * @return string
+     */
+    public function getStatusText()
+    {
+        return $this->statusText;
     }
 
     /**
@@ -560,6 +572,10 @@ trait Data
 
         if (isset($response->avatarUrl)) {
             $this->setAvatarUrl($response->avatarUrl);
+        }
+
+        if (isset($response->statusText)) {
+            $this->setStatusText($response->statusText);
         }
 
         return $this;
@@ -696,13 +712,13 @@ trait Data
     /**
      * Sets user utc offset
      *
-     * @param string $utcOffset
+     * @param int|float $utcOffset
      *
      * @return \ATDev\RocketChat\Users\Data
      */
     private function setUtcOffset($utcOffset)
     {
-        if (is_float($utcOffset)) {
+        if (is_int($utcOffset) || is_float($utcOffset)) {
             $this->utcOffset = $utcOffset;
         }
 
@@ -720,6 +736,22 @@ trait Data
     {
         if (is_string($avatarUrl)) {
             $this->avatarUrl = $avatarUrl;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets user status text
+     *
+     * @param $statusText
+     *
+     * @return $this
+     */
+    private function setStatusText($statusText)
+    {
+        if (is_string($statusText)) {
+            $this->statusText = $statusText;
         }
 
         return $this;

@@ -8,6 +8,28 @@ use ATDev\RocketChat\Ims\Data;
 
 class DataTest extends TestCase
 {
+    public function testConstructorNoRoomId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double(get_class($mock), ["setRoomId" => $mock]);
+
+        $stub->construct();
+
+        $stub->verifyNeverInvoked("setRoomId");
+    }
+
+    public function testConstructorWithRoomId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double(get_class($mock), ["setRoomId" => $mock]);
+
+        $stub->construct("asd123asd");
+
+        $stub->verifyInvokedOnce("setRoomId", ["asd123asd"]);
+    }
+
     public function testCreateOutOfResponse()
     {
         $mock = $this->getMockForTrait(Data::class);
