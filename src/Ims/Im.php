@@ -228,4 +228,35 @@ class Im extends Request
 
         return $members;
     }
+
+    public function messagesOthers($offset = 0, $count = 0)
+    {
+        static::send(
+            'im.messages.others',
+            'GET',
+            ['offset' => $offset, 'count' => $count, 'roomId' => $this->getDirectMessageId()]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $messages = new \ATDev\RocketChat\Messages\Collection();
+        $response = static::getResponse();
+
+        foreach ($response->messages as $message) {
+            $messages->add(Message::createOutOfResponse($message));
+        }
+        if (isset($response->total)) {
+            $messages->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $messages->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $messages->setOffset($response->offset);
+        }
+
+        return $messages;
+    }
 }

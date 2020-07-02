@@ -107,10 +107,24 @@ if (!$result) {
 
 ```php
 $im = new \ATDev\RocketChat\Ims\Im();
-$im->setDirectMessageId("[DIRECT MESSAGE ID");
+$im->setDirectMessageId("[DIRECT MESSAGE ID]");
 $im->setUsername("[USERNAME]");
 
 $result = $im->members();
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```
+
+### RETRIEVES THE MESSAGES FROM ANY DIRECT MESSAGE IN THE SERVER
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im("[DIRECT MESSAGE ID]");
+
+$result = $im->messagesOthers();
 
 if (!$result) {
 
