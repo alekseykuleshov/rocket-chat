@@ -148,3 +148,17 @@ if (!$result) {
 	$error = $im->getError();
 }
 ```
+
+### SETS THE TOPIC FOR THE DIRECT MESSAGE
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im("[DIRECT MESSAGE ID]");
+
+$result = $im->setTopic("[MESSAGE]");
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```

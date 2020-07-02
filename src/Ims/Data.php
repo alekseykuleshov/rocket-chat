@@ -213,7 +213,7 @@ trait Data
      * @param string $value
      * @return $this
      */
-    private function setTopic($value)
+    private function setTopicMessage($value)
     {
         if (is_string($value)) {
             $this->topic = $value;
@@ -559,7 +559,7 @@ trait Data
         }
 
         if (isset($response->topic)) {
-            $this->setTopic($response->topic);
+            $this->setTopicMessage($response->topic);
         }
 
         if (isset($response->usernames)) {

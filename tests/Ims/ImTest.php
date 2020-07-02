@@ -599,6 +599,48 @@ class ImTest extends TestCase
         $this->assertSame(30, $result->getTotal());
     }
 
+    public function testSetTopicFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "getDirectMessageId" => "directMessageId123",
+            "send" => true,
+            "getSuccess" => false,
+            "getResponse" => (object) [],
+            "updateOutOfResponse" => "nothing"
+        ]);
+
+        $im = new Im();
+        $result = $im->setTopic("some text");
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["im.setTopic", "POST", ["roomId" => "directMessageId123", "topic" => "some text"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testSetTopicSuccess()
+    {
+        $response = (object) ["topic" => "some text"];
+
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "getDirectMessageId" => "directMessageId123",
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "updateOutOfResponse" => "result"
+        ]);
+
+        $im = new Im();
+        $result = $im->setTopic("some text");
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["im.setTopic", "POST", ["roomId" => "directMessageId123", "topic" => "some text"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("updateOutOfResponse", $response);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

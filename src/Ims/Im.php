@@ -3,7 +3,6 @@
 namespace ATDev\RocketChat\Ims;
 
 use ATDev\RocketChat\Common\Request;
-use ATDev\RocketChat\Ims\ImCounters;
 use ATDev\RocketChat\Messages\Message;
 use ATDev\RocketChat\Users\User;
 
@@ -314,5 +313,21 @@ class Im extends Request
         }
 
         return $messages;
+    }
+
+    /**
+     * Sets the topic for the direct message
+     *
+     * @return $this|bool
+     */
+    public function setTopic($message)
+    {
+        static::send('im.setTopic', 'POST', ['roomId' => $this->getDirectMessageId(), 'topic' => $message]);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse());
     }
 }
