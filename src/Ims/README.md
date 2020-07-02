@@ -132,3 +132,19 @@ if (!$result) {
 	$error = $im->getError();
 }
 ```
+
+### LISTS ALL THE SPECIFIC DIRECT MESSAGE ON THE SERVER
+
+```php
+$im = new \ATDev\RocketChat\Ims\Im();
+$im->setDirectMessageId("[DIRECT MESSAGE ID]");
+$im->setUsername("[USERNAME]");
+
+$result = $im->messages();
+
+if (!$result) {
+
+	// Log the error
+	$error = $im->getError();
+}
+```

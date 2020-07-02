@@ -32,8 +32,10 @@ class Im extends Request
         $ims = new Collection();
         $response = static::getResponse();
 
-        foreach ($response->ims as $im) {
-            $ims->add(static::createOutOfResponse($im));
+        if (isset($response->ims)) {
+            foreach ($response->ims as $im) {
+                $ims->add(static::createOutOfResponse($im));
+            }
         }
         if (isset($response->total)) {
             $ims->setTotal($response->total);
@@ -171,9 +173,10 @@ class Im extends Request
 
         $ims = new Collection();
         $response = static::getResponse();
-
-        foreach ($response->ims as $im) {
-            $ims->add(static::createOutOfResponse($im));
+        if (isset($response->ims)) {
+            foreach ($response->ims as $im) {
+                $ims->add(static::createOutOfResponse($im));
+            }
         }
         if (isset($response->total)) {
             $ims->setTotal($response->total);
@@ -212,9 +215,10 @@ class Im extends Request
 
         $members = new \ATDev\RocketChat\Users\Collection();
         $response = static::getResponse();
-
-        foreach ($response->members as $member) {
-            $members->add(User::createOutOfResponse($member));
+        if (isset($response->members)) {
+            foreach ($response->members as $member) {
+                $members->add(User::createOutOfResponse($member));
+            }
         }
         if (isset($response->total)) {
             $members->setTotal($response->total);
@@ -229,6 +233,13 @@ class Im extends Request
         return $members;
     }
 
+    /**
+     * Retrieves the messages from any direct message in the server
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Messages\Collection|bool
+     */
     public function messagesOthers($offset = 0, $count = 0)
     {
         static::send(
@@ -244,8 +255,53 @@ class Im extends Request
         $messages = new \ATDev\RocketChat\Messages\Collection();
         $response = static::getResponse();
 
-        foreach ($response->messages as $message) {
-            $messages->add(Message::createOutOfResponse($message));
+        if (isset($response->messages)) {
+            foreach ($response->messages as $message) {
+                $messages->add(Message::createOutOfResponse($message));
+            }
+        }
+        if (isset($response->total)) {
+            $messages->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $messages->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $messages->setOffset($response->offset);
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Lists all of the specific direct message on the server
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Messages\Collection|bool
+     */
+    public function messages($offset = 0, $count = 0)
+    {
+        static::send(
+            'im.messages',
+            'GET',
+            [
+                'offset' => $offset, 'count' => $count,
+                'roomId' => $this->getDirectMessageId(), 'username' => $this->getUsername()
+            ]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $messages = new \ATDev\RocketChat\Messages\Collection();
+        $response = static::getResponse();
+
+        if (isset($response->messages)) {
+            foreach ($response->messages as $message) {
+                $messages->add(Message::createOutOfResponse($message));
+            }
         }
         if (isset($response->total)) {
             $messages->setTotal($response->total);
