@@ -330,4 +330,13 @@ class Im extends Request
 
         return $this->updateOutOfResponse(static::getResponse());
     }
+
+    /**
+     * @param int $offset
+     * @param int $count
+     */
+    public function files($offset = 0, $count = 0)
+    {
+        // TODO implement method
+    }
 }
