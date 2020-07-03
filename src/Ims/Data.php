@@ -82,10 +82,13 @@ trait Data
      */
     public function jsonSerialize()
     {
-        $imData = [
-            "username" => $this->username,
-            "usernames" => $this->usernames
-        ];
+        $imData = [];
+        if (!is_null($this->username)) {
+            $imData['username'] = $this->username;
+        }
+        if (!is_null($this->usernames)) {
+            $imData['usernames'] = $this->usernames;
+        }
 
         return $imData;
     }
