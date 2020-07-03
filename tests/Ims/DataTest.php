@@ -119,6 +119,17 @@ class DataTest extends TestCase
         $this->assertSame(2, $mock->getUsersCount());
     }
 
+    public function testJsonSerialize()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setUsername('username');
+        $this->assertSame(['username' => 'username'], $mock->jsonSerialize());
+
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setUsernames('graywolf337, graywolf338');
+        $this->assertSame(['usernames' => 'graywolf337, graywolf338'], $mock->jsonSerialize());
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
