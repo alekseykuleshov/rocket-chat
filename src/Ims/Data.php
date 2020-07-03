@@ -10,44 +10,58 @@ trait Data
 
     /** @var string Room id */
     private $roomId;
-    /** @var string */
-    private $updatedAt;
-    /** @var string */
-    private $t;
-    /** @var integer  */
-    private $msgs;
-    /** @var string */
-    private $ts;
-    /** @var string */
-    private $lm;
-    /** @var string */
-    private $topic;
-    /** @var string|array */
-    private $usernames;
-    /** @var string */
-    private $lastMessage;
-    /** @var string */
-    private $lastMessageId;
-    /** @var string */
-    private $lastUserId;
-    /** @var string */
-    private $lastUserName;
-    /** @var integer */
-    private $usersCount;
-    /** @var string */
+
+    /* Required properties for creation */
+    /**
+     * Required if usernames is not provided
+     * @var string The username to open a direct message session
+     */
     private $username;
-    /** @var string */
-    private $latest;
-    /** @var string */
-    private $oldest;
-    /** @var boolean */
-    private $inclusive;
-    /** @var boolean */
-    private $unreads;
-    /** @var boolean */
+    /**
+     * Required if username is not provided
+     * @var string|array List of usernames to open a multiple direct message session
+     */
+    private $usernames;
+
+    /* Readonly properties returned from api */
+    /** @var string Date-time */
+    private $updatedAt;
+    /** @var string Room type */
+    private $t;
+    /** @var integer Messages total */
+    private $msgs;
+    /** @var string Room timestamp */
+    private $ts;
+    /** @var string Last message timestamp */
+    private $lm;
+    /** @var string Last message */
+    private $lastMessage;
+    /** @var string Last message id */
+    private $lastMessageId;
+    /** @var string User id of last message */
+    private $lastUserId;
+    /** @var string Username of last message */
+    private $lastUserName;
+    /** @var integer Users total */
+    private $usersCount;
+    /** @var boolean Contains room sysMes */
     private $sysMes;
-    /** @var boolean */
+    /** @var boolean Indicates if room is read-only */
     private $readOnly;
+
+    /* Optional properties for history method */
+    /** @var string The end of time range of messages to retrieve */
+    private $latest;
+    /** @var string The start of the time range of messages to retrieve */
+    private $oldest;
+    /** @var boolean Whether messages which land on latest and oldest should be included */
+    private $inclusive;
+    /** @var boolean Whether the amount of unreads should be included */
+    private $unreads;
+
+    /* Required property for setTopic method */
+    /** @var string The direct message topic to set */
+    private $topic;
 
     /**
      * Class constructor
@@ -109,7 +123,7 @@ trait Data
      */
     public function setRoomId($roomId)
     {
-        if (!(is_null($roomId) || is_string($roomId))) {
+        if (!is_string($roomId)) {
             $this->setDataError("Invalid room Id");
         } else {
             $this->roomId = $roomId;
@@ -351,7 +365,9 @@ trait Data
      */
     public function setLatest($latest)
     {
-        if (is_string($latest)) {
+        if (!is_string($latest)) {
+            $this->setDataError("Invalid latest value");
+        } else {
             $this->latest = $latest;
         }
         return $this;
@@ -371,7 +387,9 @@ trait Data
      */
     public function setOldest($oldest)
     {
-        if (is_string($oldest)) {
+        if (!is_string($oldest)) {
+            $this->setDataError("Invalid oldest value");
+        } else {
             $this->oldest = $oldest;
         }
         return $this;
@@ -391,7 +409,9 @@ trait Data
      */
     public function setInclusive($inclusive)
     {
-        if (is_bool($inclusive)) {
+        if (!is_bool($inclusive)) {
+            $this->setDataError("Invalid inclusive value");
+        } else {
             $this->inclusive = $inclusive;
         }
         return $this;
@@ -411,7 +431,9 @@ trait Data
      */
     public function setUnreads($unreads)
     {
-        if (is_bool($unreads)) {
+        if (!is_bool($unreads)) {
+            $this->setDataError("Invalid unreads value");
+        } else {
             $this->unreads = $unreads;
         }
         return $this;

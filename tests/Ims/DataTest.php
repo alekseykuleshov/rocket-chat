@@ -63,10 +63,6 @@ class DataTest extends TestCase
         $mock->setRoomId("123");
         $this->assertSame("123", $mock->getRoomId());
 
-        // And null value...
-        $mock->setRoomId(null);
-        $this->assertSame(null, $mock->getRoomId());
-
         $stub->verifyNeverInvoked("setDataError");
     }
 
