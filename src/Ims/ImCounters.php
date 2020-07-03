@@ -6,5 +6,4 @@ use ATDev\RocketChat\Common\Counters;
 
 class ImCounters extends Counters
 {
-
 }

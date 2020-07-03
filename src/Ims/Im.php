@@ -114,7 +114,7 @@ class Im extends Request
             return false;
         }
 
-        return (new ImCounters)->updateOutOfResponse(static::getResponse());
+        return (new ImCounters())->updateOutOfResponse(static::getResponse());
     }
 
     /**

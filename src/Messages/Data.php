@@ -408,7 +408,7 @@ trait Data
     private function setDataError($error)
     {
         static::setError($error);
-		
+
         return $this;
     }
 }
