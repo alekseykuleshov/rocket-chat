@@ -199,7 +199,7 @@ class ImTest extends TestCase
             "getResponse" => (object) []
         ]);
 
-        $imCounters = test::double("\ATDev\RocketChat\Ims\ImCounters", [
+        $counters = test::double("\ATDev\RocketChat\Ims\Counters", [
             "updateOutOfResponse" => "result"
         ]);
 
@@ -210,7 +210,7 @@ class ImTest extends TestCase
         $stub->verifyInvokedOnce("send", ["im.counters", "GET", ["roomId" => "directMessageId123", "username" => "graywolf337"]]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyNeverInvoked("getResponse");
-        $imCounters->verifyNeverInvoked("updateOutOfResponse");
+        $counters->verifyNeverInvoked("updateOutOfResponse");
     }
 
     public function testCountersSuccess()
@@ -234,7 +234,7 @@ class ImTest extends TestCase
             "getResponse" => $response
         ]);
 
-        $imCounters = test::double("\ATDev\RocketChat\Ims\ImCounters", [
+        $counters = test::double("\ATDev\RocketChat\Ims\Counters", [
             "updateOutOfResponse" => "result"
         ]);
 
@@ -245,7 +245,7 @@ class ImTest extends TestCase
         $stub->verifyInvokedOnce("send", ["im.counters", "GET", ["roomId" => "directMessageId123", "username" => "graywolf337"]]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
-        $imCounters->verifyInvokedOnce("updateOutOfResponse", $response);
+        $counters->verifyInvokedOnce("updateOutOfResponse", $response);
     }
 
     public function testHistoryFailed()

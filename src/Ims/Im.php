@@ -100,7 +100,7 @@ class Im extends Request
     /**
      * Gets counters of direct messages
      *
-     * @return \ATDev\RocketChat\Ims\ImCounters|boolean
+     * @return \ATDev\RocketChat\Ims\Counters|boolean
      */
     public function counters()
     {
@@ -114,7 +114,7 @@ class Im extends Request
             return false;
         }
 
-        return (new ImCounters())->updateOutOfResponse(static::getResponse());
+        return (new Counters())->updateOutOfResponse(static::getResponse());
     }
 
     /**
