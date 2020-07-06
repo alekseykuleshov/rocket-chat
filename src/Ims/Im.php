@@ -124,16 +124,19 @@ class Im extends Request
      * @param int $count
      * @return \ATDev\RocketChat\Messages\Collection|bool
      */
-    public function history($offset = 0, $count = 0)
+    public function history($options = [])
     {
+        $options = array_replace([
+            'offset' => 0,
+            'count' => 0
+        ], $options);
+
+        $options['roomId'] = $this->getDirectMessageId();
+
         static::send(
-            "im.history",
-            "GET",
-            [
-                "roomId" => $this->getDirectMessageId(), "offset" => $offset, "count" => $count,
-                "latest" => $this->getLatest(), "oldest" => $this->getOldest(), "inclusive" => $this->getInclusive(),
-                "unreads" => $this->getUnreads()
-            ]
+            'im.history',
+            'GET',
+            $options
         );
 
         if (!static::getSuccess()) {

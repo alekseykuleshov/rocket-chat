@@ -252,10 +252,6 @@ class ImTest extends TestCase
     {
         $stub = test::double('\ATDev\RocketChat\Ims\Im', [
             'getDirectMessageId' => 'directMessageId123',
-            'getLatest' => '2019-09-30T13:42:25.304Z',
-            'getOldest' => '2019-05-30T13:42:25.304Z',
-            'getInclusive' => true,
-            'getUnreads' => true,
             'send' => true,
             'getSuccess' => false,
             'getResponse' => (object) []
@@ -268,7 +264,7 @@ class ImTest extends TestCase
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce(
             'send',
-            ['im.history', 'GET', ['roomId' => 'directMessageId123', 'offset' => 0, 'count' => 0, 'latest' => '2019-09-30T13:42:25.304Z', 'oldest' => '2019-05-30T13:42:25.304Z', 'inclusive' => true, 'unreads' => true]]
+            ['im.history', 'GET', ['offset' => 0, 'count' => 0, 'roomId' => 'directMessageId123']]
         );
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyNeverInvoked('getResponse');
@@ -285,10 +281,6 @@ class ImTest extends TestCase
         ];
         $stub = test::double("\ATDev\RocketChat\Ims\Im", [
             'getDirectMessageId' => 'directMessageId123',
-            'getLatest' => '2019-09-30T13:42:25.304Z',
-            'getOldest' => '2019-05-30T13:42:25.304Z',
-            'getInclusive' => true,
-            'getUnreads' => true,
             'send' => true,
             'getSuccess' => true,
             'getResponse' => $response
@@ -302,12 +294,23 @@ class ImTest extends TestCase
         $collection = test::double('\ATDev\RocketChat\Messages\Collection', ['add' => true]);
 
         $im = new Im();
-        $result = $im->history(2, 10);
+        $result = $im->history([
+            'offset' => 2, 'count' => 10, 'latest' => '2019-09-30T13:42:25.304Z',
+            'oldest' => '2019-05-30T13:42:25.304Z', 'inclusive' => true, 'unreads' => true
+        ]);
 
         $this->assertInstanceOf('\ATDev\RocketChat\Messages\Collection', $result);
         $stub->verifyInvokedOnce(
             'send',
-            ['im.history', 'GET', ['roomId' => 'directMessageId123', 'offset' => 2, 'count' => 10, 'latest' => '2019-09-30T13:42:25.304Z', 'oldest' => '2019-05-30T13:42:25.304Z', 'inclusive' => true, 'unreads' => true]]
+            [
+                'im.history',
+                'GET',
+                [
+                    'offset' => 2, 'count' => 10, 'latest' => '2019-09-30T13:42:25.304Z',
+                    'oldest' => '2019-05-30T13:42:25.304Z', 'inclusive' => true, 'unreads' => true,
+                    'roomId' => 'directMessageId123'
+                ]
+            ]
         );
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce('getResponse');

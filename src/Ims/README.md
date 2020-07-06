@@ -75,12 +75,13 @@ if (!$result) {
 
 ```php
 $im = new \ATDev\RocketChat\Ims\Im("[DIRECT MESSAGE ID]");
-$im->setLatest("2016-09-30T13:42:25.304Z");
-$im->setOldest("2016-05-30T13:42:25.304Z");
-$im->setInclusive(true);
-$im->setUnreads(true);
 
-$result = $im->history();
+$result = $im->history([
+    "latest" => "2016-09-30T13:42:25.304Z",
+    "oldest" => "2016-05-30T13:42:25.304Z",
+    "inclusive" => true,
+    "unreads" => true
+]);
 
 if (!$result) {
 
