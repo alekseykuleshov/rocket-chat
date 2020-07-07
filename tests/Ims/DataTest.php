@@ -66,6 +66,58 @@ class DataTest extends TestCase
         $stub->verifyNeverInvoked("setDataError");
     }
 
+    public function testInvalidUsernames()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setUsernames(123);
+        $this->assertNull($mock->getUsernames());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid usernames"]);
+    }
+
+    public function testValidUsernames()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setUsernames(["graywolf336", "graywolf337"]);
+        $this->assertSame(["graywolf336", "graywolf337"], $mock->getUsernames());
+
+        // And string value...
+        $mock->setUsernames("graywolf336, graywolf337");
+        $this->assertSame("graywolf336, graywolf337", $mock->getUsernames());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testInvalidUsername()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setUsername(123);
+        $this->assertNull($mock->getUsername());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid username"]);
+    }
+
+    public function testValidUsername()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setUsername("graywolf336");
+        $this->assertSame("graywolf336", $mock->getUsername());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
     public function testUpdateOutOfResponse()
     {
         $imFull = new ResponseFixtureFull();
