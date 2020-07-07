@@ -356,7 +356,7 @@ trait Data
      * @param bool $sysMes
      * @return $this
      */
-    public function setSysMes($sysMes)
+    private function setSysMes($sysMes)
     {
         if (is_bool($sysMes)) {
             $this->sysMes = $sysMes;
@@ -376,7 +376,7 @@ trait Data
      * @param bool $readOnly
      * @return $this
      */
-    public function setReadOnly($readOnly)
+    private function setReadOnly($readOnly)
     {
         if (is_bool($readOnly)) {
             $this->readOnly = $readOnly;
@@ -396,7 +396,7 @@ trait Data
      * @param string $lastMessageId
      * @return $this
      */
-    public function setLastMessageId($lastMessageId)
+    private function setLastMessageId($lastMessageId)
     {
         if (is_string($lastMessageId)) {
             $this->lastMessageId = $lastMessageId;
@@ -416,7 +416,7 @@ trait Data
      * @param string $lastUserId
      * @return $this
      */
-    public function setLastUserId($lastUserId)
+    private function setLastUserId($lastUserId)
     {
         if (is_string($lastUserId)) {
             $this->lastUserId = $lastUserId;
@@ -436,7 +436,7 @@ trait Data
      * @param string $lastUserName
      * @return $this
      */
-    public function setLastUserName($lastUserName)
+    private function setLastUserName($lastUserName)
     {
         if (is_string($lastUserName)) {
             $this->lastUserName = $lastUserName;
