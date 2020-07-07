@@ -93,9 +93,7 @@ if (!$result) {
 ### LISTS ALL THE DIRECT MESSAGES ON THE SERVER
 
 ```php
-$im = new \ATDev\RocketChat\Ims\Im();
-
-$result = $im->listEveryone();
+$im = \ATDev\RocketChat\Ims\Im::listEveryone();
 
 if (!$result) {
 

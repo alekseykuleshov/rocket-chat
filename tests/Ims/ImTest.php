@@ -330,8 +330,7 @@ class ImTest extends TestCase
             "createOutOfResponse" => "nothing"
         ]);
 
-        $im = new Im();
-        $result = $im->listEveryone();
+        $result = Im::listEveryone();
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce("send", ["im.list.everyone", "GET", ['offset' => 0, 'count' => 0]]);
@@ -360,8 +359,7 @@ class ImTest extends TestCase
 
         $collection = test::double("\ATDev\RocketChat\Ims\Collection", ["add" => true]);
 
-        $im = new Im();
-        $result = $im->listEveryone(2, 10);
+        $result = Im::listEveryone(2, 10);
 
         $this->assertInstanceOf("\ATDev\RocketChat\Ims\Collection", $result);
         $stub->verifyInvokedOnce("send", ["im.list.everyone", "GET", ["offset" => 2, "count" => 10]]);

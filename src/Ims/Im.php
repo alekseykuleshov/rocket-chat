@@ -165,7 +165,7 @@ class Im extends Request
      * @param int $count
      * @return Collection|bool
      */
-    public function listEveryone($offset = 0, $count = 0)
+    public static function listEveryone($offset = 0, $count = 0)
     {
         static::send("im.list.everyone", "GET", ['offset' => $offset, 'count' => $count]);
 
