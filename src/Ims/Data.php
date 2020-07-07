@@ -49,16 +49,6 @@ trait Data
     /** @var boolean Indicates if room is read-only */
     private $readOnly;
 
-    /* Optional properties for history method */
-    /** @var string The end of time range of messages to retrieve */
-    private $latest;
-    /** @var string The start of the time range of messages to retrieve */
-    private $oldest;
-    /** @var boolean Whether messages which land on latest and oldest should be included */
-    private $inclusive;
-    /** @var boolean Whether the amount of unreads should be included */
-    private $unreads;
-
     /* Required property for setTopic method */
     /** @var string The direct message topic to set */
     private $topic;
