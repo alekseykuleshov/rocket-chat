@@ -1,4 +1,4 @@
-You have to be [logged in](../..) and have relevant permissions.
+You have to be [logged in](https://github.com/alekseykuleshov/rocket-chat#login) and have relevant permissions.
 
 ### GROUP LISTING
 
