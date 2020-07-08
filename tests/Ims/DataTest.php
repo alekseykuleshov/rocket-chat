@@ -30,6 +30,17 @@ class DataTest extends TestCase
         $stub->verifyInvokedOnce("setRoomId", ["asd123asd"]);
     }
 
+    public function testJsonSerialize()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setUsername('username');
+        $this->assertSame(['username' => 'username'], $mock->jsonSerialize());
+
+        $mock = $this->getMockForTrait(Data::class);
+        $mock->setUsernames('graywolf337, graywolf338');
+        $this->assertSame(['usernames' => 'graywolf337, graywolf338'], $mock->jsonSerialize());
+    }
+
     public function testCreateOutOfResponse()
     {
         $mock = $this->getMockForTrait(Data::class);
@@ -64,6 +75,48 @@ class DataTest extends TestCase
         $this->assertSame("123", $mock->getRoomId());
 
         $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testGetters()
+    {
+        $imFull = new ResponseFixtureFull();
+
+        $stub = $this->getMockBuilder(Data::class)
+                     ->setMethods(
+                         [
+                             'getUpdatedAt', 'getT', 'getMsgs', 'getLm', 'getTopic', 'getTs', 'getLastMessage',
+                             'getUsersCount', 'getSysMes', 'getReadOnly', 'getLastMessageId',
+                             'getLastUserId', 'getLastUserName'
+                         ])
+                     ->getMockForTrait();
+
+        $stub->method('getUpdatedAt')->willReturn($imFull->_updatedAt);
+        $stub->method('getT')->willReturn($imFull->t);
+        $stub->method('getMsgs')->willReturn($imFull->msgs);
+        $stub->method('getLm')->willReturn($imFull->lm);
+        $stub->method('getTopic')->willReturn($imFull->topic);
+        $stub->method('getTs')->willReturn($imFull->ts);
+        $stub->method('getLastMessage')->willReturn($imFull->lastMessage->msg);
+        $stub->method('getUsersCount')->willReturn($imFull->usersCount);
+        $stub->method('getSysMes')->willReturn($imFull->sysMes);
+        $stub->method('getReadOnly')->willReturn($imFull->ro);
+        $stub->method('getLastMessageId')->willReturn($imFull->lastMessage->_id);
+        $stub->method('getLastUserId')->willReturn($imFull->lastMessage->u->_id);
+        $stub->method('getLastUserName')->willReturn($imFull->lastMessage->u->username);
+
+        $this->assertSame('2020-06-22T12:00:17.106Z', $stub->getUpdatedAt());
+        $this->assertSame('d', $stub->getT());
+        $this->assertSame(7, $stub->getMsgs());
+        $this->assertSame('2020-06-23T15:22:46.020Z', $stub->getLm());
+        $this->assertSame('Discuss all of the testing', $stub->getTopic());
+        $this->assertSame('2020-06-22T09:21:24.884Z', $stub->getTs());
+        $this->assertSame('Last message', $stub->getLastMessage());
+        $this->assertSame(2, $stub->getUsersCount());
+        $this->assertSame(false, $stub->getSysMes());
+        $this->assertSame(false, $stub->getReadOnly());
+        $this->assertSame('lastMessageId123', $stub->getLastMessageId());
+        $this->assertSame('lastUserId123', $stub->getLastUserId());
+        $this->assertSame('lastUserName123', $stub->getLastUserName());
     }
 
     public function testInvalidUsernames()
@@ -169,17 +222,6 @@ class DataTest extends TestCase
         $this->assertSame("Last message", $mock->getLastMessage());
         $this->assertNull($mock->getTs());
         $this->assertSame(2, $mock->getUsersCount());
-    }
-
-    public function testJsonSerialize()
-    {
-        $mock = $this->getMockForTrait(Data::class);
-        $mock->setUsername('username');
-        $this->assertSame(['username' => 'username'], $mock->jsonSerialize());
-
-        $mock = $this->getMockForTrait(Data::class);
-        $mock->setUsernames('graywolf337, graywolf338');
-        $this->assertSame(['usernames' => 'graywolf337, graywolf338'], $mock->jsonSerialize());
     }
 
     protected function tearDown(): void

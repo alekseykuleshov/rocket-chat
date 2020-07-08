@@ -341,7 +341,7 @@ trait Data
      */
     public function getDirectMessageId()
     {
-        return $this->roomId;
+        return $this->getRoomId();
     }
 
     /**
