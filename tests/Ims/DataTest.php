@@ -81,7 +81,7 @@ class DataTest extends TestCase
     {
         $imFull = new ResponseFixtureFull();
 
-        $stub = $this->getMockBuilder(Data::class)
+        $mock = $this->getMockBuilder(Data::class)
                      ->setMethods(
                          [
                              'getUpdatedAt', 'getT', 'getMsgs', 'getLm', 'getTopic', 'getTs', 'getLastMessage',
@@ -90,33 +90,33 @@ class DataTest extends TestCase
                          ])
                      ->getMockForTrait();
 
-        $stub->method('getUpdatedAt')->willReturn($imFull->_updatedAt);
-        $stub->method('getT')->willReturn($imFull->t);
-        $stub->method('getMsgs')->willReturn($imFull->msgs);
-        $stub->method('getLm')->willReturn($imFull->lm);
-        $stub->method('getTopic')->willReturn($imFull->topic);
-        $stub->method('getTs')->willReturn($imFull->ts);
-        $stub->method('getLastMessage')->willReturn($imFull->lastMessage->msg);
-        $stub->method('getUsersCount')->willReturn($imFull->usersCount);
-        $stub->method('getSysMes')->willReturn($imFull->sysMes);
-        $stub->method('getReadOnly')->willReturn($imFull->ro);
-        $stub->method('getLastMessageId')->willReturn($imFull->lastMessage->_id);
-        $stub->method('getLastUserId')->willReturn($imFull->lastMessage->u->_id);
-        $stub->method('getLastUserName')->willReturn($imFull->lastMessage->u->username);
+        $mock->method('getUpdatedAt')->willReturn($imFull->_updatedAt);
+        $mock->method('getT')->willReturn($imFull->t);
+        $mock->method('getMsgs')->willReturn($imFull->msgs);
+        $mock->method('getLm')->willReturn($imFull->lm);
+        $mock->method('getTopic')->willReturn($imFull->topic);
+        $mock->method('getTs')->willReturn($imFull->ts);
+        $mock->method('getLastMessage')->willReturn($imFull->lastMessage->msg);
+        $mock->method('getUsersCount')->willReturn($imFull->usersCount);
+        $mock->method('getSysMes')->willReturn($imFull->sysMes);
+        $mock->method('getReadOnly')->willReturn($imFull->ro);
+        $mock->method('getLastMessageId')->willReturn($imFull->lastMessage->_id);
+        $mock->method('getLastUserId')->willReturn($imFull->lastMessage->u->_id);
+        $mock->method('getLastUserName')->willReturn($imFull->lastMessage->u->username);
 
-        $this->assertSame('2020-06-22T12:00:17.106Z', $stub->getUpdatedAt());
-        $this->assertSame('d', $stub->getT());
-        $this->assertSame(7, $stub->getMsgs());
-        $this->assertSame('2020-06-23T15:22:46.020Z', $stub->getLm());
-        $this->assertSame('Discuss all of the testing', $stub->getTopic());
-        $this->assertSame('2020-06-22T09:21:24.884Z', $stub->getTs());
-        $this->assertSame('Last message', $stub->getLastMessage());
-        $this->assertSame(2, $stub->getUsersCount());
-        $this->assertSame(false, $stub->getSysMes());
-        $this->assertSame(false, $stub->getReadOnly());
-        $this->assertSame('lastMessageId123', $stub->getLastMessageId());
-        $this->assertSame('lastUserId123', $stub->getLastUserId());
-        $this->assertSame('lastUserName123', $stub->getLastUserName());
+        $this->assertSame('2020-06-22T12:00:17.106Z', $mock->getUpdatedAt());
+        $this->assertSame('d', $mock->getT());
+        $this->assertSame(7, $mock->getMsgs());
+        $this->assertSame('2020-06-23T15:22:46.020Z', $mock->getLm());
+        $this->assertSame('Discuss all of the testing', $mock->getTopic());
+        $this->assertSame('2020-06-22T09:21:24.884Z', $mock->getTs());
+        $this->assertSame('Last message', $mock->getLastMessage());
+        $this->assertSame(2, $mock->getUsersCount());
+        $this->assertSame(false, $mock->getSysMes());
+        $this->assertSame(false, $mock->getReadOnly());
+        $this->assertSame('lastMessageId123', $mock->getLastMessageId());
+        $this->assertSame('lastUserId123', $mock->getLastUserId());
+        $this->assertSame('lastUserName123', $mock->getLastUserName());
     }
 
     public function testInvalidUsernames()
@@ -169,6 +169,33 @@ class DataTest extends TestCase
         $this->assertSame("graywolf336", $mock->getUsername());
 
         $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testGetDirectMessageId()
+    {
+        $mock = $this->getMockBuilder(Data::class)
+            ->setMethods(["getRoomId"])
+            ->getMockForTrait();
+
+        $mock->expects($this->once())
+            ->method('getRoomId')
+            ->will($this->returnValue('directMessageId123'));
+
+        $this->assertSame('directMessageId123', $mock->getDirectMessageId());
+    }
+
+    public function testSetDirectMessageId()
+    {
+        $mock = $this->getMockBuilder(Data::class)
+            ->setMethods(["setRoomId"])
+            ->getMockForTrait();
+
+        $mock->expects($this->once())
+            ->method('setRoomId')
+            ->with($this->equalTo("directMessageId123"))
+            ->will($this->returnValue('directMessageId123'));
+
+        $mock->setDirectMessageId('directMessageId123');
     }
 
     public function testUpdateOutOfResponse()
