@@ -82,8 +82,7 @@ class DataTest extends TestCase
         $imFull = new ResponseFixtureFull();
 
         $mock = $this->getMockBuilder(Data::class)
-                     ->setMethods(
-                         [
+                     ->setMethods([
                              'getUpdatedAt', 'getT', 'getMsgs', 'getLm', 'getTopic', 'getTs', 'getLastMessage',
                              'getUsersCount', 'getSysMes', 'getReadOnly', 'getLastMessageId',
                              'getLastUserId', 'getLastUserName'
@@ -112,8 +111,8 @@ class DataTest extends TestCase
         $this->assertSame('2020-06-22T09:21:24.884Z', $mock->getTs());
         $this->assertSame('Last message', $mock->getLastMessage());
         $this->assertSame(2, $mock->getUsersCount());
-        $this->assertSame(false, $mock->getSysMes());
-        $this->assertSame(false, $mock->getReadOnly());
+        $this->assertFalse($mock->getSysMes());
+        $this->assertFalse($mock->getReadOnly());
         $this->assertSame('lastMessageId123', $mock->getLastMessageId());
         $this->assertSame('lastUserId123', $mock->getLastUserId());
         $this->assertSame('lastUserName123', $mock->getLastUserName());
