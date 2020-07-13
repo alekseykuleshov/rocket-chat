@@ -58,9 +58,11 @@ trait Data
      * @param int $days
      * @return $this
      */
-    private function setDays($days)
+    public function setDays($days)
     {
-        if (is_int($days)) {
+        if (!is_int($days)) {
+            $this->setDataError("Invalid days value");
+        } else {
             $this->days = $days;
         }
 
@@ -79,9 +81,11 @@ trait Data
      * @param int $maxUses
      * @return $this
      */
-    private function setMaxUses($maxUses)
+    public function setMaxUses($maxUses)
     {
-        if (is_int($maxUses)) {
+        if (!is_int($maxUses)) {
+            $this->setDataError("Invalid maxUses value");
+        } else {
             $this->maxUses = $maxUses;
         }
 
@@ -100,9 +104,11 @@ trait Data
      * @param string $roomId
      * @return $this
      */
-    private function setRoomId($roomId)
+    public function setRoomId($roomId)
     {
-        if (is_string($roomId)) {
+        if (!is_string($roomId)) {
+            $this->setDataError("Invalid room Id");
+        } else {
             $this->roomId = $roomId;
         }
 
@@ -258,6 +264,17 @@ trait Data
         if (isset($response->_updatedAt)) {
             $this->setUpdatedAt($response->_updatedAt);
         }
+
+        return $this;
+    }
+
+    /**
+     * @param string $error
+     * @return Data $this
+     */
+    private function setDataError($error)
+    {
+        static::setError($error);
 
         return $this;
     }

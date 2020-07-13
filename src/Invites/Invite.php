@@ -32,4 +32,24 @@ class Invite extends Request
 
         return $invites;
     }
+
+    /**
+     * Creates or return an existing invite with the specified parameters
+     *
+     * @return Invite|bool
+     */
+    public function findOrCreateInvite()
+    {
+        static::send(
+            "findOrCreateInvite",
+            "POST",
+            ["rid" => $this->getRoomId(), "days" => $this->getDays(), "maxUses" => $this->getMaxUses()]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this::updateOutOfResponse(static::getResponse());
+    }
 }

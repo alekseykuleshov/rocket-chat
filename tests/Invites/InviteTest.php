@@ -56,6 +56,57 @@ class InviteTest extends TestCase
         $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Invites\ResponseFixture2"]);
     }
 
+    public function testFindOrCreateInviteFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Invites\Invite", [
+            'getRoomId' => 'roomId123',
+            'getDays' => 0,
+            'getMaxUses' => 1,
+            "send" => true,
+            "getSuccess" => false,
+            "getResponse" => (object) [],
+            "updateOutOfResponse" => "nothing"
+        ]);
+
+        $invite = new Invite();
+        $result = $invite->findOrCreateInvite();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", [
+            "findOrCreateInvite",
+            "POST",
+            ['rid' => 'roomId123', 'days' => 0, 'maxUses' => 1]
+        ]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testFindOrCreateInviteSuccess()
+    {
+        $response = (object) ["something" => "here"];
+        $stub = test::double('ATDev\RocketChat\Invites\Invite', [
+            'getRoomId' => 'roomId123',
+            'getDays' => 0,
+            'getMaxUses' => 1,
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response,
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $invite = new Invite();
+        $result = $invite->findOrCreateInvite();
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', [
+            'findOrCreateInvite', 'POST', ['rid' => 'roomId123', 'days' => 0, 'maxUses' => 1]
+        ]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', $response);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

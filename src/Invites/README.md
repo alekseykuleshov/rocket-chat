@@ -11,3 +11,18 @@ if (!$listing) {
 	$error = \ATDev\RocketChat\Invites\Invite::getError();
 }
 ```
+
+### FIND OR CREATE INVITE
+
+```php
+$invite = new \ATDev\RocketChat\Invites\Invite();
+$invite->setRoomId("[ROOM ID]");
+$invite->setDays(0);
+$invite->setMaxUses(1);
+$result = $invite->findOrCreateInvite();
+
+if (!$result) {
+	// Log the error
+	$error = $invite->getError();
+}
+```
