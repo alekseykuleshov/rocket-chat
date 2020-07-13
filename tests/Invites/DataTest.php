@@ -9,6 +9,22 @@ use ATDev\RocketChat\Invites\Data;
 
 class DataTest extends TestCase
 {
+    public function testConstructorNoInviteId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+        $stub = test::double(get_class($mock), ['setInviteId' => $mock]);
+        $stub->construct();
+        $stub->verifyNeverInvoked('setInviteId');
+    }
+
+    public function testConstructorWithInviteId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+        $stub = test::double(get_class($mock), ['setInviteId' => $mock]);
+        $stub->construct('invite_id');
+        $stub->verifyInvokedOnce('setInviteId', ['invite_id']);
+    }
+
     public function testUpdateOutOfResponse()
     {
         $inviteFull = new ResponseFixtureFull();
