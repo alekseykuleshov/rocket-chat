@@ -25,6 +25,13 @@ trait Data
 
     private $updatedAt;
 
+    public function __construct($inviteId = null)
+    {
+        if (!empty($inviteId)) {
+            $this->setInviteId($inviteId);
+        }
+    }
+
     /**
      * @return string
      */
@@ -39,7 +46,9 @@ trait Data
      */
     private function setInviteId($inviteId)
     {
-        if (is_string($inviteId)) {
+        if (!(is_null($inviteId) || is_string($inviteId))) {
+            $this->setDataError("Invalid invite Id");
+        } else {
             $this->inviteId = $inviteId;
         }
 

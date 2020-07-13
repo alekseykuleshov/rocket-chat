@@ -52,4 +52,20 @@ class Invite extends Request
 
         return $this::updateOutOfResponse(static::getResponse());
     }
+
+    /**
+     * Removes an invite from the server
+     *
+     * @return Invite|bool
+     */
+    public function removeInvite()
+    {
+        static::send("removeInvite/{$this->getInviteId()}", "DELETE");
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->setInviteId(null);
+    }
 }

@@ -26,3 +26,17 @@ if (!$result) {
 	$error = $invite->getError();
 }
 ```
+
+### REMOVE INVITE
+
+```php
+$invite = new \ATDev\RocketChat\Invites\Invite("[INVITE ID]");
+
+$result = $invite->removeInvite();
+
+if (!$result) {
+
+    // Log the error
+    $error = $invite->getError();
+}
+```

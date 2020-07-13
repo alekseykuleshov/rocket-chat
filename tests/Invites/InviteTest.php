@@ -107,6 +107,42 @@ class InviteTest extends TestCase
         $stub->verifyInvokedOnce('updateOutOfResponse', $response);
     }
 
+    public function testRemoveInviteFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Invites\Invite", [
+            "getInviteId" => "inviteId123",
+            "send" => true,
+            "getSuccess" => false,
+            "setInviteId" => "nothing"
+        ]);
+
+        $invite = new Invite();
+        $result = $invite->removeInvite();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["removeInvite/inviteId123", "DELETE"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("setChannelId");
+    }
+
+    public function testRemoveInviteSuccess()
+    {
+        $stub = test::double("\ATDev\RocketChat\Invites\Invite", [
+            "getInviteId" => "inviteId123",
+            "send" => true,
+            "getSuccess" => true,
+            "setInviteId" => "result"
+        ]);
+
+        $invite = new Invite();
+        $result = $invite->removeInvite();
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["removeInvite/inviteId123", "DELETE"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("setInviteId", [null]);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
