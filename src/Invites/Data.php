@@ -7,26 +7,35 @@ namespace ATDev\RocketChat\Invites;
  */
 trait Data
 {
+    /** @var string Invite id */
     private $inviteId;
 
+    /* Required properties for creation */
+    /** @var integer The number of days that the invite will be valid for */
     private $days;
-
+    /** @var integer The number of times that the invite can be used */
     private $maxUses;
 
+    /* Readonly properties returned from api */
+    /** @var string Room id */
     private $roomId;
-
+    /** @var string User id */
     private $userId;
-
+    /** @var string Date-time */
     private $createdAt;
-
+    /** @var string Date-time */
     private $expires;
-
+    /** @var integer */
     private $uses;
-
+    /** @var string Date-time */
     private $updatedAt;
-
+    /** @var boolean */
     private $valid;
 
+    /**
+     * Class constructor
+     * @param string $inviteId
+     */
     public function __construct($inviteId = null)
     {
         if (!empty($inviteId)) {
