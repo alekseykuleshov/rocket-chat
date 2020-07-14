@@ -196,6 +196,49 @@ class InviteTest extends TestCase
         $room->verifyInvokedOnce("updateOutOfResponse", $response);
     }
 
+    public function testValidateInviteTokenFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Invites\Invite", [
+            'getInviteId' => 'inviteId123',
+            "send" => true,
+            "getSuccess" => false,
+            "getResponse" => (object) [],
+            "updateOutOfResponse" => "nothing"
+        ]);
+
+        $invite = new Invite();
+        $result = $invite->validateInviteToken();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["validateInviteToken", "POST", ['token' => 'inviteId123']]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testValidateInviteTokenSuccess()
+    {
+        $response = (object) ["something" => "here"];
+        $stub = test::double('ATDev\RocketChat\Invites\Invite', [
+            'getInviteId' => 'inviteId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response,
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $invite = new Invite();
+        $result = $invite->validateInviteToken();
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', [
+            'validateInviteToken', 'POST', ['token' => 'inviteId123']
+        ]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', $response);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

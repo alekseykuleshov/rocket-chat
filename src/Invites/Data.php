@@ -25,6 +25,8 @@ trait Data
 
     private $updatedAt;
 
+    private $valid;
+
     public function __construct($inviteId = null)
     {
         if (!empty($inviteId)) {
@@ -230,6 +232,27 @@ trait Data
     }
 
     /**
+     * @return bool
+     */
+    public function getValid()
+    {
+        return $this->valid;
+    }
+
+    /**
+     * @param bool $valid
+     * @return $this
+     */
+    private function setValid($valid)
+    {
+        if (is_bool($valid)) {
+            $this->valid = $valid;
+        }
+
+        return $this;
+    }
+
+    /**
      * @param \stdClass $response
      * @return Data
      */
@@ -272,6 +295,9 @@ trait Data
         }
         if (isset($response->_updatedAt)) {
             $this->setUpdatedAt($response->_updatedAt);
+        }
+        if (isset($response->valid)) {
+            $this->setValid($response->valid);
         }
 
         return $this;

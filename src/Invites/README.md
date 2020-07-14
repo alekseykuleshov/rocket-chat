@@ -52,3 +52,15 @@ if (!$result) {
 	$error = $invite->getError();
 }
 ```
+
+### VALIDATE INVITE TOKEN
+
+```php
+$invite = new \ATDev\RocketChat\Invites\Invite("[INVITE ID]");
+$result = $invite->validateInviteToken();
+
+if (!$result) {
+	// Log the error
+	$error = $invite->getError();
+}
+```

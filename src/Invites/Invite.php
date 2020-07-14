@@ -85,4 +85,20 @@ class Invite extends Request
 
         return (new RoomClass())->updateOutOfResponse(static::getResponse()->room);
     }
+
+    /**
+     * Checks if an invite token is valid
+     *
+     * @return Invite|bool
+     */
+    public function validateInviteToken()
+    {
+        static::send("validateInviteToken", "POST", ["token" => $this->getInviteId()]);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+        
+        return $this::updateOutOfResponse(static::getResponse());
+    }
 }
