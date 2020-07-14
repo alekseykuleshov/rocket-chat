@@ -98,7 +98,7 @@ class Invite extends Request
         if (!static::getSuccess()) {
             return false;
         }
-        
+
         return $this::updateOutOfResponse(static::getResponse());
     }
 }
