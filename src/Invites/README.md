@@ -40,3 +40,15 @@ if (!$result) {
     $error = $invite->getError();
 }
 ```
+
+### USE INVITE TOKEN
+
+```php
+$invite = new \ATDev\RocketChat\Invites\Invite("[INVITE ID]");
+$result = $invite->useInviteToken();
+
+if (!$result) {
+	// Log the error
+	$error = $invite->getError();
+}
+```

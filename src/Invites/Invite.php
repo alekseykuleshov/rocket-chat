@@ -3,6 +3,7 @@
 namespace ATDev\RocketChat\Invites;
 
 use ATDev\RocketChat\Common\Request;
+use ATDev\RocketChat\Common\RoomClass;
 
 /**
  * Invite class
@@ -67,5 +68,21 @@ class Invite extends Request
         }
 
         return $this->setInviteId(null);
+    }
+
+    /**
+     * Report to the server that an invite token was used
+     *
+     * @return Invite|bool
+     */
+    public function useInviteToken()
+    {
+        static::send("useInviteToken", "POST", ["token" => $this->getInviteId()]);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return (new RoomClass())->updateOutOfResponse(static::getResponse()->room);
     }
 }

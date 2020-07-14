@@ -216,6 +216,10 @@ trait Room
             $this->setroomId($response->_id);
         }
 
+        if (isset($response->rid)) {
+            $this->setroomId($response->rid);
+        }
+
         if (isset($response->name)) {
             $this->setName($response->name);
         }
