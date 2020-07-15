@@ -1,4 +1,16 @@
-You have to be [logged in](https://github.com/alekseykuleshov/rocket-chat#login) and have relevant permissions.
+### VALIDATE INVITE TOKEN
+
+```php
+$invite = new \ATDev\RocketChat\Invites\Invite("[INVITE ID]");
+$result = $invite->validateInviteToken();
+
+if (!$result) {
+	// Log the error
+	$error = $invite->getError();
+}
+```
+
+To use the following methods, you have to be [logged in](https://github.com/alekseykuleshov/rocket-chat#login) and have relevant permissions.
 
 ### INVITE LISTING
 
@@ -46,18 +58,6 @@ if (!$result) {
 ```php
 $invite = new \ATDev\RocketChat\Invites\Invite("[INVITE ID]");
 $result = $invite->useInviteToken();
-
-if (!$result) {
-	// Log the error
-	$error = $invite->getError();
-}
-```
-
-### VALIDATE INVITE TOKEN
-
-```php
-$invite = new \ATDev\RocketChat\Invites\Invite("[INVITE ID]");
-$result = $invite->validateInviteToken();
 
 if (!$result) {
 	// Log the error

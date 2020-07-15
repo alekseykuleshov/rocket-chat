@@ -74,6 +74,7 @@ class DataTest extends TestCase
         $this->assertSame("2019-12-21T03:31:56.774Z", $mock->getExpires());
         $this->assertSame(1, $mock->getUses());
         $this->assertSame("2019-12-20T03:33:40.065Z", $mock->getUpdatedAt());
+        $this->assertSame(true, $mock->getValid());
 
         $invite1 = new ResponseFixture1();
         $mock = $this->getMockForTrait(Data::class);
@@ -88,6 +89,7 @@ class DataTest extends TestCase
         $this->assertSame("roomId123", $mock->getRoomId());
         $this->assertNull($mock->getUpdatedAt());
         $this->assertSame("userId123", $mock->getUserId());
+        $this->assertNull($mock->getValid());
 
         $invite2 = new ResponseFixture2();
         $mock = $this->getMockForTrait(Data::class);
@@ -102,6 +104,7 @@ class DataTest extends TestCase
         $this->assertNull($mock->getRoomId());
         $this->assertSame("2019-12-20T03:33:40.065Z", $mock->getUpdatedAt());
         $this->assertNull($mock->getUserId());
+        $this->assertSame(true, $mock->getValid());
     }
 
     public function testCreateOutOfResponse()
