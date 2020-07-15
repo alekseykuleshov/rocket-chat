@@ -22,6 +22,7 @@ class ResponseFixture2 extends \stdClass
         $this->expires = "2019-12-21T03:31:56.774Z";
         $this->uses = 1;
         $this->_updatedAt = "2019-12-20T03:33:40.065Z";
+        $this->valid = true;
     }
 }
 

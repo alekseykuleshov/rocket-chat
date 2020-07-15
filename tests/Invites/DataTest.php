@@ -25,6 +25,39 @@ class DataTest extends TestCase
         $stub->verifyInvokedOnce('setInviteId', ['invite_id']);
     }
 
+    public function testGetters()
+    {
+        $inviteFull = new ResponseFixtureFull();
+        $mock = $this->getMockBuilder(Data::class)
+            ->setMethods([
+                'getInviteId', 'getDays', 'getMaxUses', 'getRoomId', 'getUserId', 'getCreatedAt', 'getExpires',
+                'getUses', 'getUpdatedAt', 'getValid'
+            ])
+            ->getMockForTrait();
+
+        $mock->method('getInviteId')->willReturn($inviteFull->_id);
+        $mock->method('getDays')->willReturn($inviteFull->days);
+        $mock->method('getMaxUses')->willReturn($inviteFull->maxUses);
+        $mock->method('getRoomId')->willReturn($inviteFull->rid);
+        $mock->method('getUserId')->willReturn($inviteFull->userId);
+        $mock->method('getCreatedAt')->willReturn($inviteFull->createdAt);
+        $mock->method('getExpires')->willReturn($inviteFull->expires);
+        $mock->method('getUses')->willReturn($inviteFull->uses);
+        $mock->method('getUpdatedAt')->willReturn($inviteFull->_updatedAt);
+        $mock->method('getValid')->willReturn($inviteFull->valid);
+
+        $this->assertSame('inviteId123', $mock->getInviteId());
+        $this->assertSame(5, $mock->getDays());
+        $this->assertSame(3, $mock->getMaxUses());
+        $this->assertSame('roomId123', $mock->getRoomId());
+        $this->assertSame('userId123', $mock->getUserId());
+        $this->assertSame('2019-12-20T03:31:56.774Z', $mock->getCreatedAt());
+        $this->assertSame('2019-12-21T03:31:56.774Z', $mock->getExpires());
+        $this->assertSame(1, $mock->getUses());
+        $this->assertSame('2019-12-20T03:33:40.065Z', $mock->getUpdatedAt());
+        $this->assertSame(true, $mock->getValid());
+    }
+
     public function testUpdateOutOfResponse()
     {
         $inviteFull = new ResponseFixtureFull();
