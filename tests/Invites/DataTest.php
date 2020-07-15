@@ -58,6 +58,106 @@ class DataTest extends TestCase
         $this->assertSame(true, $mock->getValid());
     }
 
+    public function testInvalidInviteId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setInviteId(123);
+        $this->assertNull($mock->getInviteId());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid invite Id"]);
+    }
+
+    public function testValidInviteId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setInviteId("123");
+        $this->assertSame("123", $mock->getInviteId());
+
+        // And null value...
+        $mock->setInviteId(null);
+        $this->assertSame(null, $mock->getInviteId());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testInvalidDays()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setDays("1");
+        $this->assertNull($mock->getDays());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid days value"]);
+    }
+
+    public function testValidDays()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setDays(1);
+        $this->assertSame(1, $mock->getDays());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testInvalidMaxUses()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setMaxUses("1");
+        $this->assertNull($mock->getMaxUses());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid maxUses value"]);
+    }
+
+    public function testValidMaxUses()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setMaxUses(1);
+        $this->assertSame(1, $mock->getMaxUses());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testInvalidRoomId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setRoomId(123);
+        $this->assertNull($mock->getRoomId());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid room Id"]);
+    }
+
+    public function testValidRoomId()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setRoomId("123");
+        $this->assertSame("123", $mock->getRoomId());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
     public function testUpdateOutOfResponse()
     {
         $inviteFull = new ResponseFixtureFull();

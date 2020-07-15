@@ -55,7 +55,7 @@ trait Data
      * @param string $inviteId
      * @return $this
      */
-    private function setInviteId($inviteId)
+    public function setInviteId($inviteId)
     {
         if (!(is_null($inviteId) || is_string($inviteId))) {
             $this->setDataError("Invalid invite Id");
