@@ -29,7 +29,7 @@ class DataTest extends TestCase
     {
         $inviteFull = new ResponseFixtureFull();
         $mock = $this->getMockBuilder(Data::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getInviteId', 'getDays', 'getMaxUses', 'getRoomId', 'getUserId', 'getCreatedAt', 'getExpires',
                 'getUses', 'getUpdatedAt', 'getValid'
             ])
