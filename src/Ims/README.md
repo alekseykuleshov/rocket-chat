@@ -16,7 +16,9 @@ if (!$listing) {
 
 ```php
 $im = new \ATDev\RocketChat\Ims\Im();
+
 $im->setUsername("[USERNAME]");
+// or
 $im->setUsernames("username_first, username_second, username_third");
 
 $result = $im->create();
@@ -106,7 +108,9 @@ if (!$result) {
 
 ```php
 $im = new \ATDev\RocketChat\Ims\Im();
+
 $im->setDirectMessageId("[DIRECT MESSAGE ID]");
+// or
 $im->setUsername("[USERNAME]");
 
 $result = $im->members();
@@ -136,7 +140,9 @@ if (!$result) {
 
 ```php
 $im = new \ATDev\RocketChat\Ims\Im();
+
 $im->setDirectMessageId("[DIRECT MESSAGE ID]");
+// or
 $im->setUsername("[USERNAME]");
 
 $result = $im->messages();
