@@ -10,7 +10,7 @@ use ATDev\RocketChat\Common\RoomClass;
  */
 class Invite extends Request
 {
-    use \ATDev\RocketChat\Invites\Data;
+    use Data;
 
     /**
      * Gets invite listing
