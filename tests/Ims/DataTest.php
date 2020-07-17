@@ -82,7 +82,7 @@ class DataTest extends TestCase
         $imFull = new ResponseFixtureFull();
 
         $mock = $this->getMockBuilder(Data::class)
-                     ->setMethods([
+                     ->onlyMethods([
                              'getUpdatedAt', 'getT', 'getMsgs', 'getLm', 'getTopic', 'getTs', 'getLastMessage',
                              'getUsersCount', 'getSysMes', 'getReadOnly', 'getLastMessageId',
                              'getLastUserId', 'getLastUserName'
@@ -173,7 +173,7 @@ class DataTest extends TestCase
     public function testGetDirectMessageId()
     {
         $mock = $this->getMockBuilder(Data::class)
-            ->setMethods(["getRoomId"])
+            ->onlyMethods(["getRoomId"])
             ->getMockForTrait();
 
         $mock->expects($this->once())
@@ -186,7 +186,7 @@ class DataTest extends TestCase
     public function testSetDirectMessageId()
     {
         $mock = $this->getMockBuilder(Data::class)
-            ->setMethods(["setRoomId"])
+            ->onlyMethods(["setRoomId"])
             ->getMockForTrait();
 
         $mock->expects($this->once())

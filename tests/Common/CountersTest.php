@@ -11,7 +11,7 @@ class CountersTest extends TestCase
     {
         $countersFull = new CountersResponseFixtureFull();
         $mock = $this->getMockBuilder(Counters::class)
-            ->setMethods([
+            ->onlyMethods([
                     'getJoined', 'getMembers', 'getUnreads', 'getUnreadsFrom', 'getMsgs', 'getLatest', 'getUserMentions'
                 ])
             ->getMockForAbstractClass();
