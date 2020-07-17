@@ -6,17 +6,17 @@ abstract class Counters
 {
     /** @var boolean flag that shows that user is joined the room or not */
     private $joined;
-    /** @var count of current room members */
+    /** @var integer count of current room members */
     private $members;
-    /** @var count of unread messages for specified user (calling user or provided userId) */
+    /** @var integer count of unread messages for specified user (calling user or provided userId) */
     private $unreads;
-    /** @var start date-time of unread interval for specified user */
+    /** @var string start date-time of unread interval for specified user */
     private $unreadsFrom;
-    /** @var count of messages in the room */
+    /** @var integer count of messages in the room */
     private $msgs;
-    /** @var end date-time of unread interval for specified user (or date-time of last posted message) */
+    /** @var string end date-time of unread interval for specified user (or date-time of last posted message) */
     private $latest;
-    /** @var count of user mentions in messages */
+    /** @var integer count of user mentions in messages */
     private $userMentions;
 
     /**
