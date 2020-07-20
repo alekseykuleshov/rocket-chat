@@ -702,7 +702,7 @@ trait Data
      */
     private function setUtcOffset($utcOffset)
     {
-        if (is_float($utcOffset)) {
+        if (is_numeric($utcOffset)) {
             $this->utcOffset = $utcOffset;
         }
 

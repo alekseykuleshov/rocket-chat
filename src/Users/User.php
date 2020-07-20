@@ -148,7 +148,7 @@ class User extends Request
      * @param string|null $from The last date you got a status change. ISO 8601 datetime. Timezone, milliseconds and seconds are optional
      * @return Collection|false
      */
-    public function presence($from = null)
+    public static function presence($from = null)
     {
         static::send("users.presence", "GET", ['from' => $from]);
         if (!static::getSuccess()) {
@@ -197,7 +197,7 @@ class User extends Request
      * @param string $role
      * @return false|mixed
      */
-    public function deactivateIdle($daysIdle, $role = 'user')
+    public static function deactivateIdle($daysIdle, $role = 'user')
     {
         static::send("users.presence", "POST", ['daysIdle' => $daysIdle, 'role' => $role]);
         if (!static::getSuccess()) {

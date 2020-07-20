@@ -67,7 +67,7 @@ if (!$result) {
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
 $avatar = new \ATDev\RocketChat\Users\AvatarFromFile("[PATH TO LOCAL READABLE FILE]");
 
-$result = $updateUser->setAvatar($avatar);
+$result = $user->setAvatar($avatar);
 
 if (!$result) {
 
@@ -120,6 +120,17 @@ if (!$result) {
 
 	// Log the error
 	$error = $user->getError();
+}
+```
+
+### PRESENCE
+
+```php
+$presence = \ATDev\RocketChat\Users\User::presence();
+
+if (!$presence) {
+	// Log the error
+	$error = \ATDev\RocketChat\Users\User::getError();
 }
 ```
 
