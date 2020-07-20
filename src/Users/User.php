@@ -168,25 +168,26 @@ class User extends Request
     }
 
     /**
-     * Gets the online presence of a user
+     * Gets a user's presence if the query string userId or username is provided, otherwise it gets the callee's
      *
-     * @param string|null $userId
-     * @param string|null $username
+     * @param User|null $user
      * @return false|mixed
      */
-    public static function getPresence($userId = null, $username = null)
+    public static function getPresence(User $user = null)
     {
         $params = [];
-        if (isset($userId)) {
-            $params = ['userId' => $userId];
-        } elseif (isset($username)) {
-            $params = ['username' => $username];
+        if (isset($user) && !empty($user->getUserId())) {
+            $params = ['userId' => $user->getUserId()];
+        } elseif (isset($user) && !empty($user->getUsername())) {
+            $params = ['username' => $user->getUsername()];
         }
-        static::send("users.presence", "GET", $params);
+
+        static::send("users.getPresence", "GET", $params);
         if (!static::getSuccess()) {
             return false;
         }
         // @todo: response format
+        // response object can be returned within User instance from argument
         $response = static::getResponse();
         return $response;
     }
