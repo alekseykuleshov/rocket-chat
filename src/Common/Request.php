@@ -197,7 +197,7 @@ abstract class Request implements \JsonSerializable
     /**
      * Gets success
      *
-     * @return string
+     * @return bool
      */
     public static function getSuccess()
     {

@@ -174,7 +174,7 @@ class User extends Request
      * @param string|null $username
      * @return false|mixed
      */
-    public function getPresence($userId = null, $username = null)
+    public static function getPresence($userId = null, $username = null)
     {
         $params = [];
         if (isset($userId)) {
@@ -187,7 +187,8 @@ class User extends Request
             return false;
         }
         // @todo: response format
-        return static::getResponse();
+        $response = static::getResponse();
+        return $response;
     }
 
     /**
@@ -222,24 +223,50 @@ class User extends Request
     /**
      * Gets a user's Status if the query string userId or username is provided, otherwise it gets the callee's.
      *
-     * @param string|null $userId
-     * @param string|null $username
-     * @return false|mixed
+     * @param User|null $user
+     * @return false|User
      */
-    public function getStatus($userId = null, $username = null)
+    public static function getStatus(User $user = null)
     {
         $params = [];
-        if (isset($userId)) {
-            $params = ['userId' => $userId];
-        } elseif (isset($username)) {
-            $params = ['username' => $username];
+        if (isset($user) && !empty($user->getUserId())) {
+            $params = ['userId' => $user->getUserId()];
+        } elseif (isset($user) && !empty($user->getUsername())) {
+            $params = ['username' => $user->getUsername()];
         }
+
         static::send("users.getStatus", "GET", $params);
         if (!static::getSuccess()) {
             return false;
         }
-        // @todo: response format
-        return static::getResponse();
+
+        $response = static::getResponse();
+        if (isset($user)) {
+            $user->updateOutOfResponse($response);
+        } else {
+            $user = static::createOutOfResponse($response);
+        }
+
+        return $user;
+    }
+
+    /**
+     * Sets a user Status when the status message and state is given
+     *
+     * @todo should status be validated against inclusion in ['online', 'away', 'busy', 'offline']
+     *
+     * @param string $message
+     * @param string|null $status
+     * @return bool
+     */
+    public static function setStatus($message, $status = null)
+    {
+        $params = ['message' => $message];
+        if (isset($status) && is_string($status)) {
+            $params['status'] = $status;
+        }
+        static::send("users.setStatus", "POST", $params);
+        return static::getSuccess();
     }
 
     /**
@@ -247,13 +274,13 @@ class User extends Request
      *
      * @return string|false
      */
-    public function getUsernameSuggestion()
+    public static function getUsernameSuggestion()
     {
-        static::send("users.getStatus", "GET");
+        static::send("users.getUsernameSuggestion", "GET");
         if (!static::getSuccess()) {
             return false;
         }
-        // @todo: response format
+
         return static::getResponse()->result;
     }
 }

@@ -40,6 +40,10 @@ trait Data
     /** @var string User custom fields, default is undefined */
     private $customFields;
 
+    /* Other methods required properties */
+    /** @var string The user's status message */
+    private $statusText;
+
     /* Readonly properties returned from api */
     /** @var string Date-time user created at api */
     private $createdAt;
@@ -400,6 +404,56 @@ trait Data
     }
 
     /**
+     * Gets user status
+     *
+     * @return string
+     */
+    public function getStatusValue()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Sets user status like 'online', 'away', 'busy', 'offline'
+     *
+     * @param string $status
+     * @return $this
+     */
+    public function setStatusValue($status)
+    {
+        if (is_string($status)) {
+            $this->status = $status;
+        }
+
+        return $this;
+    }
+
+    /**
+     * The user's status message
+     *
+     * @return string
+     */
+    public function getStatusText()
+    {
+        return $this->statusText;
+    }
+
+    /**
+     * Sets the user's status message
+     *
+     * @param string $statusText
+     * @return $this
+     */
+    public function setStatusText($statusText)
+    {
+        if (is_string($statusText)) {
+            $this->statusText = $statusText;
+        }
+
+        return $this;
+    }
+
+    /**
      * Sets user custom fields
      *
      * @param string $customFields
@@ -445,16 +499,6 @@ trait Data
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * Gets user status
-     *
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->status;
     }
 
     /**
@@ -527,7 +571,15 @@ trait Data
         }
 
         if (isset($response->status)) {
-            $this->setStatus($response->status);
+            $this->setStatusValue($response->status);
+        }
+
+        if (isset($response->statusText)) {
+            $this->setStatusText($response->statusText);
+        }
+
+        if (isset($response->message)) {
+            $this->setStatusText($response->message);
         }
 
         if (isset($response->active)) {
@@ -548,6 +600,10 @@ trait Data
 
         if (isset($response->statusConnection)) {
             $this->setStatusConnection($response->statusConnection);
+        }
+
+        if (isset($response->connectionStatus)) {
+            $this->setStatusConnection($response->connectionStatus);
         }
 
         if (isset($response->utcOffset)) {
@@ -640,22 +696,6 @@ trait Data
     {
         if (is_string($type)) {
             $this->type = $type;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Sets user status
-     *
-     * @param string $status
-     *
-     * @return \ATDev\RocketChat\Users\Data
-     */
-    private function setStatus($status)
-    {
-        if (is_string($status)) {
-            $this->status = $status;
         }
 
         return $this;
