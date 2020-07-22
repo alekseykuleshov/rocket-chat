@@ -97,7 +97,7 @@ class User extends Request
     }
 
     /**
-     * Deletes your own user. Requires `Allow Users to Delete Own Account` enabled. Accessible from Administration -> Accounts.
+     * Deletes your own user. Requires `Allow Users to Delete Own Account` enabled
      *
      * @param string $password
      * @return bool
@@ -187,14 +187,7 @@ class User extends Request
      */
     public static function getPresence(User $user = null)
     {
-        $params = [];
-        if (isset($user) && !empty($user->getUserId())) {
-            $params = ['userId' => $user->getUserId()];
-        } elseif (isset($user) && !empty($user->getUsername())) {
-            $params = ['username' => $user->getUsername()];
-        }
-
-        static::send("users.getPresence", "GET", $params);
+        static::send("users.getPresence", "GET", self::requestParams($user));
         if (!static::getSuccess()) {
             return false;
         }
@@ -241,14 +234,7 @@ class User extends Request
      */
     public static function getStatus(User $user = null)
     {
-        $params = [];
-        if (isset($user) && !empty($user->getUserId())) {
-            $params = ['userId' => $user->getUserId()];
-        } elseif (isset($user) && !empty($user->getUsername())) {
-            $params = ['username' => $user->getUsername()];
-        }
-
-        static::send("users.getStatus", "GET", $params);
+        static::send("users.getStatus", "GET", self::requestParams($user));
         if (!static::getSuccess()) {
             return false;
         }
@@ -284,14 +270,15 @@ class User extends Request
     /**
      * Sets user active status
      *
+     * @param bool $activeStatus
      * @return User|false
      */
-    public function setActiveStatus()
+    public function setActiveStatus($activeStatus)
     {
         static::send(
             "users.setActiveStatus",
             "POST",
-            ['activeStatus' => $this->getActive(), 'userId' => $this->getUserId()]
+            ['activeStatus' => $activeStatus, 'userId' => $this->getUserId()]
         );
         if (!static::getSuccess()) {
             return false;
@@ -323,7 +310,7 @@ class User extends Request
      */
     public function createToken()
     {
-        static::send("users.createToken", "POST", $this->currentUserParams());
+        static::send("users.createToken", "POST", self::requestParams($this));
         if (!static::getSuccess()) {
             return false;
         }
@@ -376,16 +363,18 @@ class User extends Request
     }
 
     /**
+     * @param User $user
      * @return array
      */
-    private function currentUserParams()
+    private static function requestParams(User $user)
     {
         $params = [];
-        if (!empty($this->getUserId())) {
-            $params['userId'] = $this->getUserId();
-        } elseif (!empty($this->getUsername())) {
-            $params['username'] = $this->getUsername();
+        if (isset($user) && !empty($user->getUserId())) {
+            $params = ['userId' => $user->getUserId()];
+        } elseif (isset($user) && !empty($user->getUsername())) {
+            $params = ['username' => $user->getUsername()];
         }
+
         return $params;
     }
 }

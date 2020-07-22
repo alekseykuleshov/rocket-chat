@@ -61,6 +61,36 @@ if (!$result) {
 }
 ```
 
+### SET ACTIVE STATUS
+```php
+$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+$statusResult = $user->setActiveStatus(true);
+if (!$statusResult) {
+    $statusResult->getError();
+}
+```
+
+### SET STATUS MESSAGE
+```php
+$result = \ATDev\RocketChat\Users\User::setStatus("New status message", "away");
+if (!$result) {
+    $error = \ATDev\RocketChat\Users\User::getError();
+}
+```
+
+### GET STATUS
+```php
+$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+// or by username
+$user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
+$user = \ATDev\RocketChat\Users\User::getStatus($user);
+// or get callee's status if no user argument provided
+$user = \ATDev\RocketChat\Users\User::getStatus();
+if (!$user) {
+    $error = \ATDev\RocketChat\Users\User::getError();
+}
+```
+
 ### UPDATE USER AVATAR FROM LOCAL FILE
 
 ```php
@@ -82,7 +112,7 @@ if (!$result) {
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
 $avatar = new \ATDev\RocketChat\Users\AvatarFromDomain("[URL TO FILE AVAILABLE IN PUBLIC]");
 
-$result = $updateUser->setAvatar($avatar);
+$result = $user->setAvatar($avatar);
 
 if (!$result) {
 
@@ -123,17 +153,56 @@ if (!$result) {
 }
 ```
 
-### PRESENCE
+### DELETE OWN ACCOUNT
+```php
+$result = \ATDev\RocketChat\Users\User::deleteOwnAccount(hash("sha256","[USER PASSWORD]"));
+if (!$result) {
+    $error = \ATDev\RocketChat\Users\User::getError();
+}
+```
 
+### DEACTIVATE IDLE
+```php
+$count = \ATDev\RocketChat\Users\User::deactivateIdle(5, "guest");
+if (!$count) {
+    $error = \ATDev\RocketChat\Users\User::getError();
+}
+```
+
+### PRESENCE
 ```php
 $presence = \ATDev\RocketChat\Users\User::presence();
-
 if (!$presence) {
-	// Log the error
 	$error = \ATDev\RocketChat\Users\User::getError();
 }
 ```
 
+### GET PRESENCE
+```php
+$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+// or by username
+$user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
+$userPresence = \ATDev\RocketChat\Users\User::getPresence($user);
+// or callee's presence
+$userPresence = \ATDev\RocketChat\Users\User::getPresence();
+if (!$userPresence) {
+	$error = \ATDev\RocketChat\Users\User::getError();
+}
+```
 
+### FORGOT PASSWORD
+```php
+$result = \ATDev\RocketChat\Users\User::forgotPassword('john@example.com');
+if (!$result) {
+    $result->getError();
+}
+```
 
+### GET USERNAME SUGGESTION
+```php
+$result = \ATDev\RocketChat\Users\User::getUsernameSuggestion();
+if (!$result) {
+    $result->getError();
+}
+```
 
