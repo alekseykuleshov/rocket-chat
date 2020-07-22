@@ -777,15 +777,6 @@ trait Data
         return $this;
     }
 
-    private function setAuthToken($token)
-    {
-        if (is_string($token)) {
-            $this->authToken = $token;
-        }
-
-        return $this;
-    }
-
     /**
      * Sets data error
      *
