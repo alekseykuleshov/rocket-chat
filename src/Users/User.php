@@ -97,6 +97,18 @@ class User extends Request
     }
 
     /**
+     * Deletes your own user. Requires `Allow Users to Delete Own Account` enabled. Accessible from Administration -> Accounts.
+     *
+     * @param string $password
+     * @return bool
+     */
+    public static function deleteOwnAccount($password)
+    {
+        static::send("users.deleteOwnAccount", "POST", ["password" => $password]);
+        return static::getSuccess();
+    }
+
+    /**
      * Sets avatar for user
      *
      * @param Avatar $avatar
@@ -254,11 +266,10 @@ class User extends Request
     /**
      * Sets a user Status when the status message and state is given
      *
-     * @todo should status be validated against inclusion in ['online', 'away', 'busy', 'offline']
-     *
      * @param string $message
      * @param string|null $status
      * @return bool
+     * @todo should status be validated against inclusion in ['online', 'away', 'busy', 'offline']
      */
     public static function setStatus($message, $status = null)
     {
@@ -268,6 +279,25 @@ class User extends Request
         }
         static::send("users.setStatus", "POST", $params);
         return static::getSuccess();
+    }
+
+    /**
+     * Sets user active status
+     *
+     * @return User|false
+     */
+    public function setActiveStatus()
+    {
+        static::send(
+            "users.setActiveStatus",
+            "POST",
+            ['activeStatus' => $this->getActive(), 'userId' => $this->getUserId()]
+        );
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->user);
     }
 
     /**
@@ -283,5 +313,71 @@ class User extends Request
         }
 
         return static::getResponse()->result;
+    }
+
+    /**
+     * Create a user authentication token. This is the same type of session token a user would get via login and
+     * will expire the same way. Requires user-generate-access-token permission.
+     *
+     * @return User|false
+     */
+    public function createToken()
+    {
+        $params = [];
+        if (!empty($this->getUserId())) {
+            $params['userId'] = $this->getUserId();
+        } elseif (!empty($this->getUsername())) {
+            $params['username'] = $this->getUsername();
+        }
+        static::send("users.createToken", "POST", $params);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $response = static::getResponse()->data;
+        $this->setUserId($response->userId);
+        $this->setAuthToken($response->authToken);
+
+        return $this;
+    }
+
+    /**
+     * Generate Personal Access Token. Requires `create-personal-access-tokens` permission.
+     *
+     * @param string $tokenName
+     * @param bool $bypassTwoFactor
+     * @return string|false
+     */
+    public static function generatePersonalAccessToken($tokenName, $bypassTwoFactor = false)
+    {
+        static::send("users.getUsernameSuggestion", "POST", ['tokenName' => $tokenName, 'bypassTwoFactor' => $bypassTwoFactor]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return static::getResponse()->token;
+    }
+
+    /**
+     * Remove a personal access token. Requires `create-personal-access-tokens` permission.
+     *
+     * @param string $tokenName
+     * @return bool
+     */
+    public static function removePersonalAccessToken($tokenName)
+    {
+        static::send("users.removePersonalAccessToken", "POST", ['tokenName' => $tokenName]);
+        return static::getSuccess();
+    }
+
+    /**
+     * Removes other access tokens
+     *
+     * @return bool
+     */
+    public static function removeOtherTokens()
+    {
+        static::send("users.removeOtherTokens", "POST");
+        return static::getSuccess();
     }
 }

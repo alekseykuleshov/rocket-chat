@@ -59,6 +59,8 @@ trait Data
     private $utcOffset;
     /** @var string Avatar Url */
     private $avatarUrl;
+    /** @var string Authentication token - the same type of session token a user would get via login */
+    private $authToken;
 
     /**
      * Creates user out of api response
@@ -89,7 +91,7 @@ trait Data
     /**
      * Sets user id
      *
-     * @param string $userid
+     * @param string $userId
      *
      * @return \ATDev\RocketChat\Users\Data
      */
@@ -542,6 +544,16 @@ trait Data
     }
 
     /**
+     * Returns user authentication token received by createToken api request
+     *
+     * @return string
+     */
+    public function getAuthToken()
+    {
+        return $this->authToken;
+    }
+
+    /**
      * Updates current user out of api response
      *
      * @param \stdClass $response
@@ -760,6 +772,15 @@ trait Data
     {
         if (is_string($avatarUrl)) {
             $this->avatarUrl = $avatarUrl;
+        }
+
+        return $this;
+    }
+
+    private function setAuthToken($token)
+    {
+        if (is_string($token)) {
+            $this->authToken = $token;
         }
 
         return $this;
