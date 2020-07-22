@@ -290,7 +290,7 @@ class User extends Request
     /**
      * Gets a suggestion a new username to user
      *
-     * @return string|false
+     * @return string|null|false
      */
     public static function getUsernameSuggestion()
     {
@@ -299,27 +299,39 @@ class User extends Request
             return false;
         }
 
-        return static::getResponse()->result;
+        return isset(static::getResponse()->result) ? static::getResponse()->result : null;
     }
 
     /**
      * Create a user authentication token. This is the same type of session token a user would get via login and
-     * will expire the same way. Requires user-generate-access-token permission.
+     * will expire the same way. Requires `user-generate-access-token` permission.
      *
-     * @return User|false
+     * @param User $user
+     * @return \stdClass|null|false
      */
-    public function createToken()
+    public static function createToken(User $user)
     {
-        static::send("users.createToken", "POST", self::requestParams($this));
+        static::send("users.createToken", "POST", self::requestParams($user));
         if (!static::getSuccess()) {
             return false;
         }
 
-        $response = static::getResponse()->data;
-        $this->setUserId($response->userId);
-//        $this->setAuthToken($response->authToken);
+        return isset(static::getResponse()->data) ? static::getResponse()->data : null;
+    }
 
-        return $this;
+    /**
+     * Gets the user’s personal access tokens. Requires `create-personal-access-tokens` permission
+     *
+     * @return array|null|false
+     */
+    public static function getPersonalAccessTokens()
+    {
+        static::send("users.getPersonalAccessTokens", "GET");
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return isset(static::getResponse()->tokens) ? static::getResponse()->tokens : null;
     }
 
     /**
@@ -327,16 +339,32 @@ class User extends Request
      *
      * @param string $tokenName
      * @param bool $bypassTwoFactor
-     * @return string|false
+     * @return string|null|false
      */
     public static function generatePersonalAccessToken($tokenName, $bypassTwoFactor = false)
     {
-        static::send("users.getUsernameSuggestion", "POST", ['tokenName' => $tokenName, 'bypassTwoFactor' => $bypassTwoFactor]);
+        static::send("users.generatePersonalAccessToken", "POST", ['tokenName' => $tokenName, 'bypassTwoFactor' => $bypassTwoFactor]);
         if (!static::getSuccess()) {
             return false;
         }
 
-        return static::getResponse()->token;
+        return isset(static::getResponse()->token) ? static::getResponse()->token : null;
+    }
+
+    /**
+     * Regenerate a user personal access token. Requires `create-personal-access-tokens` permission
+     *
+     * @param string $tokenName
+     * @return string|null|false
+     */
+    public static function regeneratePersonalAccessToken($tokenName)
+    {
+        static::send("users.regeneratePersonalAccessToken", "POST", ['tokenName' => $tokenName]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return isset(static::getResponse()->token) ? static::getResponse()->token : null;
     }
 
     /**
