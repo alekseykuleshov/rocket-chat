@@ -209,16 +209,16 @@ class User extends Request
      *
      * @param int $daysIdle
      * @param string $role
-     * @return false|mixed
+     * @return int|false
      */
     public static function deactivateIdle($daysIdle, $role = 'user')
     {
-        static::send("users.presence", "POST", ['daysIdle' => $daysIdle, 'role' => $role]);
+        static::send("users.deactivateIdle", "POST", ['daysIdle' => $daysIdle, 'role' => $role]);
         if (!static::getSuccess()) {
             return false;
         }
-        // @todo: response format
-        return static::getResponse();
+
+        return static::getResponse()->count;
     }
 
     /**
@@ -227,7 +227,7 @@ class User extends Request
      * @param string $email
      * @return bool|string
      */
-    public function forgotPassword($email)
+    public static function forgotPassword($email)
     {
         static::send("users.forgotPassword", "POST", ['email' => $email]);
         return static::getSuccess();
@@ -323,20 +323,14 @@ class User extends Request
      */
     public function createToken()
     {
-        $params = [];
-        if (!empty($this->getUserId())) {
-            $params['userId'] = $this->getUserId();
-        } elseif (!empty($this->getUsername())) {
-            $params['username'] = $this->getUsername();
-        }
-        static::send("users.createToken", "POST", $params);
+        static::send("users.createToken", "POST", $this->currentUserParams());
         if (!static::getSuccess()) {
             return false;
         }
 
         $response = static::getResponse()->data;
         $this->setUserId($response->userId);
-        $this->setAuthToken($response->authToken);
+//        $this->setAuthToken($response->authToken);
 
         return $this;
     }
@@ -379,5 +373,19 @@ class User extends Request
     {
         static::send("users.removeOtherTokens", "POST");
         return static::getSuccess();
+    }
+
+    /**
+     * @return array
+     */
+    private function currentUserParams()
+    {
+        $params = [];
+        if (!empty($this->getUserId())) {
+            $params['userId'] = $this->getUserId();
+        } elseif (!empty($this->getUsername())) {
+            $params['username'] = $this->getUsername();
+        }
+        return $params;
     }
 }
