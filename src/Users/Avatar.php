@@ -19,7 +19,7 @@ abstract class Avatar
     /**
      * Class constructor
      *
-     * @param string $source
+     * @param string|null $source
      */
     public function __construct($source = null)
     {
@@ -31,7 +31,7 @@ abstract class Avatar
     /**
      * Sets source of new user avatar
      *
-     * @param string $name
+     * @param string $source
      *
      * @return \ATDev\RocketChat\Users\Avatar
      */

@@ -1,1 +1,0 @@
-C:37:"PHPUnit\Runner\DefaultTestResultCache":265:{a:2:{s:7:"defects";a:1:{s:55:"ATDev\RocketChat\Tests\Common\CountersTest::testGetters";i:4;}s:5:"times";a:2:{s:55:"ATDev\RocketChat\Tests\Common\CountersTest::testGetters";d:0.011;s:67:"ATDev\RocketChat\Tests\Common\CountersTest::testUpdateOutOfResponse";d:0.001;}}}

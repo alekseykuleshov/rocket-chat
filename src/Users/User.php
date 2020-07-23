@@ -71,7 +71,7 @@ class User extends Request
      */
     public function info()
     {
-        static::send("users.info", "GET", ["userId" => $this->getUserId()]);
+        static::send("users.info", "GET", self::requestParams($this));
 
         if (!static::getSuccess()) {
             return false;
@@ -118,13 +118,13 @@ class User extends Request
     public function setAvatar(Avatar $avatar)
     {
         if ($avatar::IS_FILE) {
-            static::send("users.setAvatar", "POST", ["userId" => $this->getUserId()], ["image" => $avatar->getSource()]);
+            static::send("users.setAvatar", "POST", self::requestParams($this), ["image" => $avatar->getSource()]);
 
             if (!static::getSuccess()) {
                 return false;
             }
         } else {
-            static::send("users.setAvatar", "POST", ["userId" => $this->getUserId(), "avatarUrl" => $avatar->getSource()]);
+            static::send("users.setAvatar", "POST", array_merge(self::requestParams($this), ["avatarUrl" => $avatar->getSource()]));
 
             if (!static::getSuccess()) {
                 return false;
@@ -135,13 +135,13 @@ class User extends Request
     }
 
     /**
-     * Gets avatar for user
+     * Gets avatar url for user
      *
      * @return boolean|$this
      */
     public function getAvatar()
     {
-        static::send("users.getAvatar", "GET", ["userId" => $this->getUserId()]);
+        static::send("users.getAvatar", "GET", self::requestParams($this));
 
         if (!static::getSuccess()) {
             return false;
@@ -152,6 +152,17 @@ class User extends Request
         }
 
         return $this;
+    }
+
+    /**
+     * Reset user's avatar
+     *
+     * @return bool
+     */
+    public function resetAvatar()
+    {
+        static::send("users.resetAvatar", "POST", self::requestParams($this));
+        return static::getSuccess();
     }
 
     /**

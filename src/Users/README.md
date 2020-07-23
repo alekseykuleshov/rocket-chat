@@ -95,12 +95,12 @@ if (!$user) {
 
 ```php
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
+// or by username
+$user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
 $avatar = new \ATDev\RocketChat\Users\AvatarFromFile("[PATH TO LOCAL READABLE FILE]");
 
 $result = $user->setAvatar($avatar);
-
 if (!$result) {
-
 	// Log the error
 	$error = $user->getError();
 }
@@ -110,12 +110,12 @@ if (!$result) {
 
 ```php
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
+// or by username
+$user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
 $avatar = new \ATDev\RocketChat\Users\AvatarFromDomain("[URL TO FILE AVAILABLE IN PUBLIC]");
 
 $result = $user->setAvatar($avatar);
-
 if (!$result) {
-
 	// Log the error
 	$error = $user->getError();
 }
@@ -125,17 +125,27 @@ if (!$result) {
 
 ```php
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
+// or by username
+$user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
 
 $result = $user->getAvatar();
-
 if (!$result) {
-
 	// Log the error
 	$error = $user->getError();
 } else {
-
 	// Url to new user avatar
 	$user->getAvatarUrl();
+}
+```
+
+### RESET USER AVATAR
+```php
+$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+// or by username
+$user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
+$resetResultUser = $user->resetAvatar();
+if (!$resetResultUser) {
+    $error = $user->getError();
 }
 ```
 
