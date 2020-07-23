@@ -79,7 +79,7 @@ trait Data
     /**
      * Class constructor
      *
-     * @param string $userId
+     * @param string|null $userId
      */
     public function __construct($userId = null)
     {
