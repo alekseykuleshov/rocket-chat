@@ -65,6 +65,22 @@ class User extends Request
     }
 
     /**
+     * Update own basic information
+     *
+     * @param array $data
+     * @return Data|false
+     */
+    public static function updateOwnBasicInfo($data = [])
+    {
+        static::send("users.updateOwnBasicInfo", "POST", ["data" => $data]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return static::createOutOfResponse(static::getResponse()->user);
+    }
+
+    /**
      * Gets extended info of user
      *
      * @return boolean|$this
@@ -399,6 +415,21 @@ class User extends Request
     {
         static::send("users.removeOtherTokens", "POST");
         return static::getSuccess();
+    }
+
+    /**
+     * Request the user's data for download
+     *
+     * @param bool $fullExport If needs a full export
+     * @return false|mixed
+     */
+    public static function requestDataDownload($fullExport = false)
+    {
+        static::send("users.requestDataDownload", "GET", ['fullExport' => $fullExport]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+        return static::getResponse()->exportOperation;
     }
 
     /**

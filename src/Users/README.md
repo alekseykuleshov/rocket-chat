@@ -61,6 +61,23 @@ if (!$result) {
 }
 ```
 
+### UPDATE OWN BASIC INFO
+```php
+$updatedUser = \ATDev\RocketChat\Users\User::updateOwnBasicInfo([
+    'email' => 'test@updated.com',
+    'name' => 'Updated Name',
+    'username' => 'new-username',
+    'currentPassword' => hash('sha256', 'q1w2e3r4t5'),
+    'newPassword' => 'newPassw0rd',
+    'customFields' => [
+        'twitter' => '@example'
+    ]
+]);
+if (!$updatedUser) {
+    $error = \ATDev\RocketChat\Users\User::getError();
+}
+```
+
 ### SET ACTIVE STATUS
 ```php
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
