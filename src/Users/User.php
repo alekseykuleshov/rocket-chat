@@ -432,20 +432,25 @@ class User extends Request
         return static::getResponse()->exportOperation;
     }
 
+    /**
+     * @return array|false
+     */
     public static function getPreferences()
     {
         static::send("users.getPreferences", "GET");
         if (!static::getSuccess()) {
             return false;
         }
+
+        return static::getResponse()->preferences;
     }
 
     /**
      * @param $userId
-     * @param Preferences $preferences
+     * @param array $preferences
      * @return false|User
      */
-    public static function setPreferences($userId, Preferences $preferences)
+    public static function setPreferences($userId, $preferences)
     {
         static::send("users.setPreferences", "POST", ["userId" => $userId, "data" => $preferences]);
         if (!static::getSuccess()) {

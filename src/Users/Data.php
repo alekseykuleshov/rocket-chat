@@ -61,6 +61,8 @@ trait Data
     private $avatarUrl;
     /** @var string Authentication token - the same type of session token a user would get via login */
     private $authToken;
+    /** @var \stdClass All preferences of the user */
+    private $preferences;
 
     /**
      * Creates user out of api response
@@ -554,6 +556,16 @@ trait Data
     }
 
     /**
+     * Returns user preferences
+     *
+     * @return \stdClass
+     */
+    public function getPreferencesData()
+    {
+        return $this->preferences;
+    }
+
+    /**
      * Updates current user out of api response
      *
      * @param \stdClass $response
@@ -628,6 +640,10 @@ trait Data
 
         if (isset($response->avatarUrl)) {
             $this->setAvatarUrl($response->avatarUrl);
+        }
+
+        if (isset($response->settings) && isset($response->settings->preferences)) {
+            $this->setPreferencesData($response->settings->preferences);
         }
 
         return $this;
@@ -772,6 +788,19 @@ trait Data
     {
         if (is_string($avatarUrl)) {
             $this->avatarUrl = $avatarUrl;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $preferences
+     * @return $this
+     */
+    private function setPreferencesData($preferences)
+    {
+        if (is_object($preferences)) {
+            $this->preferences = $preferences;
         }
 
         return $this;
