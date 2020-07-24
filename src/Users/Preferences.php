@@ -2,7 +2,7 @@
 
 namespace ATDev\RocketChat\Users;
 
-class Preferences
+class Preferences implements \JsonSerializable
 {
     // Required properties
     /** @var string New room notification */
@@ -70,23 +70,125 @@ class Preferences
     /** @var bool Mute focused conversations */
     private $muteFocusedConversations;
 
-    public static function createOutOfResponse($response)
+    /**
+     * Updates current user preferences from response object
+     *
+     * @param \stdClass $response
+     * @return $this
+     */
+    public function updateOutOfResponse($response)
     {
-        $preferences = new static();
-
-        if (isset($response->createdAt)) {
-            $this->setCreatedAt($response->createdAt);
+        if (isset($response->newRoomNotification)) {
+            $this->setNewRoomNotification($response->newRoomNotification);
+        }
+        if (isset($response->newMessageNotification)) {
+            $this->setNewMessageNotification($response->newMessageNotification);
+        }
+        if (isset($response->useEmojis)) {
+            $this->setUseEmojis($response->useEmojis);
+        }
+        if (isset($response->convertAsciiEmoji)) {
+            $this->setConvertAsciiEmoji($response->convertAsciiEmoji);
+        }
+        if (isset($response->saveMobileBandwidth)) {
+            $this->setSaveMobileBandwidth($response->saveMobileBandwidth);
+        }
+        if (isset($response->collapseMediaByDefault)) {
+            $this->setCollapseMediaByDefault($response->collapseMediaByDefault);
+        }
+        if (isset($response->autoImageLoad)) {
+            $this->setAutoImageLoad($response->autoImageLoad);
+        }
+        if (isset($response->emailNotificationMode)) {
+            $this->setEmailNotificationMode($response->emailNotificationMode);
+        }
+        if (isset($response->roomsListExhibitionMode)) {
+            $this->setRoomsListExhibitionMode($response->roomsListExhibitionMode);
+        }
+        if (isset($response->unreadAlert)) {
+            $this->setUnreadAlert($response->unreadAlert);
+        }
+        if (isset($response->notificationsSoundVolume)) {
+            $this->setNotificationsSoundVolume($response->notificationsSoundVolume);
+        }
+        if (isset($response->desktopNotifications)) {
+            $this->setDesktopNotifications($response->desktopNotifications);
+        }
+        if (isset($response->mobileNotifications)) {
+            $this->setMobileNotifications($response->mobileNotifications);
+        }
+        if (isset($response->enableAutoAway)) {
+            $this->setEnableAutoAway($response->enableAutoAway);
+        }
+        if (isset($response->highlights)) {
+            $this->setHighlights($response->highlights);
+        }
+        if (isset($response->desktopNotificationDuration)) {
+            $this->setDesktopNotificationDuration($response->desktopNotificationDuration);
+        }
+        if (isset($response->desktopNotificationRequireInteraction)) {
+            $this->setDesktopNotificationRequireInteraction($response->desktopNotificationRequireInteraction);
+        }
+        if (isset($response->viewMode)) {
+            $this->setViewMode($response->viewMode);
+        }
+        if (isset($response->hideUsernames)) {
+            $this->setHideUsernames($response->hideUsernames);
+        }
+        if (isset($response->hideRoles)) {
+            $this->setHideRoles($response->hideRoles);
+        }
+        if (isset($response->hideAvatars)) {
+            $this->setHideAvatars($response->hideAvatars);
+        }
+        if (isset($response->sendOnEnter)) {
+            $this->setSendOnEnter($response->sendOnEnter);
+        }
+        if (isset($response->roomCounterSidebar)) {
+            $this->setRoomCounterSidebar($response->roomCounterSidebar);
+        }
+        if (isset($response->language)) {
+            $this->setLanguage($response->language);
+        }
+        if (isset($response->sidebarShowFavorites)) {
+            $this->setSidebarShowFavorites($response->sidebarShowFavorites);
+        }
+        if (isset($response->sidebarShowUnread)) {
+            $this->setSidebarShowUnread($response->sidebarShowUnread);
+        }
+        if (isset($response->sidebarSortby)) {
+            $this->setSidebarSortby($response->sidebarSortby);
+        }
+        if (isset($response->sidebarViewMode)) {
+            $this->setSidebarViewMode($response->sidebarViewMode);
+        }
+        if (isset($response->sidebarHideAvatar)) {
+            $this->setSidebarHideAvatar($response->sidebarHideAvatar);
+        }
+        if (isset($response->groupByType)) {
+            $this->setGroupByType($response->groupByType);
+        }
+        if (isset($response->muteFocusedConversations)) {
+            $this->setMuteFocusedConversations($response->muteFocusedConversations);
         }
 
-        return $preferences;
+        return $this;
     }
 
-    public function 
+    /**
+     * Returns preferences data to submit to api
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return array_filter(get_object_vars($this), function($v) { return !is_null($v); });
+    }
 
     /**
      * @return string
      */
-    public function getNewRoomNotification(): string
+    public function getNewRoomNotification()
     {
         return $this->newRoomNotification;
     }
@@ -95,16 +197,19 @@ class Preferences
      * @param string $newRoomNotification
      * @return Preferences
      */
-    public function setNewRoomNotification(string $newRoomNotification): Preferences
+    public function setNewRoomNotification($newRoomNotification)
     {
-        $this->newRoomNotification = $newRoomNotification;
+        if (is_string($newRoomNotification)) {
+            $this->newRoomNotification = $newRoomNotification;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getNewMessageNotification(): string
+    public function getNewMessageNotification()
     {
         return $this->newMessageNotification;
     }
@@ -113,16 +218,19 @@ class Preferences
      * @param string $newMessageNotification
      * @return Preferences
      */
-    public function setNewMessageNotification(string $newMessageNotification): Preferences
+    public function setNewMessageNotification($newMessageNotification)
     {
-        $this->newMessageNotification = $newMessageNotification;
+        if (is_string($newMessageNotification)) {
+            $this->newMessageNotification = $newMessageNotification;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isUseEmojis(): bool
+    public function isUseEmojis()
     {
         return $this->useEmojis;
     }
@@ -131,16 +239,18 @@ class Preferences
      * @param bool $useEmojis
      * @return Preferences
      */
-    public function setUseEmojis(bool $useEmojis): Preferences
+    public function setUseEmojis($useEmojis)
     {
-        $this->useEmojis = $useEmojis;
+        if (is_bool($useEmojis)) {
+            $this->useEmojis = $useEmojis;
+        }
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isConvertAsciiEmoji(): bool
+    public function isConvertAsciiEmoji()
     {
         return $this->convertAsciiEmoji;
     }
@@ -149,16 +259,18 @@ class Preferences
      * @param bool $convertAsciiEmoji
      * @return Preferences
      */
-    public function setConvertAsciiEmoji(bool $convertAsciiEmoji): Preferences
+    public function setConvertAsciiEmoji($convertAsciiEmoji)
     {
-        $this->convertAsciiEmoji = $convertAsciiEmoji;
+        if (is_bool($convertAsciiEmoji)) {
+            $this->convertAsciiEmoji = $convertAsciiEmoji;
+        }
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isSaveMobileBandwidth(): bool
+    public function isSaveMobileBandwidth()
     {
         return $this->saveMobileBandwidth;
     }
@@ -167,88 +279,103 @@ class Preferences
      * @param bool $saveMobileBandwidth
      * @return Preferences
      */
-    public function setSaveMobileBandwidth(bool $saveMobileBandwidth): Preferences
+    public function setSaveMobileBandwidth($saveMobileBandwidth)
     {
-        $this->saveMobileBandwidth = $saveMobileBandwidth;
+        if (is_bool($saveMobileBandwidth)) {
+            $this->saveMobileBandwidth = $saveMobileBandwidth;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isCollapseMediaByDefault(): bool
+    public function isCollapseMediaByDefault()
     {
         return $this->collapseMediaByDefault;
     }
 
     /**
-     * @param bool $collapseMediaByDefault
+     * @param bool $collapseMedia
      * @return Preferences
      */
-    public function setCollapseMediaByDefault(bool $collapseMediaByDefault): Preferences
+    public function setCollapseMediaByDefault($collapseMedia)
     {
-        $this->collapseMediaByDefault = $collapseMediaByDefault;
+        if (is_bool($collapseMedia)) {
+            $this->collapseMediaByDefault = $collapseMedia;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isAutoImageLoad(): bool
+    public function isAutoImageLoad()
     {
         return $this->autoImageLoad;
     }
 
     /**
-     * @param bool $autoImageLoad
+     * @param bool $autoLoad
      * @return Preferences
      */
-    public function setAutoImageLoad(bool $autoImageLoad): Preferences
+    public function setAutoImageLoad($autoLoad)
     {
-        $this->autoImageLoad = $autoImageLoad;
+        if (is_bool($autoLoad)) {
+            $this->autoImageLoad = $autoLoad;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getEmailNotificationMode(): string
+    public function getEmailNotificationMode()
     {
         return $this->emailNotificationMode;
     }
 
     /**
-     * @param string $emailNotificationMode
+     * @param string $mode
      * @return Preferences
      */
-    public function setEmailNotificationMode(string $emailNotificationMode): Preferences
+    public function setEmailNotificationMode($mode)
     {
-        $this->emailNotificationMode = $emailNotificationMode;
+        if (is_string($mode)) {
+            $this->emailNotificationMode = $mode;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getRoomsListExhibitionMode(): string
+    public function getRoomsListExhibitionMode()
     {
         return $this->roomsListExhibitionMode;
     }
 
     /**
-     * @param string $roomsListExhibitionMode
+     * @param string $mode
      * @return Preferences
      */
-    public function setRoomsListExhibitionMode(string $roomsListExhibitionMode): Preferences
+    public function setRoomsListExhibitionMode($mode)
     {
-        $this->roomsListExhibitionMode = $roomsListExhibitionMode;
+        if (is_string($mode)) {
+            $this->roomsListExhibitionMode = $mode;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isUnreadAlert(): bool
+    public function isUnreadAlert()
     {
         return $this->unreadAlert;
     }
@@ -257,34 +384,40 @@ class Preferences
      * @param bool $unreadAlert
      * @return Preferences
      */
-    public function setUnreadAlert(bool $unreadAlert): Preferences
+    public function setUnreadAlert($unreadAlert)
     {
-        $this->unreadAlert = $unreadAlert;
+        if (is_bool($unreadAlert)) {
+            $this->unreadAlert = $unreadAlert;
+        }
+
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getNotificationsSoundVolume(): int
+    public function getNotificationsSoundVolume()
     {
         return $this->notificationsSoundVolume;
     }
 
     /**
-     * @param int $notificationsSoundVolume
+     * @param int $volume
      * @return Preferences
      */
-    public function setNotificationsSoundVolume(int $notificationsSoundVolume): Preferences
+    public function setNotificationsSoundVolume($volume)
     {
-        $this->notificationsSoundVolume = $notificationsSoundVolume;
+        if (is_int($volume)) {
+            $this->notificationsSoundVolume = $volume;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getDesktopNotifications(): string
+    public function getDesktopNotifications()
     {
         return $this->desktopNotifications;
     }
@@ -293,16 +426,19 @@ class Preferences
      * @param string $desktopNotifications
      * @return Preferences
      */
-    public function setDesktopNotifications(string $desktopNotifications): Preferences
+    public function setDesktopNotifications($desktopNotifications)
     {
-        $this->desktopNotifications = $desktopNotifications;
+        if (is_string($desktopNotifications)) {
+            $this->desktopNotifications = $desktopNotifications;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getMobileNotifications(): string
+    public function getMobileNotifications()
     {
         return $this->mobileNotifications;
     }
@@ -311,16 +447,19 @@ class Preferences
      * @param string $mobileNotifications
      * @return Preferences
      */
-    public function setMobileNotifications(string $mobileNotifications): Preferences
+    public function setMobileNotifications($mobileNotifications)
     {
-        $this->mobileNotifications = $mobileNotifications;
+        if (is_string($mobileNotifications)) {
+            $this->mobileNotifications = $mobileNotifications;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isEnableAutoAway(): bool
+    public function isEnableAutoAway()
     {
         return $this->enableAutoAway;
     }
@@ -329,16 +468,19 @@ class Preferences
      * @param bool $enableAutoAway
      * @return Preferences
      */
-    public function setEnableAutoAway(bool $enableAutoAway): Preferences
+    public function setEnableAutoAway($enableAutoAway)
     {
-        $this->enableAutoAway = $enableAutoAway;
+        if (is_bool($enableAutoAway)) {
+            $this->enableAutoAway = $enableAutoAway;
+        }
+
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getHighlights(): array
+    public function getHighlights()
     {
         return $this->highlights;
     }
@@ -347,52 +489,60 @@ class Preferences
      * @param array $highlights
      * @return Preferences
      */
-    public function setHighlights(array $highlights): Preferences
+    public function setHighlights($highlights)
     {
-        $this->highlights = $highlights;
+        if (is_array($highlights)) {
+            $this->highlights = $highlights;
+        }
+
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getDesktopNotificationDuration(): int
+    public function getDesktopNotificationDuration()
     {
         return $this->desktopNotificationDuration;
     }
 
     /**
-     * @param int $desktopNotificationDuration
+     * @param int $duration
      * @return Preferences
      */
-    public function setDesktopNotificationDuration(int $desktopNotificationDuration): Preferences
+    public function setDesktopNotificationDuration($duration)
     {
-        $this->desktopNotificationDuration = $desktopNotificationDuration;
+        if (is_int($duration)) {
+            $this->desktopNotificationDuration = $duration;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isDesktopNotificationRequireInteraction(): bool
+    public function isDesktopNotificationRequireInteraction()
     {
         return $this->desktopNotificationRequireInteraction;
     }
 
     /**
-     * @param bool $desktopNotificationRequireInteraction
+     * @param bool $require
      * @return Preferences
      */
-    public function setDesktopNotificationRequireInteraction(bool $desktopNotificationRequireInteraction): Preferences
+    public function setDesktopNotificationRequireInteraction($require)
     {
-        $this->desktopNotificationRequireInteraction = $desktopNotificationRequireInteraction;
+        if (is_bool($require)) {
+            $this->desktopNotificationRequireInteraction = $require;
+        }
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getViewMode(): int
+    public function getViewMode()
     {
         return $this->viewMode;
     }
@@ -401,16 +551,19 @@ class Preferences
      * @param int $viewMode
      * @return Preferences
      */
-    public function setViewMode(int $viewMode): Preferences
+    public function setViewMode($viewMode)
     {
-        $this->viewMode = $viewMode;
+        if (is_int($viewMode)) {
+            $this->viewMode = $viewMode;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isHideUsernames(): bool
+    public function isHideUsernames()
     {
         return $this->hideUsernames;
     }
@@ -419,16 +572,19 @@ class Preferences
      * @param bool $hideUsernames
      * @return Preferences
      */
-    public function setHideUsernames(bool $hideUsernames): Preferences
+    public function setHideUsernames($hideUsernames)
     {
-        $this->hideUsernames = $hideUsernames;
+        if (is_bool($hideUsernames)) {
+            $this->hideUsernames = $hideUsernames;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isHideRoles(): bool
+    public function isHideRoles()
     {
         return $this->hideRoles;
     }
@@ -437,16 +593,19 @@ class Preferences
      * @param bool $hideRoles
      * @return Preferences
      */
-    public function setHideRoles(bool $hideRoles): Preferences
+    public function setHideRoles($hideRoles)
     {
-        $this->hideRoles = $hideRoles;
+        if (is_bool($hideRoles)) {
+            $this->hideRoles = $hideRoles;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isHideAvatars(): bool
+    public function isHideAvatars()
     {
         return $this->hideAvatars;
     }
@@ -455,16 +614,19 @@ class Preferences
      * @param bool $hideAvatars
      * @return Preferences
      */
-    public function setHideAvatars(bool $hideAvatars): Preferences
+    public function setHideAvatars($hideAvatars)
     {
-        $this->hideAvatars = $hideAvatars;
+        if (is_bool($hideAvatars)) {
+            $this->hideAvatars = $hideAvatars;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getSendOnEnter(): string
+    public function getSendOnEnter()
     {
         return $this->sendOnEnter;
     }
@@ -473,106 +635,126 @@ class Preferences
      * @param string $sendOnEnter
      * @return Preferences
      */
-    public function setSendOnEnter(string $sendOnEnter): Preferences
+    public function setSendOnEnter($sendOnEnter)
     {
-        $this->sendOnEnter = $sendOnEnter;
+        if (is_string($sendOnEnter)) {
+            $this->sendOnEnter = $sendOnEnter;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isRoomCounterSidebar(): bool
+    public function isRoomCounterSidebar()
     {
         return $this->roomCounterSidebar;
     }
 
     /**
-     * @param bool $roomCounterSidebar
+     * @param bool $show
      * @return Preferences
      */
-    public function setRoomCounterSidebar(bool $roomCounterSidebar): Preferences
+    public function setRoomCounterSidebar($show)
     {
-        $this->roomCounterSidebar = $roomCounterSidebar;
+        if (is_bool($show)) {
+            $this->roomCounterSidebar = $show;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getLanguage(): string
+    public function getLanguage()
     {
         return $this->language;
     }
 
     /**
-     * @param string $language
+     * Language
+     *
+     * @param string $language 'pt-BR'
      * @return Preferences
      */
-    public function setLanguage(string $language): Preferences
+    public function setLanguage($language)
     {
-        $this->language = $language;
+        if (is_string($language)) {
+            $this->language = $language;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isSidebarShowFavorites(): bool
+    public function isSidebarShowFavorites()
     {
         return $this->sidebarShowFavorites;
     }
 
     /**
-     * @param bool $sidebarShowFavorites
+     * @param bool $show
      * @return Preferences
      */
-    public function setSidebarShowFavorites(bool $sidebarShowFavorites): Preferences
+    public function setSidebarShowFavorites($show)
     {
-        $this->sidebarShowFavorites = $sidebarShowFavorites;
+        if (is_bool($show)) {
+            $this->sidebarShowFavorites = $show;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isSidebarShowUnread(): bool
+    public function isSidebarShowUnread()
     {
         return $this->sidebarShowUnread;
     }
 
     /**
-     * @param bool $sidebarShowUnread
+     * @param bool $show
      * @return Preferences
      */
-    public function setSidebarShowUnread(bool $sidebarShowUnread): Preferences
+    public function setSidebarShowUnread($show)
     {
-        $this->sidebarShowUnread = $sidebarShowUnread;
+        if (is_bool($show)) {
+            $this->sidebarShowUnread = $show;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getSidebarSortby(): string
+    public function getSidebarSortby()
     {
         return $this->sidebarSortby;
     }
 
     /**
-     * @param string $sidebarSortby
+     * @param string $sortBy
      * @return Preferences
      */
-    public function setSidebarSortby(string $sidebarSortby): Preferences
+    public function setSidebarSortby($sortBy)
     {
-        $this->sidebarSortby = $sidebarSortby;
+        if (is_string($sortBy)) {
+            $this->sidebarSortby = $sortBy;
+        }
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getSidebarViewMode(): string
+    public function getSidebarViewMode()
     {
         return $this->sidebarViewMode;
     }
@@ -581,34 +763,40 @@ class Preferences
      * @param string $sidebarViewMode
      * @return Preferences
      */
-    public function setSidebarViewMode(string $sidebarViewMode): Preferences
+    public function setSidebarViewMode($sidebarViewMode)
     {
-        $this->sidebarViewMode = $sidebarViewMode;
+        if (is_string($sidebarViewMode)) {
+            $this->sidebarViewMode = $sidebarViewMode;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isSidebarHideAvatar(): bool
+    public function isSidebarHideAvatar()
     {
         return $this->sidebarHideAvatar;
     }
 
     /**
-     * @param bool $sidebarHideAvatar
+     * @param bool $hide
      * @return Preferences
      */
-    public function setSidebarHideAvatar(bool $sidebarHideAvatar): Preferences
+    public function setSidebarHideAvatar($hide)
     {
-        $this->sidebarHideAvatar = $sidebarHideAvatar;
+        if (is_bool($hide)) {
+            $this->sidebarHideAvatar = $hide;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isGroupByType(): bool
+    public function isGroupByType()
     {
         return $this->groupByType;
     }
@@ -617,29 +805,33 @@ class Preferences
      * @param bool $groupByType
      * @return Preferences
      */
-    public function setGroupByType(bool $groupByType): Preferences
+    public function setGroupByType($groupByType)
     {
-        $this->groupByType = $groupByType;
+        if (is_bool($groupByType)) {
+            $this->groupByType = $groupByType;
+        }
+
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isMuteFocusedConversations(): bool
+    public function isMuteFocusedConversations()
     {
         return $this->muteFocusedConversations;
     }
 
     /**
-     * @param bool $muteFocusedConversations
+     * @param bool $mute
      * @return Preferences
      */
-    public function setMuteFocusedConversations(bool $muteFocusedConversations): Preferences
+    public function setMuteFocusedConversations($mute)
     {
-        $this->muteFocusedConversations = $muteFocusedConversations;
+        if (is_bool($mute)) {
+            $this->muteFocusedConversations = $mute;
+        }
+
         return $this;
     }
-
-
 }

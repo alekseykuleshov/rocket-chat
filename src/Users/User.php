@@ -433,7 +433,7 @@ class User extends Request
     }
 
     /**
-     * @return array|false
+     * @return Preferences|false
      */
     public static function getPreferences()
     {
@@ -442,15 +442,18 @@ class User extends Request
             return false;
         }
 
-        return static::getResponse()->preferences;
+        $preferences = new Preferences();
+        $preferences->updateOutOfResponse(static::getResponse()->preferences);
+
+        return $preferences;
     }
 
     /**
      * @param $userId
-     * @param array $preferences
+     * @param Preferences $preferences
      * @return false|User
      */
-    public static function setPreferences($userId, $preferences)
+    public static function setPreferences($userId, Preferences $preferences)
     {
         static::send("users.setPreferences", "POST", ["userId" => $userId, "data" => $preferences]);
         if (!static::getSuccess()) {

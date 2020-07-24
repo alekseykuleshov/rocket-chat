@@ -558,7 +558,7 @@ trait Data
     /**
      * Returns user preferences
      *
-     * @return \stdClass
+     * @return Preferences
      */
     public function getPreferencesData()
     {
@@ -643,7 +643,8 @@ trait Data
         }
 
         if (isset($response->settings) && isset($response->settings->preferences)) {
-            $this->setPreferencesData($response->settings->preferences);
+            $preferences = new Preferences();
+            $this->setPreferencesData($preferences->updateOutOfResponse($response->settings->preferences));
         }
 
         return $this;
@@ -794,15 +795,12 @@ trait Data
     }
 
     /**
-     * @param array $preferences
+     * @param Preferences $preferences
      * @return $this
      */
-    private function setPreferencesData($preferences)
+    private function setPreferencesData(Preferences $preferences)
     {
-        if (is_object($preferences)) {
-            $this->preferences = $preferences;
-        }
-
+        $this->preferences = $preferences;
         return $this;
     }
 

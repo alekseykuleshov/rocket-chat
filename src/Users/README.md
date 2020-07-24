@@ -233,21 +233,29 @@ if (!$result) {
 }
 ```
 
+### SET PREFERENCES
+```php
+$user = \ATDev\RocketChat\Chat::login("[USERNAME]", "[PASSWORD]");
+$preferences = new \ATDev\RocketChat\Users\Preferences();
+$preferences->setHighlights(['highlight phrase', 'highlightword']);
+$preferences->setAutoImageLoad(false);
+
+$user = \ATDev\RocketChat\Users\User::setPreferences($user->getUserId(), $preferences);
+if (!$user) {
+    \ATDev\RocketChat\Users\User::getError();
+}
+
+$preferences = $user->getPreferencesData();
+$preferences->getHighlights();
+```
+
 ### GET PREFERENCES
 ```php
 $preferences = \ATDev\RocketChat\Users\User::getPreferences();
 if (!$preferences) {
     $preferences->getError();
 }
-```
 
-### SET PREFERENCES
-```php
-$user = \ATDev\RocketChat\Chat::login("[USERNAME]", "[PASSWORD]");
-$user = \ATDev\RocketChat\Users\User::setPreferences($user->getUserId(), ['useEmojis' => true, 'convertAsciiEmoji' => false]);
-if (!$user) {
-    \ATDev\RocketChat\Users\User::getError();
-}
-$preferences = $user->getPreferencesData();
+$preferences->getDesktopNotificationDuration();
 ```
 
