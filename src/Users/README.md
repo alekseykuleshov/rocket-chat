@@ -233,3 +233,21 @@ if (!$result) {
 }
 ```
 
+### GET PREFERENCES
+```php
+$preferences = \ATDev\RocketChat\Users\User::getPreferences();
+if (!$preferences) {
+    $preferences->getError();
+}
+```
+
+### SET PREFERENCES
+```php
+$user = \ATDev\RocketChat\Chat::login("[USERNAME]", "[PASSWORD]");
+$user = \ATDev\RocketChat\Users\User::setPreferences($user->getUserId(), ['useEmojis' => true, 'convertAsciiEmoji' => false]);
+if (!$user) {
+    \ATDev\RocketChat\Users\User::getError();
+}
+$preferences = $user->getPreferencesData();
+```
+
