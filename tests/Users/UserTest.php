@@ -365,6 +365,49 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("setAvatarUrl", ["some-url"]);
     }
 
+    public function testUpdateOwnBasicInfoFailed()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => false
+        ]);
+        $updateData = [
+            'email' => 'test@updated.com',
+            'name' => 'Updated Name'
+        ];
+
+        $result = User::updateOwnBasicInfo($updateData);
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["users.updateOwnBasicInfo", "POST", ["data" => $updateData]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("createOutOfResponse");
+    }
+
+    public function testUpdateOwnBasicInfoSuccess()
+    {
+        $updateData = [
+            'email' => 'test@updated.com',
+            'name' => 'Updated Name'
+        ];
+        $response = (object) ["user" => (object) $updateData];
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "createOutOfResponse" => "updated user result"
+        ]);
+
+        $result = User::updateOwnBasicInfo($updateData);
+
+        $this->assertSame("updated user result", $result);
+        $stub->verifyInvokedOnce("send", ["users.updateOwnBasicInfo", "POST", ["data" => $updateData]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("createOutOfResponse");
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
