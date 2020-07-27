@@ -2,6 +2,8 @@
 
 namespace ATDev\RocketChat\Tests\Users;
 
+use Users\PreferencesResponseFixture1;
+
 class ResponseFixture1 extends \stdClass
 {
     public function __construct()
@@ -28,6 +30,8 @@ class ResponseFixture2 extends \stdClass
         $this->name = "John Doe";
         $this->statusConnection = "offline";
         $this->username = "jDoe";
+        $this->settings = new \stdClass();
+        $this->settings->parameters = new PreferencesResponseFixture1();
     }
 }
 

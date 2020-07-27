@@ -434,7 +434,7 @@ class DataTest extends TestCase
         $this->assertSame("test@example.com", $mock->getEmail());
         $this->assertSame(true, $mock->getVerified());
         $this->assertSame("user", $mock->getType());
-        $this->assertSame("some", $mock->getStatus());
+        $this->assertSame("some", $mock->getStatusValue());
         $this->assertSame(true, $mock->getActive());
         $this->assertSame(["admin", "guest"], $mock->getRoles());
         $this->assertSame("John Doe", $mock->getName());
@@ -453,7 +453,7 @@ class DataTest extends TestCase
         $this->assertSame("test@example.com", $mock->getEmail());
         $this->assertNull($mock->getVerified());
         $this->assertNull($mock->getType());
-        $this->assertSame("some", $mock->getStatus());
+        $this->assertSame("some", $mock->getStatusValue());
         $this->assertNull($mock->getActive());
         $this->assertSame(["admin", "guest"], $mock->getRoles());
         $this->assertNull($mock->getName());
@@ -472,7 +472,7 @@ class DataTest extends TestCase
         $this->assertNull($mock->getEmail());
         $this->assertNull($mock->getVerified());
         $this->assertSame("user", $mock->getType());
-        $this->assertNull($mock->getStatus());
+        $this->assertNull($mock->getStatusValue());
         $this->assertSame(true, $mock->getActive());
         $this->assertNull($mock->getRoles());
         $this->assertSame("John Doe", $mock->getName());
