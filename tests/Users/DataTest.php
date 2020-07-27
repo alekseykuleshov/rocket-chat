@@ -440,7 +440,8 @@ class DataTest extends TestCase
         $this->assertSame(["admin", "guest"], $mock->getRoles());
         $this->assertSame("John Doe", $mock->getName());
         $this->assertSame("2016-12-08T00:22:15.167Z", $mock->getLastLogin());
-        $this->assertSame("offline", $mock->getStatusConnection());
+        $this->assertSame("online", $mock->getStatusConnection());
+        $this->assertSame("status message", $mock->getStatusText());
         $this->assertSame(-3.5, $mock->getUtcOffset());
         $this->assertSame("jDoe", $mock->getUserName());
         $this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
@@ -465,6 +466,7 @@ class DataTest extends TestCase
         $this->assertNull($mock->getName());
         $this->assertSame("2016-12-08T00:22:15.167Z", $mock->getLastLogin());
         $this->assertNull($mock->getStatusConnection());
+        $this->assertSame("status text", $mock->getStatusText());
         $this->assertSame(-3.5, $mock->getUtcOffset());
         $this->assertNull($mock->getUserName());
         $this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
@@ -485,6 +487,7 @@ class DataTest extends TestCase
         $this->assertSame("John Doe", $mock->getName());
         $this->assertNull($mock->getLastLogin());
         $this->assertSame("offline", $mock->getStatusConnection());
+        $this->assertNull($mock->getStatusText());
         $this->assertNull($mock->getUtcOffset());
         $this->assertSame("jDoe", $mock->getUserName());
         $this->assertNull($mock->getAvatarUrl());

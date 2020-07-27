@@ -17,6 +17,7 @@ class ResponseFixture1 extends \stdClass
         $this->lastLogin = "2016-12-08T00:22:15.167Z";
         $this->utcOffset = -3.5;
         $this->avatarUrl = "https://localhost/avatar.png";
+        $this->statusText = "status text";
     }
 }
 
@@ -46,5 +47,9 @@ class ResponseFixtureFull extends \stdClass
         }
 
         $this->emails[0]->verified = true;
+        $this->statusConnection = null;
+        $this->connectionStatus = "online";
+        $this->statusText = null;
+        $this->message = "status message";
     }
 }
