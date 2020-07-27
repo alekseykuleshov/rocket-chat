@@ -2,6 +2,7 @@
 
 namespace ATDev\RocketChat\Tests\Users;
 
+use ATDev\RocketChat\Users\Preferences;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -443,6 +444,11 @@ class DataTest extends TestCase
         $this->assertSame(-3.5, $mock->getUtcOffset());
         $this->assertSame("jDoe", $mock->getUserName());
         $this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
+        $this->assertInstanceOf(Preferences::class, $mock->getPreferencesData());
+        $this->assertClassHasAttribute("newRoomNotification", Preferences::class);
+        $this->assertSame("notification", $mock->getPreferencesData()->getNewRoomNotification());
+        $this->assertClassHasAttribute("useEmojis", Preferences::class);
+        $this->assertSame(true, $mock->getPreferencesData()->isUseEmojis());
 
         $user1 = new ResponseFixture1();
         $mock = $this->getMockForTrait(Data::class);
@@ -462,6 +468,7 @@ class DataTest extends TestCase
         $this->assertSame(-3.5, $mock->getUtcOffset());
         $this->assertNull($mock->getUserName());
         $this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
+        $this->assertNull($mock->getPreferencesData());
 
         $user2 = new ResponseFixture2();
         $mock = $this->getMockForTrait(Data::class);
@@ -481,6 +488,11 @@ class DataTest extends TestCase
         $this->assertNull($mock->getUtcOffset());
         $this->assertSame("jDoe", $mock->getUserName());
         $this->assertNull($mock->getAvatarUrl());
+        $this->assertInstanceOf(Preferences::class, $mock->getPreferencesData());
+        $this->assertClassHasAttribute("newRoomNotification", Preferences::class);
+        $this->assertSame("notification", $mock->getPreferencesData()->getNewRoomNotification());
+        $this->assertClassHasAttribute("useEmojis", Preferences::class);
+        $this->assertSame(true, $mock->getPreferencesData()->isUseEmojis());
     }
 
     public function testCreateOutOfResponse()

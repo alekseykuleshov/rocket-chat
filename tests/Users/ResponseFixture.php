@@ -31,7 +31,7 @@ class ResponseFixture2 extends \stdClass
         $this->statusConnection = "offline";
         $this->username = "jDoe";
         $this->settings = new \stdClass();
-        $this->settings->parameters = new PreferencesResponseFixture1();
+        $this->settings->preferences = new PreferencesResponseFixture1();
     }
 }
 
