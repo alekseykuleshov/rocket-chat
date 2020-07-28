@@ -408,6 +408,45 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("createOutOfResponse");
     }
 
+    public function testSetActiveStatusFailed()
+    {
+        $stub = test::double(User::class, [
+            "getUserId" => "userId123",
+            "send" => true,
+            "getSuccess" => false
+        ]);
+
+        $user = new User();
+        $result = $user->setActiveStatus(true);
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["users.setActiveStatus", "POST", ["activeStatus" => true, "userId" => "userId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testSetActiveStatusSuccess()
+    {
+        $response = (object) ["user" => "user content"];
+        $stub = test::double(User::class, [
+            "getUserId" => "userId123",
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "updateOutOfResponse" => "result"
+        ]);
+
+        $user = new User();
+        $result = $user->setActiveStatus(false);
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["users.setActiveStatus", "POST", ["activeStatus" => false, "userId" => "userId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("updateOutOfResponse", ["user content"]);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
