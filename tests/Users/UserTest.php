@@ -365,6 +365,34 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("setAvatarUrl", ["some-url"]);
     }
 
+    public function testResetAvatarFailed()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => false,
+            "getUsername" => "username123"
+        ]);
+        $result = (new User())->resetAvatar();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["users.resetAvatar", "POST", ["username" => "username123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testResetAvatarSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getUserId" => "userId123"
+        ]);
+        $result = (new User())->resetAvatar();
+
+        $this->assertSame(true, $result);
+        $stub->verifyInvokedOnce("send", ["users.resetAvatar", "POST", ["userId" => "userId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
     public function testUpdateOwnBasicInfoFailed()
     {
         $stub = test::double(User::class, [
@@ -542,6 +570,113 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("updateOutOfResponse", $response);
         $stub->verifyNeverInvoked("createOutOfResponse");
+    }
+
+    public function testForgotPasswordFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::forgotPassword("email123");
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.forgotPassword", "POST", ["email" => "email123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testForgotPasswordSuccess()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
+        $response = User::forgotPassword("email123");
+
+        $this->assertSame(true, $response);
+        $stub->verifyInvokedOnce("send", ["users.forgotPassword", "POST", ["email" => "email123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testDeactivateIdleFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::deactivateIdle(5);
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.deactivateIdle", "POST", ["daysIdle" => 5, "role" => "user"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+    }
+
+    public function testDeactivateIdleSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) ["count" => 10]
+        ]);
+        $response = User::deactivateIdle(5, "guest");
+
+        $this->assertSame(10, $response);
+        $stub->verifyInvokedOnce("send", ["users.deactivateIdle", "POST", ["daysIdle" => 5, "role" => "guest"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+    }
+
+    public function testDeleteOwnAccountFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::deleteOwnAccount("pass123");
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.deleteOwnAccount", "POST", ["password" => "pass123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testDeleteOwnAccountSuccess()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
+        $response = User::deleteOwnAccount("pass123");
+
+        $this->assertSame(true, $response);
+        $stub->verifyInvokedOnce("send", ["users.deleteOwnAccount", "POST", ["password" => "pass123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testGetUsernameSuggestionFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::getUsernameSuggestion();
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.getUsernameSuggestion", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+    }
+
+    public function testGetUsernameSuggestionNull()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => null
+        ]);
+        $response = User::getUsernameSuggestion();
+
+        $this->assertNull($response);
+        $stub->verifyInvokedOnce("send", ["users.getUsernameSuggestion", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+    }
+
+    public function testGetUsernameSuggestionSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) ["result" => "response"]
+        ]);
+        $response = User::getUsernameSuggestion();
+
+        $this->assertSame("response", $response);
+        $stub->verifyInvokedOnce("send", ["users.getUsernameSuggestion", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedMultipleTimes("getResponse", 2);
     }
 
     protected function tearDown(): void
