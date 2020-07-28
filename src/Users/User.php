@@ -268,7 +268,7 @@ class User extends Request
 
         $response = static::getResponse();
         if (isset($user)) {
-            $user->updateOutOfResponse($response);
+            $user = $user->updateOutOfResponse($response);
         } else {
             $user = static::createOutOfResponse($response);
         }
@@ -282,7 +282,6 @@ class User extends Request
      * @param string $message
      * @param string|null $status
      * @return bool
-     * @todo should status be validated against inclusion in ['online', 'away', 'busy', 'offline']
      */
     public static function setStatus($message, $status = null)
     {
@@ -464,10 +463,12 @@ class User extends Request
     }
 
     /**
-     * @param User $user
+     * Prepares request params to have `userId` or `username`
+     *
+     * @param User|null $user
      * @return array
      */
-    private static function requestParams(User $user)
+    private static function requestParams(User $user = null)
     {
         $params = [];
         if (isset($user) && !empty($user->getUserId())) {

@@ -447,6 +447,103 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("updateOutOfResponse", ["user content"]);
     }
 
+    public function testSetStatusFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $result = User::setStatus("Status message");
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["users.setStatus", "POST", ["message" => "Status message"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testSetStatusSuccess()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
+        $result = User::setStatus("Status message", "away");
+
+        $this->assertSame(true, $result);
+        $stub->verifyInvokedOnce("send", ["users.setStatus", "POST", ["message" => "Status message", "status" => "away"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testGetStatusFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $result = User::getStatus();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", []]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("createOutOfResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testGetStatusWithUsernameFailed()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => false,
+            "getUsername" => "user-name",
+            "getUserId" => null,
+        ]);
+
+        $user = new User();
+        $result = User::getStatus($user);
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", ["username" => "user-name"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("createOutOfResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testGetStatusSuccess()
+    {
+        $response = (object) [
+            "message" => "Latest status",
+            "connectionStatus" => "online",
+            "status" => "online"
+        ];
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "createOutOfResponse" => "userInstance"
+        ]);
+
+        $result = User::getStatus();
+        $this->assertSame("userInstance", $result);
+        $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", []]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("createOutOfResponse", $response);
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testGetStatusWithUserIdSuccess()
+    {
+        $response = (object) [
+            "_id" => "userId123",
+            "message" => "Latest status",
+            "connectionStatus" => "online",
+            "status" => "online"
+        ];
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "updateOutOfResponse" => "userInstance",
+            "getUserId" => "userId123"
+        ]);
+
+        $user = new User();
+        $result = User::getStatus($user);
+        $this->assertSame("userInstance", $result);
+        $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", ["userId" => "userId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("updateOutOfResponse", $response);
+        $stub->verifyNeverInvoked("createOutOfResponse");
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
