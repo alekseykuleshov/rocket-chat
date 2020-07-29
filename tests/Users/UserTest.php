@@ -2,6 +2,7 @@
 
 namespace ATDev\RocketChat\Tests\Users;
 
+use ATDev\RocketChat\Users\Collection;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -1015,6 +1016,111 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
         $stub->verifyInvokedOnce("createOutOfResponse", "user-result");
+    }
+
+    public function testPresenceFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $result = User::presence();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["users.presence", "GET", ["from" => null]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("createOutOfResponse");
+    }
+
+    public function testPresenceSuccess()
+    {
+        $user1 = new ResponseFixture1();
+        $user2 = new ResponseFixture2();
+        $response = (object) ["users" => [$user1, $user2], "full" => false];
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "createOutOfResponse" => function ($arg) { return get_class($arg); }
+        ]);
+
+        $coll = test::double(Collection::class, ["add" => true, "setFull" => false]);
+        $result = User::presence("2019-05-22T12:11:45.392Z");
+
+        $this->assertInstanceOf(Collection::class, $result);
+        $stub->verifyInvokedOnce("send", ["users.presence", "GET", ["from" => "2019-05-22T12:11:45.392Z"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("createOutOfResponse", [$user1]);
+        $stub->verifyInvokedOnce("createOutOfResponse", [$user2]);
+        $coll->verifyInvokedOnce("add", [ResponseFixture1::class]);
+        $coll->verifyInvokedOnce("add", [ResponseFixture2::class]);
+        $coll->verifyInvokedOnce("setFull", [false]);
+    }
+
+    public function testGetPresenceFailed()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => false,
+            "getUserId" => null,
+            "getUsername" => "username123"
+        ]);
+        $result = User::getPresence(new User());
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["users.getPresence", "GET", ["username" => "username123"]]);
+        $stub->verifyInvokedMultipleTimes("getUsername", 2);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyInvokedOnce("getUserId");
+    }
+
+    public function testGetPresenceSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getUserId" => "userId123",
+            "getUsername" => null,
+            "getResponse" => (object) ["presence" => "away"]
+        ]);
+        $result = User::getPresence(new User());
+
+        $this->assertIsObject($result);
+        $this->assertObjectHasAttribute("presence", $result);
+        $this->assertSame("away", $result->presence);
+        $this->assertObjectNotHasAttribute("connectionStatus", $result);
+        $this->assertObjectNotHasAttribute("lastLogin", $result);
+        $stub->verifyInvokedOnce("send", ["users.getPresence", "GET", ["userId" => "userId123"]]);
+        $stub->verifyInvokedMultipleTimes("getUserId", 2);
+        $stub->verifyNeverInvoked("getUsername");
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+    }
+
+    public function testGetPresenceCalleeSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) [
+                "presence" => "away",
+                "connectionStatus" => "offline",
+                "lastLogin" => "2016-12-08T18:26:03.612Z"
+            ]
+        ]);
+        $result = User::getPresence(new User());
+
+        $this->assertIsObject($result);
+        $this->assertObjectHasAttribute("presence", $result);
+        $this->assertSame("away", $result->presence);
+        $this->assertObjectHasAttribute("connectionStatus", $result);
+        $this->assertSame("offline", $result->connectionStatus);
+        $this->assertObjectHasAttribute("lastLogin", $result);
+        $this->assertSame("2016-12-08T18:26:03.612Z", $result->lastLogin);
+        $stub->verifyInvokedOnce("send", ["users.getPresence", "GET", []]);
+        $stub->verifyInvokedOnce("getUsername");
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
     }
 
     protected function tearDown(): void

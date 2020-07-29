@@ -218,10 +218,19 @@ class User extends Request
         if (!static::getSuccess()) {
             return false;
         }
-        // @todo: response format
-        // response object can be returned within User instance from argument
+
         $response = static::getResponse();
-        return $response;
+        $result = new \stdClass();
+        $result->presence = $response->presence;
+
+        if (isset($response->connectionStatus)) {
+            $result->connectionStatus = $response->connectionStatus;
+        }
+        if (isset($response->lastLogin)) {
+            $result->lastLogin = $response->lastLogin;
+        }
+
+        return $result;
     }
 
     /**
