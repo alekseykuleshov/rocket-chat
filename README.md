@@ -58,6 +58,8 @@ Now, when you are logged in, you can:
 
 [Manage Invites](src/Invites)
 
+[Manage Ims](src/Ims)
+
 ## Unit tests
 
 Tests are run by `./vendor/bin/phpunit tests`. Although the library code is designed to be compatible with `php 5.6`, testing
