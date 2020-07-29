@@ -61,7 +61,7 @@ trait Data
     private $avatarUrl;
     /** @var string Authentication token - the same type of session token a user would get via login */
     private $authToken;
-    /** @var \stdClass All preferences of the user */
+    /** @var Preferences All preferences of the user */
     private $preferences;
 
     /**
