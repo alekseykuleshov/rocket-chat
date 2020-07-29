@@ -542,6 +542,8 @@ class UserTest extends TestCase
         $result = User::getStatus();
         $this->assertSame("userInstance", $result);
         $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", []]);
+        $stub->verifyNeverInvoked("getUserId");
+        $stub->verifyNeverInvoked("getUsername");
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("createOutOfResponse", $response);
         $stub->verifyNeverInvoked("updateOutOfResponse");
@@ -560,13 +562,16 @@ class UserTest extends TestCase
             "getSuccess" => true,
             "getResponse" => $response,
             "updateOutOfResponse" => "userInstance",
-            "getUserId" => "userId123"
+            "getUserId" => "userId123",
+            "getUsername" => null
         ]);
 
         $user = new User();
         $result = User::getStatus($user);
         $this->assertSame("userInstance", $result);
         $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", ["userId" => "userId123"]]);
+        $stub->verifyInvokedMultipleTimes("getUserId", 2);
+        $stub->verifyNeverInvoked("getUsername");
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("updateOutOfResponse", $response);
         $stub->verifyNeverInvoked("createOutOfResponse");
@@ -675,6 +680,155 @@ class UserTest extends TestCase
 
         $this->assertSame("response", $response);
         $stub->verifyInvokedOnce("send", ["users.getUsernameSuggestion", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedMultipleTimes("getResponse", 2);
+    }
+
+    public function testCreateTokenFailed()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => false,
+            "getUsername" => "username123",
+            "getUserId" => null
+        ]);
+        $response = User::createToken(new User());
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.createToken", "POST", ["username" => "username123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedMultipleTimes("getUsername", 2);
+        $stub->verifyInvokedOnce("getUserId");
+        $stub->verifyNeverInvoked("getResponse");
+    }
+
+    public function testCreateTokenNull()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getUserId" => "userId123",
+            "getUsername" => null,
+            "getResponse" => null
+        ]);
+        $response = User::createToken(new User());
+
+        $this->assertNull($response);
+        $stub->verifyInvokedOnce("send", ["users.createToken", "POST", ["userId" => "userId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getUsername");
+        $stub->verifyInvokedMultipleTimes("getUserId", 2);
+        $stub->verifyInvokedOnce("getResponse", 2);
+    }
+
+    public function testCreateTokenSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getUserId" => "userId123",
+            "getUsername" => null,
+            "getResponse" => (object) [
+                "data" => "response object"
+            ]
+        ]);
+        $response = User::createToken(new User());
+
+        $this->assertSame("response object", $response);
+        $stub->verifyInvokedOnce("send", ["users.createToken", "POST", ["userId" => "userId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getUsername");
+        $stub->verifyInvokedMultipleTimes("getUserId", 2);
+        $stub->verifyInvokedMultipleTimes("getResponse", 2);
+    }
+
+    public function testGetPersonalAccessTokensFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::getPersonalAccessTokens();
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.getPersonalAccessTokens", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+    }
+
+    public function testGetPersonalAccessTokensNull()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => null
+        ]);
+        $response = User::getPersonalAccessTokens();
+
+        $this->assertNull($response);
+        $stub->verifyInvokedOnce("send", ["users.getPersonalAccessTokens", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+    }
+
+    public function testGetPersonalAccessTokensSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) ["tokens" => "personal tokens array"]
+        ]);
+        $response = User::getPersonalAccessTokens();
+
+        $this->assertSame("personal tokens array", $response);
+        $stub->verifyInvokedOnce("send", ["users.getPersonalAccessTokens", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedMultipleTimes("getResponse", 2);
+    }
+
+    public function testGeneratePersonalAccessTokenFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::generatePersonalAccessToken("token-name");
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce(
+            "send",
+            ["users.generatePersonalAccessToken", "POST", ["tokenName" => "token-name", "bypassTwoFactor" => false]]
+        );
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+    }
+
+    public function testGeneratePersonalAccessTokenNull()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => null
+        ]);
+        $response = User::generatePersonalAccessToken("token-name");
+
+        $this->assertNull($response);
+        $stub->verifyInvokedOnce(
+            "send",
+            ["users.generatePersonalAccessToken", "POST", ["tokenName" => "token-name", "bypassTwoFactor" => false]]
+        );
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+    }
+
+    public function testGeneratePersonalAccessTokenSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) ["token" => "personal-token"]
+        ]);
+        $response = User::generatePersonalAccessToken("token-name", true);
+
+        $this->assertSame("personal-token", $response);
+        $stub->verifyInvokedOnce(
+            "send",
+            ["users.generatePersonalAccessToken", "POST", ["tokenName" => "token-name", "bypassTwoFactor" => true]]
+        );
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedMultipleTimes("getResponse", 2);
     }
