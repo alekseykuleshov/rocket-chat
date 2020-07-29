@@ -1,15 +1,20 @@
 <?php
 
-namespace ATDev\RocketChat\Users;
+namespace ATDev\RocketChat\Ims;
 
 /**
- * User collection class
+ * Im collection class
  */
 class Collection extends \ATDev\RocketChat\Common\Collection
 {
+
+    /**
+     * @param Im $element
+     * @return bool|true
+     */
     public function add($element)
     {
-        if (!($element instanceof User)) {
+        if (!($element instanceof Im)) {
             return false;
         }
 
