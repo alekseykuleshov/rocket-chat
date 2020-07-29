@@ -2,12 +2,10 @@
 
 namespace ATDev\RocketChat\Users;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 /**
  * User collection class
  */
-class Collection extends ArrayCollection
+class Collection extends \ATDev\RocketChat\Common\Collection
 {
     /** @var bool */
     private $full;

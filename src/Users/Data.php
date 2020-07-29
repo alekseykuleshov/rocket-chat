@@ -55,7 +55,7 @@ trait Data
     private $lastLogin;
     /** @var string User status connection of the api */
     private $statusConnection;
-    /** @var string User utc offset */
+    /** @var int|float User utc offset */
     private $utcOffset;
     /** @var string Avatar Url */
     private $avatarUrl;
@@ -528,7 +528,7 @@ trait Data
     /**
      * Gets user utc offset
      *
-     * @return float
+     * @return int|float
      */
     public function getUtcOffset()
     {
@@ -765,7 +765,7 @@ trait Data
     /**
      * Sets user utc offset
      *
-     * @param string $utcOffset
+     * @param int|float $utcOffset
      *
      * @return \ATDev\RocketChat\Users\Data
      */
