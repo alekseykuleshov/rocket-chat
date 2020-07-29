@@ -432,6 +432,8 @@ class User extends Request
     }
 
     /**
+     * Gets all preferences of the user
+     *
      * @return Preferences|false
      */
     public static function getPreferences()
@@ -442,12 +444,12 @@ class User extends Request
         }
 
         $preferences = new Preferences();
-        $preferences->updateOutOfResponse(static::getResponse()->preferences);
-
-        return $preferences;
+        return $preferences->updateOutOfResponse(static::getResponse()->preferences);
     }
 
     /**
+     * Sets user's preferences
+     *
      * @param $userId
      * @param Preferences $preferences
      * @return false|User

@@ -8,6 +8,7 @@ use AspectMock\Test as test;
 use ATDev\RocketChat\Users\User;
 use ATDev\RocketChat\Users\AvatarFromFile;
 use ATDev\RocketChat\Users\AvatarFromDomain;
+use ATDev\RocketChat\Users\Preferences;
 
 class UserTest extends TestCase
 {
@@ -831,6 +832,189 @@ class UserTest extends TestCase
         );
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedMultipleTimes("getResponse", 2);
+    }
+
+    public function testRegeneratePersonalAccessTokenFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::regeneratePersonalAccessToken("token-name");
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce(
+            "send",
+            ["users.regeneratePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+        );
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+    }
+
+    public function testRegeneratePersonalAccessTokenNull()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => null
+        ]);
+        $response = User::regeneratePersonalAccessToken("token-name");
+
+        $this->assertNull($response);
+        $stub->verifyInvokedOnce(
+            "send",
+            ["users.regeneratePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+        );
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+    }
+
+    public function testRegeneratePersonalAccessTokenSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) ["token" => "personal-token"]
+        ]);
+        $response = User::regeneratePersonalAccessToken("token-name");
+
+        $this->assertSame("personal-token", $response);
+        $stub->verifyInvokedOnce(
+            "send",
+            ["users.regeneratePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+        );
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedMultipleTimes("getResponse", 2);
+    }
+
+    public function testRemovePersonalAccessTokenFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::removePersonalAccessToken("token-name");
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce(
+            "send",
+            ["users.removePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+        );
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testRemovePersonalAccessTokenSuccess()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
+        $response = User::removePersonalAccessToken("token-name");
+
+        $this->assertSame(true, $response);
+        $stub->verifyInvokedOnce(
+            "send",
+            ["users.removePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+        );
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testRemoveOtherTokensFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::removeOtherTokens();
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.removeOtherTokens", "POST"]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testRemoveOtherTokensSuccess()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
+        $response = User::removeOtherTokens();
+
+        $this->assertSame(true, $response);
+        $stub->verifyInvokedOnce("send", ["users.removeOtherTokens", "POST"]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testRequestDataDownloadFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $response = User::requestDataDownload();
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.requestDataDownload", "GET", ["fullExport" => false]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+    }
+
+    public function testRequestDataDownloadSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) ["exportOperation" => "result"]
+        ]);
+        $response = User::requestDataDownload(true);
+
+        $this->assertSame("result", $response);
+        $stub->verifyInvokedOnce("send", ["users.requestDataDownload", "GET", ["fullExport" => true]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+    }
+
+    public function testGetPreferencesFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $prefStub = test::double(Preferences::class);
+        $response = User::getPreferences();
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.getPreferences", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $prefStub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testGetPreferencesSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) ["preferences" => "preferences-result"]
+        ]);
+        $prefStub = test::double(Preferences::class, ["updateOutOfResponse" => "result"]);
+        $response = User::getPreferences();
+
+        $this->assertSame("result", $response);
+        $stub->verifyInvokedOnce("send", ["users.getPreferences", "GET"]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $prefStub->verifyInvokedOnce("updateOutOfResponse", "preferences-result");
+    }
+
+    public function testSetPreferencesFailed()
+    {
+        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $preferences = new Preferences();
+        $response = User::setPreferences("userId123", $preferences);
+
+        $this->assertSame(false, $response);
+        $stub->verifyInvokedOnce("send", ["users.setPreferences", "POST", ["userId" => "userId123", "data" => $preferences]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("createOutOfResponse");
+    }
+
+    public function testSetPreferencesSuccess()
+    {
+        $stub = test::double(User::class, [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => (object) ["user" => "user-result"],
+            "createOutOfResponse" => "result"
+        ]);
+        $preferences = new Preferences();
+        $response = User::setPreferences("userId123", $preferences);
+
+        $this->assertSame("result", $response);
+        $stub->verifyInvokedOnce("send", ["users.setPreferences", "POST", ["userId" => "userId123", "data" => $preferences]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("createOutOfResponse", "user-result");
     }
 
     protected function tearDown(): void
