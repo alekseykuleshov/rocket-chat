@@ -56,6 +56,8 @@ Now, when you are logged in, you can:
 
 [Manage Messages](src/Messages)
 
+[Manage Invites](src/Invites)
+
 [Manage Ims](src/Ims)
 
 ## Unit tests

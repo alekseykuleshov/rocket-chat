@@ -5,9 +5,8 @@ namespace ATDev\RocketChat\Common;
 /**
  * Room data trait
  */
-trait Room
+trait RoomData
 {
-
     /** @var string Room id */
     private $roomId;
 
@@ -36,9 +35,8 @@ trait Room
     /**
      * Creates room out of api response
      *
-     * @param \stdClass $response
-     *
-     * @return \ATDev\RocketChat\Common\Room
+     * @param $response
+     * @return $this
      */
     public static function createOutOfResponse($response)
     {
@@ -63,8 +61,7 @@ trait Room
      * Sets room id
      *
      * @param string $roomId
-     *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     public function setRoomId($roomId)
     {
@@ -91,8 +88,7 @@ trait Room
      * Sets room name
      *
      * @param string $name
-     *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     public function setName($name)
     {
@@ -118,9 +114,8 @@ trait Room
     /**
      * Sets if room is read-only
      *
-     * @param boolean $name
-     *
-     * @return \ATDev\RocketChat\Common\Room
+     * @param bool $readOnly
+     * @return $this
      */
     public function setReadOnly($readOnly)
     {
@@ -136,7 +131,7 @@ trait Room
     /**
      * Gets if room is read-only
      *
-     * @return string
+     * @return bool
      */
     public function getReadOnly()
     {
@@ -156,7 +151,7 @@ trait Room
     /**
      * Gets messages count
      *
-     * @return string
+     * @return int
      */
     public function getMsgs()
     {
@@ -166,7 +161,7 @@ trait Room
     /**
      * Gets users count
      *
-     * @return string
+     * @return int
      */
     public function getUsersCount()
     {
@@ -207,13 +202,16 @@ trait Room
      * Updates current room out of api response
      *
      * @param \stdClass $response
-     *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     public function updateOutOfResponse($response)
     {
         if (isset($response->_id)) {
             $this->setroomId($response->_id);
+        }
+
+        if (isset($response->rid)) {
+            $this->setroomId($response->rid);
         }
 
         if (isset($response->name)) {
@@ -274,7 +272,7 @@ trait Room
      *
      * @param string $value
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     private function setT($value)
     {
@@ -290,7 +288,7 @@ trait Room
      *
      * @param int $value
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     private function setMsgs($value)
     {
@@ -306,7 +304,7 @@ trait Room
      *
      * @param int $usersCount
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     private function setUsersCount($usersCount)
     {
@@ -320,9 +318,9 @@ trait Room
     /**
      * Sets room timestamp
      *
-     * @param int $ts
+     * @param int $value
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     private function setTs($value)
     {
@@ -338,7 +336,7 @@ trait Room
      *
      * @param bool $default
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     private function setDefault($default)
     {
@@ -354,7 +352,7 @@ trait Room
      *
      * @param bool $sysMes
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     private function setSysMes($sysMes)
     {
@@ -369,8 +367,7 @@ trait Room
      * Sets data error
      *
      * @param string $error
-     *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return $this
      */
     private function setDataError($error)
     {
