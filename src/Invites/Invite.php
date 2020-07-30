@@ -3,7 +3,7 @@
 namespace ATDev\RocketChat\Invites;
 
 use ATDev\RocketChat\Common\Request;
-use ATDev\RocketChat\Rooms\Room;
+use ATDev\RocketChat\Common\RoomClass;
 
 /**
  * Invite class
@@ -83,7 +83,7 @@ class Invite extends Request
             return false;
         }
 
-        return (new Room())->updateOutOfResponse(static::getResponse()->room);
+        return (new RoomClass())->updateOutOfResponse(static::getResponse()->room);
     }
 
     /**
