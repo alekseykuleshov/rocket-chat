@@ -295,5 +295,82 @@ class Channel extends Request
         return $this;
     }
 
+    public function anonymousRead($offset = 0, $count = 0)
+    {
+        static::send(
+            'channels.anonymousread',
+            'GET',
+            array_merge(self::requestParams($this), ['offset' => $offset, 'count' => $count])
+        );
 
+        if (!static::getSuccess()) {
+            return false;
+        }
+        $response = static::getResponse();
+        $messages = new \ATDev\RocketChat\Messages\Collection();
+        if (isset($response->messages)) {
+            foreach ($response->messages as $message) {
+                $messages->add(Message::createOutOfResponse($message));
+            }
+        }
+        if (isset($response->total)) {
+            $messages->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $messages->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $messages->setOffset($response->offset);
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Archives a channel
+     *
+     * @return $this|false
+     */
+    public function archive()
+    {
+        static::send('channels.archive', 'POST', ['roomId' => $this->getRoomId()]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Unarchives a channel
+     *
+     * @return $this|false
+     */
+    public function unarchive()
+    {
+        static::send('channels.unarchive', 'POST', ['roomId' => $this->getRoomId()]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Prepares request params to have `roomId` or `roomName`
+     *
+     * @param Channel|null $channel
+     * @return array
+     */
+    private static function requestParams(Channel $channel = null)
+    {
+        $params = [];
+        if (isset($channel) && !empty($channel->getChannelId())) {
+            $params = ['roomId' => $channel->getChannelId()];
+        } elseif (isset($channel) && !empty($channel->getName())) {
+            $params = ['roomName' => $channel->getName()];
+        }
+
+        return $params;
+    }
 }
