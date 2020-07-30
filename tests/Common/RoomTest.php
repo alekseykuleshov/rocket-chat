@@ -5,13 +5,13 @@ namespace ATDev\RocketChat\Tests\Common;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
-use ATDev\RocketChat\Common\Room;
+use ATDev\RocketChat\Common\RoomTrait;
 
 class RoomTest extends TestCase
 {
     public function testConstructorNoRoomId()
     {
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
 
         $stub = test::double(get_class($mock), ["setRoomId" => $mock]);
 
@@ -22,7 +22,7 @@ class RoomTest extends TestCase
 
     public function testConstructorWithRoomId()
     {
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
 
         $stub = test::double(get_class($mock), ["setRoomId" => $mock]);
 
@@ -33,7 +33,7 @@ class RoomTest extends TestCase
 
     public function testInvalidRoomId()
     {
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
 
         $stub = test::double($mock, ["setDataError" => $mock]);
 
@@ -45,7 +45,7 @@ class RoomTest extends TestCase
 
     public function testValidRoomId()
     {
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
 
         $stub = test::double($mock, ["setDataError" => $mock]);
 
@@ -61,7 +61,7 @@ class RoomTest extends TestCase
 
     public function testInvalidName()
     {
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
 
         $stub = test::double($mock, ["setDataError" => $mock]);
 
@@ -73,7 +73,7 @@ class RoomTest extends TestCase
 
     public function testValidName()
     {
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
 
         $stub = test::double($mock, ["setDataError" => $mock]);
 
@@ -89,14 +89,14 @@ class RoomTest extends TestCase
 
     public function testJsonSerialize()
     {
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
         $mock->setName("roomname");
 
         $this->assertSame([
             "name" => "roomname"
         ], $mock->jsonSerialize());
 
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
         $mock->setReadOnly(true);
 
         $this->assertSame([
@@ -108,7 +108,7 @@ class RoomTest extends TestCase
     public function testUpdateOutOfResponse()
     {
         $roomFull = new ResponseFixtureFull();
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
         $mock->updateOutOfResponse($roomFull);
 
         $this->assertSame("asd123asd", $mock->getRoomId());
@@ -123,7 +123,7 @@ class RoomTest extends TestCase
         $this->assertSame(true, $mock->getSysMes());
 
         $room1 = new ResponseFixture1();
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
         $mock->updateOutOfResponse($room1);
 
         $this->assertSame("asd123asd", $mock->getRoomId());
@@ -137,7 +137,7 @@ class RoomTest extends TestCase
         $this->assertSame(true, $mock->getSysMes());
 
         $room2 = new ResponseFixture2();
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
         $mock->updateOutOfResponse($room2);
 
         $this->assertNull($mock->getRoomId());
@@ -153,7 +153,7 @@ class RoomTest extends TestCase
 
     public function testCreateOutOfResponse()
     {
-        $mock = $this->getMockForTrait(Room::class);
+        $mock = $this->getMockForTrait(RoomTrait::class);
 
         $stub = test::double(get_class($mock), ["updateOutOfResponse" => $mock]);
 

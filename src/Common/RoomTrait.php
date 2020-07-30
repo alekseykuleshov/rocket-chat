@@ -5,7 +5,7 @@ namespace ATDev\RocketChat\Common;
 /**
  * Room data trait
  */
-trait Room
+trait RoomTrait
 {
 
     /** @var string Room id */
@@ -38,7 +38,7 @@ trait Room
      *
      * @param \stdClass $response
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     public static function createOutOfResponse($response)
     {
@@ -64,7 +64,7 @@ trait Room
      *
      * @param string $roomId
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     public function setRoomId($roomId)
     {
@@ -92,7 +92,7 @@ trait Room
      *
      * @param string $name
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     public function setName($name)
     {
@@ -120,7 +120,7 @@ trait Room
      *
      * @param boolean $name
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     public function setReadOnly($readOnly)
     {
@@ -208,7 +208,7 @@ trait Room
      *
      * @param \stdClass $response
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     public function updateOutOfResponse($response)
     {
@@ -278,7 +278,7 @@ trait Room
      *
      * @param string $value
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     private function setT($value)
     {
@@ -294,7 +294,7 @@ trait Room
      *
      * @param int $value
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     private function setMsgs($value)
     {
@@ -310,7 +310,7 @@ trait Room
      *
      * @param int $usersCount
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     private function setUsersCount($usersCount)
     {
@@ -326,7 +326,7 @@ trait Room
      *
      * @param int $ts
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     private function setTs($value)
     {
@@ -342,7 +342,7 @@ trait Room
      *
      * @param bool $default
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     private function setDefault($default)
     {
@@ -358,7 +358,7 @@ trait Room
      *
      * @param bool $sysMes
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     private function setSysMes($sysMes)
     {
@@ -374,7 +374,7 @@ trait Room
      *
      * @param string $error
      *
-     * @return \ATDev\RocketChat\Common\Room
+     * @return \ATDev\RocketChat\Common\RoomTrait
      */
     private function setDataError($error)
     {

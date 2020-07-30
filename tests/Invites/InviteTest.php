@@ -152,7 +152,7 @@ class InviteTest extends TestCase
             "getResponse" => (object) []
         ]);
 
-        $room = test::double("\ATDev\RocketChat\Common\RoomClass", [
+        $room = test::double("\ATDev\RocketChat\Rooms\Room", [
             "updateOutOfResponse" => "result"
         ]);
 
@@ -180,7 +180,7 @@ class InviteTest extends TestCase
             'getResponse' => $response
         ]);
 
-        $room = test::double("\ATDev\RocketChat\Common\RoomClass", [
+        $room = test::double("\ATDev\RocketChat\Rooms\Room", [
             "updateOutOfResponse" => "result"
         ]);
 

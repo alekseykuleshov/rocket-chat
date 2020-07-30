@@ -11,7 +11,7 @@ use ATDev\RocketChat\Users\User;
  */
 class Group extends Request
 {
-    use \ATDev\RocketChat\Common\Room;
+    use \ATDev\RocketChat\Common\RoomTrait;
     use \ATDev\RocketChat\Groups\Data;
 
     /**
