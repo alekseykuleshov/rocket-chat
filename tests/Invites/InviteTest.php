@@ -2,6 +2,7 @@
 
 namespace ATDev\RocketChat\Tests\Invites;
 
+use ATDev\RocketChat\Rooms\Room;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -152,9 +153,7 @@ class InviteTest extends TestCase
             "getResponse" => (object) []
         ]);
 
-        $room = test::double("\ATDev\RocketChat\Common\RoomClass", [
-            "updateOutOfResponse" => "result"
-        ]);
+        $room = test::double(Room::class, ["updateOutOfResponse" => "result"]);
 
         $invite = new Invite();
         $result = $invite->useInviteToken();
@@ -180,9 +179,7 @@ class InviteTest extends TestCase
             'getResponse' => $response
         ]);
 
-        $room = test::double("\ATDev\RocketChat\Common\RoomClass", [
-            "updateOutOfResponse" => "result"
-        ]);
+        $room = test::double(Room::class, ["updateOutOfResponse" => "result"]);
 
         $invite = new Invite();
         $result = $invite->useInviteToken();

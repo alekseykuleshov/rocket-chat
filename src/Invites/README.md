@@ -18,7 +18,6 @@ To use the following methods, you have to be [logged in](https://github.com/alek
 $listing = \ATDev\RocketChat\Invites\Invite::listing();
 
 if (!$listing) {
-
 	// Log the error
 	$error = \ATDev\RocketChat\Invites\Invite::getError();
 }
@@ -43,11 +42,9 @@ if (!$result) {
 
 ```php
 $invite = new \ATDev\RocketChat\Invites\Invite("[INVITE ID]");
-
 $result = $invite->removeInvite();
 
 if (!$result) {
-
     // Log the error
     $error = $invite->getError();
 }

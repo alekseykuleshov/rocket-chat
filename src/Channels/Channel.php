@@ -11,7 +11,7 @@ use ATDev\RocketChat\Users\User;
  */
 class Channel extends Request
 {
-    use \ATDev\RocketChat\Common\RoomTrait;
+    use \ATDev\RocketChat\Common\RoomData;
     use \ATDev\RocketChat\Channels\Data;
 
     /**

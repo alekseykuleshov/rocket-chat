@@ -3,7 +3,7 @@
 namespace ATDev\RocketChat\Invites;
 
 use ATDev\RocketChat\Common\Request;
-use ATDev\RocketChat\Common\RoomClass;
+use ATDev\RocketChat\Rooms\Room;
 
 /**
  * Invite class
@@ -73,7 +73,7 @@ class Invite extends Request
     /**
      * Report to the server that an invite token was used
      *
-     * @return Invite|bool
+     * @return Room|false
      */
     public function useInviteToken()
     {
@@ -83,7 +83,7 @@ class Invite extends Request
             return false;
         }
 
-        return (new RoomClass())->updateOutOfResponse(static::getResponse()->room);
+        return (new Room())->updateOutOfResponse(static::getResponse()->room);
     }
 
     /**
