@@ -3,6 +3,7 @@
 namespace ATDev\RocketChat\Channels;
 
 use ATDev\RocketChat\Common\Request;
+use ATDev\RocketChat\Common\Room;
 use ATDev\RocketChat\Messages\Message;
 use ATDev\RocketChat\Users\User;
 
@@ -11,8 +12,8 @@ use ATDev\RocketChat\Users\User;
  */
 class Channel extends Request
 {
-    use \ATDev\RocketChat\Common\Room;
-    use \ATDev\RocketChat\Channels\Data;
+    use Room;
+    use Data;
 
     /**
      * Gets channel listing
@@ -50,7 +51,7 @@ class Channel extends Request
     /**
      * Creates channel at api instance
      *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @return Channel|boolean
      */
     public function create()
     {
@@ -66,7 +67,7 @@ class Channel extends Request
     /**
      * Deletes channel
      *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @return Channel|boolean
      */
     public function delete()
     {
@@ -82,7 +83,7 @@ class Channel extends Request
     /**
      * Gets channel info
      *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @return Channel|boolean
      */
     public function info()
     {
@@ -98,7 +99,7 @@ class Channel extends Request
     /**
      * Adds channel back to user list of channels
      *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @return Channel|boolean
      */
     public function open()
     {
@@ -114,7 +115,7 @@ class Channel extends Request
     /**
      * Removes channel from user list of channels
      *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @return Channel|boolean
      */
     public function close()
     {
@@ -130,9 +131,8 @@ class Channel extends Request
     /**
      * Invite user to channel
      *
-     * @param \ATDev\RocketChat\Users\User $user
-     *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @param User $user
+     * @return Channel|boolean
      */
     public function invite(User $user)
     {
@@ -148,9 +148,8 @@ class Channel extends Request
     /**
      * Kicks user out of the channel
      *
-     * @param \ATDev\RocketChat\Users\User $user
-     *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @param User $user
+     * @return Channel|boolean
      */
     public function kick(User $user)
     {
@@ -166,9 +165,8 @@ class Channel extends Request
     /**
      * Adds owner of the channel
      *
-     * @param \ATDev\RocketChat\Users\User $user
-     *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @param User $user
+     * @return Channel|boolean
      */
     public function addOwner(User $user)
     {
@@ -184,9 +182,8 @@ class Channel extends Request
     /**
      * Removes owner of the channel
      *
-     * @param \ATDev\RocketChat\Users\User $user
-     *
-     * @return \ATDev\RocketChat\Channels\Channel|boolean
+     * @param User $user
+     * @return Channel|boolean
      */
     public function removeOwner(User $user)
     {
@@ -235,4 +232,68 @@ class Channel extends Request
 
         return $messages;
     }
+
+    /**
+     * Adds all of the users of the Rocket.Chat server to the channel
+     *
+     * @param false $activeUsersOnly
+     * @return Channel|false
+     */
+    public function addAll($activeUsersOnly = false)
+    {
+        static::send(
+            'channels.addAll',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'activeUsersOnly' => $activeUsersOnly]
+        );
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    /**
+     * Gives the role of Leader for a user in the current channel
+     *
+     * @param User $user
+     * @return $this|false
+     */
+    public function addLeader(User $user)
+    {
+        static::send(
+            'channels.addLeader',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'userId' => $user->getUserId()]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gives the role of moderator for a user in the current channel
+     *
+     * @param User $user
+     * @return $this|false
+     */
+    public function addModerator(User $user)
+    {
+        static::send(
+            'channels.addModerator',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'userId' => $user->getUserId()]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+
 }
