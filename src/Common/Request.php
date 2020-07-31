@@ -112,7 +112,8 @@ abstract class Request implements \JsonSerializable
         static::$response = @json_decode($responseBody);
         static::$responseCode = $responseCode;
         static::$responseUrl = (!empty($headersRedirect)) ? $headersRedirect[count($headersRedirect) - 1] : null;
-
+        // @TODO: "channels.archive" unauthorized request does not return 'success' field
+        // @TODO: it returns response code 401 with error in response body
         if (isset(static::$response->success) && (!static::$response->success)) {
             if (isset(static::$response->error)) {
                 static::setError(static::$response->error);

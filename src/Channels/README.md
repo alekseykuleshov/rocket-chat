@@ -22,7 +22,6 @@ $channel->setReadOnly(true);
 $result = $channel->create();
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -36,7 +35,6 @@ $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 $result = $channel->info();
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -50,7 +48,6 @@ $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 $result = $channel->delete();
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -64,7 +61,6 @@ $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 $result = $channel->open();
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -78,7 +74,6 @@ $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 $result = $channel->close();
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -93,7 +88,6 @@ $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 $result = $channel->invite($user);
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -108,7 +102,6 @@ $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 $result = $channel->kick($user);
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -123,7 +116,6 @@ $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 $result = $channel->addOwner($user);
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -138,7 +130,6 @@ $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 $result = $channel->removeOwner($user);
 
 if (!$result) {
-
 	// Log the error
 	$error = $channel->getError();
 }
@@ -152,6 +143,72 @@ $result = $channel->messages();
 
 if (!$result) {
     // Log the error
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL ADD ALL
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->addAll(true);
+
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL ADD LEADER
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+$result = $channel->addLeader($user);
+
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL ADD MODERATOR
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+$result = $channel->addModerator($user);
+
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL ANONYMOUS READ
+```php
+// Identify channel by id
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+// or by name
+$channel = new \ATDev\RocketChat\Channels\Channel();
+$channel->setName("[CHANNEL-NAME]");
+$result = $channel->anonymousRead();
+
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL ARCHIVE
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->archive();
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL UNARCHIVE
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->unarchive();
+if (!$result) {
     $error = $channel->getError();
 }
 ```

@@ -25,15 +25,16 @@ class Channel extends Request
     public static function listing($offset = 0, $count = 0)
     {
         static::send("channels.list", "GET", ['offset' => $offset, 'count' => $count]);
-
         if (!static::getSuccess()) {
             return false;
         }
 
         $channels = new Collection();
         $response = static::getResponse();
-        foreach ($response->channels as $channel) {
-            $channels->add(static::createOutOfResponse($channel));
+        if (isset($response->channels)) {
+            foreach ($response->channels as $channel) {
+                $channels->add(static::createOutOfResponse($channel));
+            }
         }
         if (isset($response->total)) {
             $channels->setTotal($response->total);
@@ -295,6 +296,13 @@ class Channel extends Request
         return $this;
     }
 
+    /**
+     * Gets the messages in public channels to an anonymous user
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Messages\Collection|false
+     */
     public function anonymousRead($offset = 0, $count = 0)
     {
         static::send(

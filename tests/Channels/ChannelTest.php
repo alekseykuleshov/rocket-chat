@@ -2,6 +2,7 @@
 
 namespace ATDev\RocketChat\Tests\Channels;
 
+use ATDev\RocketChat\Messages\Message;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -578,6 +579,141 @@ class ChannelTest extends TestCase
             "roomId" => "channelId123",
             "userId" => "userId123"
         ]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testAnonymousReadFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+        $messageStub = test::double(Message::class, ['createOutOfResponse' => 'nothing']);
+
+        $channel = new Channel();
+        $result = $channel->anonymousRead();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['channels.anonymousread', 'GET', ['roomId' => 'channelId123', 'offset' => 0, 'count' => 0]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyInvokedMultipleTimes('getChannelId', 2);
+        $stub->verifyNeverInvoked('getName');
+        $messageStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testAnonymousReadSuccess()
+    {
+        $message1 = new \ATDev\RocketChat\Tests\Messages\ResponseFixture1();
+        $message2 = new \ATDev\RocketChat\Tests\Messages\ResponseFixture2();
+        $response = (object) [
+            'messages' => [$message1, $message2],
+            'offset' => 2,
+            'count' => 10,
+            'total' => 30
+        ];
+        $stub = test::double(Channel::class, [
+            'getChannelId' => null,
+            'getName' => 'channel-name',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $messageStub = test::double(
+            Message::class,
+            ['createOutOfResponse' => function ($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Messages\Collection', ['add' => true]);
+
+        $channel = new Channel();
+        $result = $channel->anonymousRead(2, 10);
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Messages\Collection', $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['channels.anonymousread', 'GET', ['roomName' => 'channel-name', 'offset' => 2, 'count' => 10]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedMultipleTimes('getName', 2);
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$message1]);
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$message2]);
+        $collection->verifyInvokedOnce('add', [$message1]);
+        $collection->verifyInvokedOnce('add', [$message2]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
+    }
+
+    public function testArchiveFailed()
+    {
+        $stub = test::double(Channel::class, [
+            "getRoomId" => "channelId123",
+            "send" => true,
+            "getSuccess" => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->archive();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["channels.archive", "POST", ["roomId" => "channelId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testArchiveSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            "getRoomId" => "channelId123",
+            "send" => true,
+            "getSuccess" => true
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->archive();
+
+        $this->assertSame($channel, $result);
+        $stub->verifyInvokedOnce("send", ["channels.archive", "POST", ["roomId" => "channelId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testUnarchiveFailed()
+    {
+        $stub = test::double(Channel::class, [
+            "getRoomId" => "channelId123",
+            "send" => true,
+            "getSuccess" => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->unarchive();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["channels.unarchive", "POST", ["roomId" => "channelId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testUnarchiveSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            "getRoomId" => "channelId123",
+            "send" => true,
+            "getSuccess" => true
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->unarchive();
+
+        $this->assertSame($channel, $result);
+        $stub->verifyInvokedOnce("send", ["channels.unarchive", "POST", ["roomId" => "channelId123"]]);
         $stub->verifyInvokedOnce("getSuccess");
     }
 
