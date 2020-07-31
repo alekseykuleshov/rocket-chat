@@ -860,6 +860,134 @@ class ChannelTest extends TestCase
         $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
     }
 
+    public function testMembersFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+        $userStub = test::double(User::class, ['createOutOfResponse' => 'nothing']);
+
+        $channel = new Channel();
+        $result = $channel->members();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['channels.members', 'GET', ['roomId' => 'channelId123', 'offset' => 0, 'count' => 0]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyInvokedMultipleTimes('getChannelId', 2);
+        $stub->verifyNeverInvoked('getName');
+        $userStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testMembersSuccess()
+    {
+        $user1 = new \ATDev\RocketChat\Tests\Users\ResponseFixture1();
+        $user2 = new \ATDev\RocketChat\Tests\Users\ResponseFixture2();
+        $response = (object) [
+            'members' => [$user1, $user2],
+            'offset' => 2,
+            'count' => 10,
+            'total' => 30
+        ];
+        $stub = test::double(Channel::class, [
+            'getChannelId' => null,
+            'getName' => 'channel-name',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $userStub = test::double(
+            User::class,
+            ['createOutOfResponse' => function ($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
+
+        $channel = new Channel();
+        $result = $channel->members(2, 10);
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['channels.members', 'GET', ['roomName' => 'channel-name', 'offset' => 2, 'count' => 10]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedMultipleTimes('getName', 2);
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user1]);
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user2]);
+        $collection->verifyInvokedOnce('add', [$user1]);
+        $collection->verifyInvokedOnce('add', [$user2]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
+    }
+
+    public function testModeratorsFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+        $userStub = test::double(User::class, ['createOutOfResponse' => 'nothing']);
+
+        $channel = new Channel();
+        $result = $channel->moderators();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.moderators', 'GET', ['roomId' => 'channelId123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyInvokedMultipleTimes('getChannelId', 2);
+        $stub->verifyNeverInvoked('getName');
+        $userStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testModeratorsSuccess()
+    {
+        $user1 = new \ATDev\RocketChat\Tests\Users\ResponseFixture1();
+        $user2 = new \ATDev\RocketChat\Tests\Users\ResponseFixture2();
+        $response = (object) ['moderators' => [$user1, $user2]];
+        $stub = test::double(Channel::class, [
+            'getChannelId' => null,
+            'getName' => 'channel-name',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $userStub = test::double(
+            User::class,
+            ['createOutOfResponse' => function ($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
+
+        $channel = new Channel();
+        $result = $channel->moderators();
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
+        $stub->verifyInvokedOnce('send', ['channels.moderators', 'GET', ['roomName' => 'channel-name']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedMultipleTimes('getName', 2);
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user1]);
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user2]);
+        $collection->verifyInvokedOnce('add', [$user1]);
+        $collection->verifyInvokedOnce('add', [$user2]);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

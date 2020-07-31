@@ -452,6 +452,67 @@ class Channel extends Request
     }
 
     /**
+     * Lists all channel users
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Users\Collection|false
+     */
+    public function members($offset = 0, $count = 0)
+    {
+        static::send(
+            'channels.members',
+            'GET',
+            array_merge(self::requestParams($this), ['offset' => $offset, 'count' => $count])
+        );
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $members = new \ATDev\RocketChat\Users\Collection();
+        $response = static::getResponse();
+        if (isset($response->members)) {
+            foreach ($response->members as $user) {
+                $members->add(User::createOutOfResponse($user));
+            }
+        }
+        if (isset($response->total)) {
+            $members->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $members->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $members->setOffset($response->offset);
+        }
+
+        return $members;
+    }
+
+    /**
+     * Channel Moderators List
+     *
+     * @return \ATDev\RocketChat\Users\Collection|false
+     */
+    public function moderators()
+    {
+        static::send('channels.moderators', 'GET', self::requestParams($this));
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $moderators = new \ATDev\RocketChat\Users\Collection();
+        $response = static::getResponse();
+        if (isset($response->moderators)) {
+            foreach ($response->moderators as $user) {
+                $moderators->add(User::createOutOfResponse($user));
+            }
+        }
+
+        return $moderators;
+    }
+
+    /**
      * Prepares request params to have `roomId` or `roomName`
      *
      * @param Channel|null $channel
