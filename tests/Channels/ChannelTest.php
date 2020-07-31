@@ -2,6 +2,7 @@
 
 namespace ATDev\RocketChat\Tests\Channels;
 
+use ATDev\RocketChat\Channels\Counters;
 use ATDev\RocketChat\Messages\Message;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
@@ -715,6 +716,68 @@ class ChannelTest extends TestCase
         $this->assertSame($channel, $result);
         $stub->verifyInvokedOnce("send", ["channels.unarchive", "POST", ["roomId" => "channelId123"]]);
         $stub->verifyInvokedOnce("getSuccess");
+    }
+
+    public function testCountersFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+
+        $counters = test::double(Counters::class, ['updateOutOfResponse' => 'result']);
+
+        $channel = new Channel();
+        $result = $channel->counters();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedMultipleTimes('getChannelId', 2);
+        $stub->verifyNeverInvoked('getName');
+        $stub->verifyInvokedOnce('send', ['channels.counters', 'GET', ['roomId' => 'channelId123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $counters->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testCountersSuccess()
+    {
+        $response = (object) [
+            'joined' => true,
+            'members' => 2,
+            'unreads' => 0,
+            'unreadsFrom' => '2018-02-21T21:08:51.026Z',
+            'msgs' => 304,
+            'latest' => '2018-02-21T21:08:51.026Z',
+            'userMentions' => 0,
+            'success' => true
+        ];
+        $stub = test::double(Channel::class, [
+            'getChannelId' => null,
+            'getName' => 'channel123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+
+        $countersStub = test::double(Counters::class, ['updateOutOfResponse' => 'result']);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $channel = new Channel();
+        $result = $channel->counters(new User());
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.counters', 'GET', [
+            'roomName' => 'channel123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedMultipleTimes('getName', 2);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $countersStub->verifyInvokedOnce('updateOutOfResponse', $response);
     }
 
     protected function tearDown(): void

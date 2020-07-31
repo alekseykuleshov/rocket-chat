@@ -365,6 +365,60 @@ class Channel extends Request
     }
 
     /**
+     * Lists all of the channels the calling user has joined
+     *
+     * @param int $offset
+     * @param int $count
+     * @return Collection|false
+     */
+    public static function listJoined($offset = 0, $count = 0)
+    {
+        static::send('channels.list.joined', 'GET', ['offset' => $offset, 'count' => $count]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $channels = new Collection();
+        $response = static::getResponse();
+        if (isset($response->channels)) {
+            foreach ($response->channels as $channel) {
+                $channels->add(static::createOutOfResponse($channel));
+            }
+        }
+        if (isset($response->total)) {
+            $channels->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $channels->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $channels->setOffset($response->offset);
+        }
+
+        return $channels;
+    }
+
+    /**
+     * Gets channel counters
+     *
+     * @param User|null $user
+     * @return Counters|false
+     */
+    public function counters(User $user = null)
+    {
+        $params = self::requestParams($this);
+        if (isset($user)) {
+            $params = array_merge($params, ['userId' => $user->getUserId()]);
+        }
+        static::send('channels.counters', 'GET', $params);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return (new Counters())->updateOutOfResponse(static::getResponse());
+    }
+
+    /**
      * Prepares request params to have `roomId` or `roomName`
      *
      * @param Channel|null $channel

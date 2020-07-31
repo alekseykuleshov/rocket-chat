@@ -212,3 +212,15 @@ if (!$result) {
     $error = $channel->getError();
 }
 ```
+
+### CHANNEL COUNTERS
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->counters();
+if (!$result) {
+	// Log the error
+	$error = $channel->getError();
+}
+```
+
