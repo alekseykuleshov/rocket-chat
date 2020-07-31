@@ -224,3 +224,24 @@ if (!$result) {
 }
 ```
 
+### CHANNEL JOIN
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->join("[JOIN CODE]");
+if (!$result) {
+	// Log the error
+	$error = $channel->getError();
+}
+```
+
+### CHANNEL LEAVE
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->leave();
+if (!$result) {
+	// Log the error
+	$error = $channel->getError();
+}
+```

@@ -419,6 +419,39 @@ class Channel extends Request
     }
 
     /**
+     * Joins yourself to the channel
+     *
+     * @param string $joinCode
+     * @return Channel|false
+     */
+    public function join($joinCode)
+    {
+        static::send('channels.join', 'POST', [
+            'roomId' => $this->getChannelId(), 'joinCode' => $joinCode
+        ]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    /**
+     * Causes the callee to be removed from the channel
+     *
+     * @return Channel|false
+     */
+    public function leave()
+    {
+        static::send('channels.leave', 'POST', ['roomId' => $this->getChannelId()]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    /**
      * Prepares request params to have `roomId` or `roomName`
      *
      * @param Channel|null $channel

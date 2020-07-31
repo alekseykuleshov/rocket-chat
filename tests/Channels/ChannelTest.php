@@ -780,6 +780,86 @@ class ChannelTest extends TestCase
         $countersStub->verifyInvokedOnce('updateOutOfResponse', $response);
     }
 
+    public function testJoinFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->join('join_code');
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.join', 'POST', [
+            'roomId' => 'channelId123', 'joinCode' => 'join_code'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testJoinSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->join('join_code');
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.join', 'POST', [
+            'roomId' => 'channelId123', 'joinCode' => 'join_code'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
+    public function testLeaveFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->leave();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.leave', 'POST', ['roomId' => 'channelId123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testLeaveSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->leave();
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.leave', 'POST', ['roomId' => 'channelId123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
