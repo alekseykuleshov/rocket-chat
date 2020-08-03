@@ -599,6 +599,36 @@ class Channel extends Request
         return $this->updateOutOfResponse(static::getResponse()->channel);
     }
 
+    /**
+     * Gets all user's the mentions of a channel
+     *
+     * @TODO
+     * @param int $offset
+     * @param int $count
+     * @return false|mixed
+     */
+    public function getAllUserMentionsByChannel($offset = 0, $count = 0)
+    {
+        static::send(
+            'channels.getAllUserMentionsByChannel',
+            'GET',
+            ['roomId' => $this->getChannelId(), 'offset' => $offset, 'count' => $count]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $response = static::getResponse();
+        return $response;
+    }
+
+    /**
+     * Lists all user's roles in the channel
+     *
+     * @TODO
+     * @return false|mixed
+     */
     public function roles()
     {
         static::send('channels.roles', 'GET', self::requestParams($this));
