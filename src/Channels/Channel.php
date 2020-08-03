@@ -276,6 +276,27 @@ class Channel extends Request
     }
 
     /**
+     * Removes the role of Leader for a user in the current channel
+     *
+     * @param User $user
+     * @return $this|false
+     */
+    public function removeLeader(User $user)
+    {
+        static::send(
+            'channels.removeLeader',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'userId' => $user->getUserId()]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+    /**
      * Gives the role of moderator for a user in the current channel
      *
      * @param User $user
@@ -285,6 +306,27 @@ class Channel extends Request
     {
         static::send(
             'channels.addModerator',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'userId' => $user->getUserId()]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes the role of moderator from a user in the current channel
+     *
+     * @param User $user
+     * @return $this|false
+     */
+    public function removeModerator(User $user)
+    {
+        static::send(
+            'channels.removeModerator',
             'POST',
             ['roomId' => $this->getChannelId(), 'userId' => $user->getUserId()]
         );
@@ -510,6 +552,51 @@ class Channel extends Request
         }
 
         return $moderators;
+    }
+
+    /**
+     * Lists all online users of a channel if the channel's id is provided, otherwise it gets all online users of all channels
+     *
+     * @param array|null $query
+     * @return \ATDev\RocketChat\Users\Collection|false
+     */
+    public static function online(array $query = null)
+    {
+        static::send('channels.online', 'GET', $query);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $users = new \ATDev\RocketChat\Users\Collection();
+        $response = static::getResponse();
+        if (isset($response->online)) {
+            foreach ($response->online as $user) {
+                $users->add(User::createOutOfResponse($user));
+            }
+        }
+
+        return $users;
+    }
+
+    /**
+     * Changes the name of the channel
+     *
+     * @param $name
+     * @return Channel|false
+     */
+    public function rename($name)
+    {
+        static::send(
+            'channels.rename',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'name' => $name]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
     }
 
     /**

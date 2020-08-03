@@ -168,6 +168,17 @@ if (!$result) {
 }
 ```
 
+### CHANNEL REMOVE LEADER
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+$result = $channel->removeLeader($user);
+
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
 ### CHANNEL ADD MODERATOR
 ```php
 $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
@@ -176,6 +187,84 @@ $result = $channel->addModerator($user);
 
 if (!$result) {
     $error = $channel->getError();
+}
+```
+
+### CHANNEL REMOVE MODERATOR
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+$result = $channel->removeModerator($user);
+
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL MODERATORS LIST
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->moderators();
+if (!$result) {
+	$error = $channel->getError();
+}
+```
+
+### CHANNEL JOIN
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->join("[JOIN CODE]");
+if (!$result) {
+	$error = $channel->getError();
+}
+```
+
+### CHANNEL LEAVE
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->leave();
+if (!$result) {
+	$error = $channel->getError();
+}
+```
+
+### CHANNEL LIST JOINED
+```php
+$list = \ATDev\RocketChat\Channels\Channel::listJoined();
+
+if (!$list) {
+    $error = \ATDev\RocketChat\Channels\Channel::getError();
+}
+```
+
+### CHANNEL MEMBERS LIST
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->members();
+if (!$result) {
+	$error = $channel->getError();
+}
+```
+
+### CHANNEL COUNTERS
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->counters();
+if (!$result) {
+	$error = $channel->getError();
+}
+```
+
+### CHANNEL ONLINE
+```php
+$result = \ATDev\RocketChat\Channels\Channel::online(['_id' => 'channelId123']);
+if (!$result) {
+	$error = \ATDev\RocketChat\Channels\Channel::getError();
 }
 ```
 
@@ -213,66 +302,12 @@ if (!$result) {
 }
 ```
 
-### CHANNEL LIST JOINED
-```php
-$list = \ATDev\RocketChat\Channels\Channel::listJoined();
-
-if (!$list) {
-    $error = \ATDev\RocketChat\Channels\Channel::getError();
-}
-```
-
-### CHANNEL COUNTERS
+### CHANNEL RENAME
 ```php
 $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 
-$result = $channel->counters();
+$result = $channel->rename("[NEW-CHANNEL-NAME]");
 if (!$result) {
-	// Log the error
-	$error = $channel->getError();
-}
-```
-
-### CHANNEL JOIN
-```php
-$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
-
-$result = $channel->join("[JOIN CODE]");
-if (!$result) {
-	// Log the error
-	$error = $channel->getError();
-}
-```
-
-### CHANNEL LEAVE
-```php
-$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
-
-$result = $channel->leave();
-if (!$result) {
-	// Log the error
-	$error = $channel->getError();
-}
-```
-
-### CHANNEL MEMBERS LIST
-```php
-$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
-
-$result = $channel->members();
-if (!$result) {
-	// Log the error
-	$error = $channel->getError();
-}
-```
-
-### CHANNEL MODERATORS LIST
-```php
-$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
-
-$result = $channel->moderators();
-if (!$result) {
-	// Log the error
-	$error = $channel->getError();
+    $error = $channel->getError();
 }
 ```

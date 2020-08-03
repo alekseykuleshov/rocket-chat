@@ -498,89 +498,177 @@ class ChannelTest extends TestCase
     public function testAddLeaderFailed()
     {
         $stub = test::double(Channel::class, [
-            "getChannelId" => "channelId123",
-            "send" => true,
-            "getSuccess" => false
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
         ]);
-        $userStub = test::double(User::class, ["getUserId" => "userId123"]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
 
         $channel = new Channel();
         $user = new User();
         $result = $channel->addLeader($user);
 
         $this->assertSame(false, $result);
-        $userStub->verifyInvokedOnce("getUserId");
-        $stub->verifyInvokedOnce("send", ["channels.addLeader", "POST", [
-            "roomId" => "channelId123",
-            "userId" => "userId123"
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['channels.addLeader', 'POST', [
+            'roomId' => 'channelId123',
+            'userId' => 'userId123'
         ]]);
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testAddLeaderSuccess()
     {
         $stub = test::double(Channel::class, [
-            "getChannelId" => "channelId123",
-            "send" => true,
-            "getSuccess" => true
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true
         ]);
-        $userStub = test::double(User::class, ["getUserId" => "userId123"]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
 
         $channel = new Channel();
         $user = new User();
         $result = $channel->addLeader($user);
 
         $this->assertSame($channel, $result);
-        $userStub->verifyInvokedOnce("getUserId");
-        $stub->verifyInvokedOnce("send", ["channels.addLeader", "POST", [
-            "roomId" => "channelId123",
-            "userId" => "userId123"
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['channels.addLeader', 'POST', [
+            'roomId' => 'channelId123',
+            'userId' => 'userId123'
         ]]);
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testRemoveLeaderFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $channel = new Channel();
+        $user = new User();
+        $result = $channel->removeLeader($user);
+
+        $this->assertSame(false, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce("send", ['channels.removeLeader', 'POST', [
+            'roomId' => 'channelId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testRemoveLeaderSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $channel = new Channel();
+        $user = new User();
+        $result = $channel->removeLeader($user);
+
+        $this->assertSame($channel, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['channels.removeLeader', 'POST', [
+            'roomId' => 'channelId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testAddModeratorFailed()
     {
         $stub = test::double(Channel::class, [
-            "getChannelId" => "channelId123",
-            "send" => true,
-            "getSuccess" => false
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
         ]);
-        $userStub = test::double(User::class, ["getUserId" => "userId123"]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
 
         $channel = new Channel();
         $user = new User();
         $result = $channel->addModerator($user);
 
         $this->assertSame(false, $result);
-        $userStub->verifyInvokedOnce("getUserId");
-        $stub->verifyInvokedOnce("send", ["channels.addModerator", "POST", [
-            "roomId" => "channelId123",
-            "userId" => "userId123"
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['channels.addModerator', 'POST', [
+            'roomId' => 'channelId123',
+            'userId' => 'userId123'
         ]]);
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testAddModeratorSuccess()
     {
         $stub = test::double(Channel::class, [
-            "getChannelId" => "channelId123",
-            "send" => true,
-            "getSuccess" => true
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true
         ]);
-        $userStub = test::double(User::class, ["getUserId" => "userId123"]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
 
         $channel = new Channel();
         $user = new User();
         $result = $channel->addModerator($user);
 
         $this->assertSame($channel, $result);
-        $userStub->verifyInvokedOnce("getUserId");
-        $stub->verifyInvokedOnce("send", ["channels.addModerator", "POST", [
-            "roomId" => "channelId123",
-            "userId" => "userId123"
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['channels.addModerator', 'POST', [
+            'roomId' => 'channelId123',
+            'userId' => 'userId123'
         ]]);
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testRemoveModeratorFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $channel = new Channel();
+        $user = new User();
+        $result = $channel->removeModerator($user);
+
+        $this->assertSame(false, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['channels.removeModerator', 'POST', [
+            'roomId' => 'channelId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testRemoveModeratorSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $channel = new Channel();
+        $user = new User();
+        $result = $channel->removeModerator($user);
+
+        $this->assertSame($channel, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['channels.removeModerator', 'POST', [
+            'roomId' => 'channelId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testAnonymousReadFailed()
@@ -986,6 +1074,98 @@ class ChannelTest extends TestCase
         $userStub->verifyInvokedOnce('createOutOfResponse', [$user2]);
         $collection->verifyInvokedOnce('add', [$user1]);
         $collection->verifyInvokedOnce('add', [$user2]);
+    }
+
+    public function testOnlineFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+        $userStub = test::double(User::class, ['createOutOfResponse' => 'nothing']);
+
+        $result = Channel::online();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.online', 'GET']);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $userStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testOnlineSuccess()
+    {
+        $user1 = (object) ['_id' => 'userId1', 'username' => 'username1'];
+        $user2 = (object) ['_id' => 'userId2', 'username' => 'username2'];
+        $response = (object) ['online' => [$user1, $user2]];
+        $stub = test::double(Channel::class, [
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $userStub = test::double(
+            User::class,
+            ['createOutOfResponse' => function ($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
+
+        $result = Channel::online(['queryParam' => 'queryVal']);
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
+        $stub->verifyInvokedOnce('send', ['channels.online', 'GET', ['queryParam' => 'queryVal']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user1]);
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user2]);
+        $collection->verifyInvokedOnce('add', [$user1]);
+        $collection->verifyInvokedOnce('add', [$user2]);
+    }
+
+    public function testRenameFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->rename('new-name');
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.rename', 'POST', [
+            'roomId' => 'channelId123',
+            'name' => 'new-name'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testRenameSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->rename('new-name');
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.rename', 'POST', [
+            'roomId' => 'channelId123',
+            'name' => 'new-name'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
     }
 
     protected function tearDown(): void
