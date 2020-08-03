@@ -562,7 +562,7 @@ class Channel extends Request
      */
     public static function online(array $query = null)
     {
-        static::send('channels.online', 'GET', $query);
+        static::send('channels.online', 'GET', ['query' => json_encode($query)]);
         if (!static::getSuccess()) {
             return false;
         }
@@ -597,6 +597,17 @@ class Channel extends Request
         }
 
         return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    public function roles()
+    {
+        static::send('channels.roles', 'GET', self::requestParams($this));
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $response = static::getResponse();
+        return $response;
     }
 
     /**

@@ -1115,7 +1115,9 @@ class ChannelTest extends TestCase
         $result = Channel::online(['queryParam' => 'queryVal']);
 
         $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
-        $stub->verifyInvokedOnce('send', ['channels.online', 'GET', ['queryParam' => 'queryVal']]);
+        $stub->verifyInvokedOnce('send', ['channels.online', 'GET', [
+            'query' => json_encode(['queryParam' => 'queryVal'])
+        ]]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce('getResponse');
         $userStub->verifyInvokedOnce('createOutOfResponse', [$user1]);
