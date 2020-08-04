@@ -17,7 +17,7 @@ if (!$listing) {
 ```php
 $channel = new \ATDev\RocketChat\Channels\Channel();
 $channel->setName("[CHANNEL-NAME-NO-SPACES]");
-$channel->setReadOnly(true);
+$channel->setReadOnlyValue(true);
 
 $result = $channel->create();
 
@@ -307,6 +307,79 @@ if (!$result) {
 $channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
 
 $result = $channel->rename("[NEW-CHANNEL-NAME]");
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL SET DEFAULT
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->setDefault(true);
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL SET JOIN CODE
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->setJoinCode("[JOIN-CODE]");
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL SET DESCRIPTION
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->setDescription("[CHANNEL DESCRIPTION]");
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL SET ANNOUNCEMENT
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->setAnnouncement("[CHANNEL ANNOUNCEMENT]");
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL SET CUSTOM FIELDS
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->setCustomFields(["CUSTOM-FIELD" => "VALUE"]);
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL SET READ ONLY
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->setReadOnly(true);
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL SET TOPIC
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+$result = $channel->setTopic("[NEW CHANNEL TOPIC]");
+if (!$result) {
+    $error = $channel->getError();
+}
+```
+
+### CHANNEL SET TYPE
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->setType("c");
 if (!$result) {
     $error = $channel->getError();
 }

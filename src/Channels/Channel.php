@@ -641,6 +641,172 @@ class Channel extends Request
     }
 
     /**
+     * Sets whether the channel is a default channel or not
+     *
+     * @param bool $default
+     * @return Channel|false
+     */
+    public function setDefault($default = true)
+    {
+        static::send(
+            'channels.setDefault',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'default' => $default]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    /**
+     * Sets the code required to join the channel
+     *
+     * @param string $joinCode
+     * @return Channel|false
+     */
+    public function setJoinCode($joinCode)
+    {
+        static::send(
+            'channels.setJoinCode',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'joinCode' => $joinCode]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    /**
+     * Sets the description for the channel
+     *
+     * @param string $description
+     * @return $this|false
+     */
+    public function setDescription($description = '')
+    {
+        static::send(
+            'channels.setDescription',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'description' => $description]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the announcement for the channel
+     *
+     * @param string $announcement
+     * @return $this|false
+     */
+    public function setAnnouncement($announcement = '')
+    {
+        static::send(
+            'channels.setAnnouncement',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'announcement' => $announcement]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the custom fields for the channel
+     *
+     * @param \stdClass $customFields
+     * @return Channel|false
+     */
+    public function setCustomFields($customFields)
+    {
+        static::send(
+            'channels.setCustomFields',
+            'POST',
+            array_merge(self::requestParams($this), ['customFields' => $customFields])
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    /**
+     * Sets whether the channel is read only or not
+     *
+     * @param bool $readOnly
+     * @return Channel|false
+     */
+    public function setReadOnly($readOnly = true)
+    {
+        static::send(
+            'channels.setReadOnly',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'readOnly' => $readOnly]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    /**
+     * Sets the topic for the channel
+     *
+     * @param string $message
+     * @return Channel|false
+     */
+    public function setTopic($message = '')
+    {
+        static::send(
+            'channels.setTopic',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'topic' => $message]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse());
+    }
+
+    /**
+     * @param string $type
+     * @return Channel|false
+     */
+    public function setType($type = 'c')
+    {
+        static::send(
+            'channels.setType',
+            'POST',
+            ['roomId' => $this->getChannelId(), 'type' => $type]
+        );
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->channel);
+    }
+
+    /**
      * Prepares request params to have `roomId` or `roomName`
      *
      * @param Channel|null $channel
