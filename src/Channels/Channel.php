@@ -602,10 +602,9 @@ class Channel extends Request
     /**
      * Gets all user's the mentions of a channel
      *
-     * @TODO
      * @param int $offset
      * @param int $count
-     * @return false|mixed
+     * @return \ATDev\RocketChat\Messages\Collection|false
      */
     public function getAllUserMentionsByChannel($offset = 0, $count = 0)
     {
@@ -619,8 +618,24 @@ class Channel extends Request
             return false;
         }
 
+        $messages = new \ATDev\RocketChat\Messages\Collection();
         $response = static::getResponse();
-        return $response;
+        if (isset($response->mentions)) {
+            foreach ($response->mentions as $message) {
+                $messages->add(Message::createOutOfResponse($message));
+            }
+        }
+        if (isset($response->total)) {
+            $messages->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $messages->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $messages->setOffset($response->offset);
+        }
+
+        return $messages;
     }
 
     /**

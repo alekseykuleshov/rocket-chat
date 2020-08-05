@@ -3,7 +3,10 @@
 namespace ATDev\RocketChat\Tests\Channels;
 
 use ATDev\RocketChat\Channels\Counters;
+use ATDev\RocketChat\Messages\Collection as MessagesCollection;
 use ATDev\RocketChat\Messages\Message;
+use ATDev\RocketChat\Tests\Messages\ResponseFixture1 as MessageFixture1;
+use ATDev\RocketChat\Tests\Messages\ResponseFixture2 as MessageFixture2;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -1529,13 +1532,12 @@ class ChannelTest extends TestCase
         $channel = new Channel();
         $result = $channel->roles();
 
-        $this->assertSame('result', $result);
+        $this->assertSame(false, $result);
         $stub->verifyNeverInvoked('getName');
         $stub->verifyInvokedMultipleTimes('getChannelId', 2);
         $stub->verifyInvokedOnce('send', ['channels.roles', 'GET', ['roomId' => 'channelId123']]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyNeverInvoked('getResponse');
-//        $stub->verifyNeverInvoked('updateOutOfResponse');
     }
 
     public function testRolesSuccess()
@@ -1572,7 +1574,7 @@ class ChannelTest extends TestCase
         $channel = new Channel();
         $result = $channel->getAllUserMentionsByChannel();
 
-        $this->assertSame('result', $result);
+        $this->assertSame(false, $result);
         $stub->verifyInvokedOnce('send', ['channels.getAllUserMentionsByChannel', 'GET', [
             'roomId' => 'channelId123',
             'offset' => 0,
@@ -1580,31 +1582,47 @@ class ChannelTest extends TestCase
         ]]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyNeverInvoked('getResponse');
-//        $stub->verifyNeverInvoked('updateOutOfResponse');
     }
 
     public function testGetAllUserMentionsByChannelSuccess()
     {
+        $mention1 = new MessageFixture1();
+        $mention2 = new MessageFixture2();
+        $response = (object) [
+            'mentions' => [$mention1, $mention2],
+            'offset' => 2,
+            'count' => 10,
+            'total' => 30
+        ];
         $stub = test::double(Channel::class, [
             'getChannelId' => 'channelId123',
             'send' => true,
             'getSuccess' => true,
-            'getResponse' => (object) ['channel' => 'channel data'],
-            'updateOutOfResponse' => 'result'
+            'getResponse' => $response
         ]);
+        $messageStub = test::double(Message::class, [
+            'createOutOfResponse' => function ($arg) { return get_class($arg); }
+        ]);
+        $mentionsColl = test::double(MessagesCollection::class, ['add' => true]);
 
         $channel = new Channel();
-        $result = $channel->getAllUserMentionsByChannel(10, 20);
+        $result = $channel->getAllUserMentionsByChannel(10, 30);
 
-        $this->assertSame('result', $result);
+        $this->assertInstanceOf(MessagesCollection::class, $result);
         $stub->verifyInvokedOnce('send', ['channels.getAllUserMentionsByChannel', 'GET', [
             'roomId' => 'channelId123',
             'offset' => 10,
-            'count' => 20
+            'count' => 30
         ]]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce('getResponse');
-//        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$mention1]);
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$mention2]);
+        $mentionsColl->verifyInvokedOnce('add', [MessageFixture1::class]);
+        $mentionsColl->verifyInvokedOnce('add', [MessageFixture2::class]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
     }
 
     protected function tearDown(): void

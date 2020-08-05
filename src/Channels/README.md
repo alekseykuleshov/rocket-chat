@@ -384,3 +384,13 @@ if (!$result) {
     $error = $channel->getError();
 }
 ```
+
+### GET ALL THE MENTIONS OF A CHANNEL
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->getAllUserMentionsByChannel(5, 10);
+if (!$result) {
+    $error = $channel->getError();
+}
+```
