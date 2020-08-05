@@ -1170,6 +1170,443 @@ class ChannelTest extends TestCase
         $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
     }
 
+    public function testSetDefaultFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setDefault();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setDefault', 'POST', [
+            'roomId' => 'channelId123',
+            'default' => true
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testSetDefaultSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setDefault(false);
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.setDefault', 'POST', [
+            'roomId' => 'channelId123',
+            'default' => false
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
+    public function testSetJoinCodeFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setJoinCode('join-code');
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setJoinCode', 'POST', [
+            'roomId' => 'channelId123',
+            'joinCode' => 'join-code'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testSetJoinCodeSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setJoinCode('join-code');
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.setJoinCode', 'POST', [
+            'roomId' => 'channelId123',
+            'joinCode' => 'join-code'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
+    public function testSetDescriptionFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setDescription('channel description');
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setDescription', 'POST', [
+            'roomId' => 'channelId123',
+            'description' => 'channel description'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testSetDescriptionSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setDescription();
+
+        $this->assertSame($channel, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setDescription', 'POST', [
+            'roomId' => 'channelId123',
+            'description' => ''
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testSetAnnouncementFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setAnnouncement('channel announcement');
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setAnnouncement', 'POST', [
+            'roomId' => 'channelId123',
+            'announcement' => 'channel announcement'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testSetAnnouncementSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setAnnouncement();
+
+        $this->assertSame($channel, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setAnnouncement', 'POST', [
+            'roomId' => 'channelId123',
+            'announcement' => ''
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testSetCustomFieldsFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $customFields = new \stdClass();
+        $customFields->test = 'value';
+        $channel = new Channel();
+        $result = $channel->setCustomFields($customFields);
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setCustomFields', 'POST', [
+            'roomId' => 'channelId123',
+            'customFields' => $customFields
+        ]]);
+        $stub->verifyNeverInvoked('getName');
+        $stub->verifyInvokedMultipleTimes('getChannelId', 2);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testSetCustomFieldsSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getName' => 'channelName123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $customFields = new \stdClass();
+        $channel = new Channel();
+        $result = $channel->setCustomFields($customFields);
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.setCustomFields', 'POST', [
+            'roomName' => 'channelName123',
+            'customFields' => $customFields
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedMultipleTimes('getName', 2);
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
+    public function testSetReadOnlyFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setReadOnly();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setReadOnly', 'POST', [
+            'roomId' => 'channelId123',
+            'readOnly' => true
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testSetReadOnlySuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setReadOnly(false);
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.setReadOnly', 'POST', [
+            'roomId' => 'channelId123',
+            'readOnly' => false
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
+    public function testSetTopicFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setTopic('test topic');
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setTopic', 'POST', [
+            'roomId' => 'channelId123',
+            'topic' => 'test topic'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testSetTopicSuccess()
+    {
+        $response = (object) ['topic' => 'topic set'];
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response,
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setTopic();
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.setTopic', 'POST', [
+            'roomId' => 'channelId123',
+            'topic' => ''
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', [$response]);
+    }
+
+    public function testSetTypeFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setType('p');
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.setType', 'POST', [
+            'roomId' => 'channelId123',
+            'type' => 'p'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testSetTypeSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setType();
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.setType', 'POST', [
+            'roomId' => 'channelId123',
+            'type' => 'c'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
+    public function testRolesFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->roles();
+
+        $this->assertSame('result', $result);
+        $stub->verifyNeverInvoked('getName');
+        $stub->verifyInvokedMultipleTimes('getChannelId', 2);
+        $stub->verifyInvokedOnce('send', ['channels.roles', 'GET', ['roomId' => 'channelId123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+//        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testRolesSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => null,
+            'getName' => 'channelName123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->roles();
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedMultipleTimes('getName', 2);
+        $stub->verifyInvokedOnce('send', ['channels.roles', 'GET', ['roomName' => 'channelName123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+//        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
+    public function testGetAllUserMentionsByChannelFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->getAllUserMentionsByChannel();
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.getAllUserMentionsByChannel', 'GET', [
+            'roomId' => 'channelId123',
+            'offset' => 0,
+            'count' => 0
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+//        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testGetAllUserMentionsByChannelSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->getAllUserMentionsByChannel(10, 20);
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.getAllUserMentionsByChannel', 'GET', [
+            'roomId' => 'channelId123',
+            'offset' => 10,
+            'count' => 20
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+//        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
