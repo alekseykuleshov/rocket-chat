@@ -1639,6 +1639,63 @@ class ChannelTest extends TestCase
         $this->assertSame(30, $result->getTotal());
     }
 
+    public function testHistoryFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->history(['inclusive' => true, 'latest' => 'test-latest']);
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['channels.history', 'GET', [
+            'offset' => 0,
+            'count' => 0,
+            'inclusive' => true,
+            'latest' => 'test-latest',
+            'roomId' => 'channelId123',
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+    }
+
+    public function testHistorySuccess()
+    {
+        $message1 = new MessageFixture1();
+        $message2 = new MessageFixture2();
+        $response = (object) ['messages' => [$message1, $message2]];
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $messageStub = test::double(Message::class, [
+            'createOutOfResponse' => function ($arg) { return get_class($arg); }
+        ]);
+        $mentionsColl = test::double(MessagesCollection::class, ['add' => true]);
+
+        $channel = new Channel();
+        $result = $channel->history(['offset' => 10, 'inclusive' => true]);
+
+        $this->assertInstanceOf(MessagesCollection::class, $result);
+        $stub->verifyInvokedOnce('send', ['channels.history', 'GET', [
+            'offset' => 10,
+            'count' => 0,
+            'inclusive' => true,
+            'roomId' => 'channelId123',
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$message1]);
+        $messageStub->verifyInvokedOnce('createOutOfResponse', [$message2]);
+        $mentionsColl->verifyInvokedOnce('add', [MessageFixture1::class]);
+        $mentionsColl->verifyInvokedOnce('add', [MessageFixture2::class]);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

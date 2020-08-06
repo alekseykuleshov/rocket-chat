@@ -394,3 +394,30 @@ if (!$result) {
     $error = $channel->getError();
 }
 ```
+
+### CHANNEL ROLES
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$roles = $channel->roles();
+if (!$roles) {
+	$error = $channel->getError();
+} else {
+    $roles->first()->getRoles();
+}
+```
+
+### CHANNEL HISTORY
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->history([
+    "latest" => "2016-09-30T13:42:25.304Z",
+    "oldest" => "2016-05-30T13:42:25.304Z",
+    "inclusive" => true,
+    "unreads" => true
+]);
+if (!$result) {
+	$error = $channel->getError();
+}
+```

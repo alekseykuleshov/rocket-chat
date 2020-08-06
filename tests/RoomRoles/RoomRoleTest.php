@@ -31,7 +31,6 @@ class RoomRoleTest extends TestCase
     {
         $roomRole1 = new ResponseFixture1();
         $mock = $this->getMockBuilder(RoomRole::class)->enableProxyingToOriginalMethods()->getMock();
-//        $stub = test::double(get_class($mock), ['updateOutOfResponse' => $mock]);
         $mock->updateOutOfResponse($roomRole1);
 
         $this->assertSame('roomRoleId123', $mock->getRoomRoleId());

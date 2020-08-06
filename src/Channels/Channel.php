@@ -829,6 +829,37 @@ class Channel extends Request
     }
 
     /**
+     * Retrieves the messages from a channel
+     *
+     * @param array $options
+     * @return \ATDev\RocketChat\Messages\Collection|false
+     */
+    public function history($options = [])
+    {
+        $options = array_replace([
+            'offset' => 0,
+            'count' => 0
+        ], $options);
+        $options['roomId'] = $this->getChannelId();
+
+        static::send('channels.history', 'GET', $options);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $response = static::getResponse();
+        $messages = new \ATDev\RocketChat\Messages\Collection();
+
+        if (isset($response->messages)) {
+            foreach ($response->messages as $message) {
+                $messages->add(Message::createOutOfResponse($message));
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
      * Prepares request params to have `roomId` or `roomName`
      *
      * @param Channel|null $channel
