@@ -5,6 +5,7 @@ namespace ATDev\RocketChat\Channels;
 use ATDev\RocketChat\Common\Request;
 use ATDev\RocketChat\Common\Room;
 use ATDev\RocketChat\Messages\Message;
+use ATDev\RocketChat\RoomRoles\RoomRole;
 use ATDev\RocketChat\Users\User;
 
 /**
@@ -641,8 +642,7 @@ class Channel extends Request
     /**
      * Lists all user's roles in the channel
      *
-     * @TODO
-     * @return false|mixed
+     * @return \ATDev\RocketChat\RoomRoles\Collection|false
      */
     public function roles()
     {
@@ -651,8 +651,15 @@ class Channel extends Request
             return false;
         }
 
+        $roomRoles = new \ATDev\RocketChat\RoomRoles\Collection();
         $response = static::getResponse();
-        return $response;
+        if (isset($response->roles)) {
+            foreach ($response->roles as $roomRole) {
+                $roomRoles->add(RoomRole::createOutOfResponse($roomRole));
+            }
+        }
+
+        return $roomRoles;
     }
 
     /**

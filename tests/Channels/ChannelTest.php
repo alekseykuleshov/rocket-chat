@@ -3,10 +3,14 @@
 namespace ATDev\RocketChat\Tests\Channels;
 
 use ATDev\RocketChat\Channels\Counters;
-use ATDev\RocketChat\Messages\Collection as MessagesCollection;
 use ATDev\RocketChat\Messages\Message;
+use ATDev\RocketChat\Messages\Collection as MessagesCollection;
 use ATDev\RocketChat\Tests\Messages\ResponseFixture1 as MessageFixture1;
 use ATDev\RocketChat\Tests\Messages\ResponseFixture2 as MessageFixture2;
+use ATDev\RocketChat\RoomRoles\RoomRole;
+use ATDev\RocketChat\Tests\RoomRoles\ResponseFixture1 as RoomRolesFixture1;
+use ATDev\RocketChat\Tests\RoomRoles\ResponseFixture2 as RoomRolesFixture2;
+use ATDev\RocketChat\RoomRoles\Collection as RoomRolesCollection;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -1542,25 +1546,35 @@ class ChannelTest extends TestCase
 
     public function testRolesSuccess()
     {
+        $role1 = new RoomRolesFixture1();
+        $role2 = new RoomRolesFixture2();
+        $response = (object) ['roles' => [$role1, $role2]];
         $stub = test::double(Channel::class, [
             'getChannelId' => null,
             'getName' => 'channelName123',
             'send' => true,
             'getSuccess' => true,
-            'getResponse' => (object) ['channel' => 'channel data'],
-            'updateOutOfResponse' => 'result'
+            'getResponse' => $response
         ]);
+        $roomRoleStub = test::double(
+            RoomRole::class,
+            ['createOutOfResponse' => function ($arg) { return get_class($arg); }]
+        );
+        $roomRoleCol = test::double(RoomRolesCollection::class, ['add' => true]);
 
         $channel = new Channel();
         $result = $channel->roles();
 
-        $this->assertSame('result', $result);
+        $this->assertInstanceOf(RoomRolesCollection::class, $result);
         $stub->verifyInvokedOnce('getChannelId');
         $stub->verifyInvokedMultipleTimes('getName', 2);
         $stub->verifyInvokedOnce('send', ['channels.roles', 'GET', ['roomName' => 'channelName123']]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce('getResponse');
-//        $stub->verifyInvokedOnce('updateOutOfResponse', ['channel data']);
+        $roomRoleStub->verifyInvokedOnce('createOutOfResponse', [$role1]);
+        $roomRoleStub->verifyInvokedOnce('createOutOfResponse', [$role2]);
+        $roomRoleCol->verifyInvokedOnce('add', [RoomRolesFixture1::class]);
+        $roomRoleCol->verifyInvokedOnce('add', [RoomRolesFixture2::class]);
     }
 
     public function testGetAllUserMentionsByChannelFailed()
