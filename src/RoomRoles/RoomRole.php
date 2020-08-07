@@ -32,12 +32,20 @@ class RoomRole
         }
     }
 
+    /**
+     * @param \stdClass $response
+     * @return RoomRole
+     */
     public static function createOutOfResponse($response)
     {
         $roomRole = new static($response->_id);
         return $roomRole->updateOutOfResponse($response);
     }
 
+    /**
+     * @param \stdClass $response
+     * @return $this
+     */
     public function updateOutOfResponse($response)
     {
         if (isset($response->_id)) {
