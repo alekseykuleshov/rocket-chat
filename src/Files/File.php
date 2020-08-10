@@ -15,6 +15,8 @@ class File
     /** @var string */
     private $type;
     /** @var string */
+    private $typeGroup;
+    /** @var string */
     private $roomId;
     /** @var string */
     private $description;
@@ -83,6 +85,9 @@ class File
         }
         if (isset($response->type)) {
             $this->setType($response->type);
+        }
+        if (isset($response->typeGroup)) {
+            $this->setTypeGroup($response->typeGroup);
         }
         if (isset($response->rid)) {
             $this->setRoomId($response->rid);
@@ -212,6 +217,27 @@ class File
     {
         if (is_string($type)) {
             $this->type = $type;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTypeGroup()
+    {
+        return $this->typeGroup;
+    }
+
+    /**
+     * @param string $typeGroup
+     * @return File
+     */
+    private function setTypeGroup($typeGroup)
+    {
+        if (is_string($typeGroup)) {
+            $this->typeGroup = $typeGroup;
         }
 
         return $this;

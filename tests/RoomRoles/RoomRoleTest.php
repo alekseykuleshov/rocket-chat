@@ -1,6 +1,6 @@
 <?php
 
-namespace RoomRoles;
+namespace ATDev\RocketChat\Tests\RoomRoles;
 
 use ATDev\RocketChat\RoomRoles\RoomRole;
 use ATDev\RocketChat\Tests\RoomRoles\ResponseFixture1;

@@ -11,6 +11,10 @@ use ATDev\RocketChat\RoomRoles\RoomRole;
 use ATDev\RocketChat\Tests\RoomRoles\ResponseFixture1 as RoomRolesFixture1;
 use ATDev\RocketChat\Tests\RoomRoles\ResponseFixture2 as RoomRolesFixture2;
 use ATDev\RocketChat\RoomRoles\Collection as RoomRolesCollection;
+use ATDev\RocketChat\Files\File;
+use ATDev\RocketChat\Tests\Files\ResponseFixture1 as FilesFixture1;
+use ATDev\RocketChat\Tests\Files\ResponseFixture2 as FilesFixture2;
+use ATDev\RocketChat\Files\Collection as FilesCollection;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -1694,6 +1698,65 @@ class ChannelTest extends TestCase
         $messageStub->verifyInvokedOnce('createOutOfResponse', [$message2]);
         $mentionsColl->verifyInvokedOnce('add', [MessageFixture1::class]);
         $mentionsColl->verifyInvokedOnce('add', [MessageFixture2::class]);
+    }
+
+    public function testFilesFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->files();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedMultipleTimes('getChannelId', 2);
+        $stub->verifyNeverInvoked('getName');
+        $stub->verifyInvokedOnce('send', ['channels.files', 'GET', [
+            'roomId' => 'channelId123',
+            'offset' => 0,
+            'count' => 0
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+    }
+
+    public function testFilesSuccess()
+    {
+        $file1 = new FilesFixture1();
+        $file2 = new FilesFixture2();
+        $response = (object) ['files' => [$file1, $file2]];
+        $stub = test::double(Channel::class, [
+            'getChannelId' => null,
+            'getName' => 'channelName123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $fileStub = test::double(File::class, [
+            'createOutOfResponse' => function ($arg) { return get_class($arg); }
+        ]);
+        $filesColl = test::double(FilesCollection::class, ['add' => true]);
+
+        $channel = new Channel();
+        $result = $channel->files(10);
+
+        $this->assertInstanceOf(FilesCollection::class, $result);
+        $stub->verifyInvokedOnce('send', ['channels.files', 'GET', [
+            'roomName' => 'channelName123',
+            'offset' => 10,
+            'count' => 0
+        ]]);
+        $stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedMultipleTimes('getName', 2);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $fileStub->verifyInvokedOnce('createOutOfResponse', [$file1]);
+        $fileStub->verifyInvokedOnce('createOutOfResponse', [$file2]);
+        $filesColl->verifyInvokedOnce('add', [FilesFixture1::class]);
+        $filesColl->verifyInvokedOnce('add', [FilesFixture2::class]);
     }
 
     protected function tearDown(): void

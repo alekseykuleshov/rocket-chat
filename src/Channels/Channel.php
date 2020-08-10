@@ -4,6 +4,7 @@ namespace ATDev\RocketChat\Channels;
 
 use ATDev\RocketChat\Common\Request;
 use ATDev\RocketChat\Common\Room;
+use ATDev\RocketChat\Files\File;
 use ATDev\RocketChat\Messages\Message;
 use ATDev\RocketChat\RoomRoles\RoomRole;
 use ATDev\RocketChat\Users\User;
@@ -857,6 +858,43 @@ class Channel extends Request
         }
 
         return $messages;
+    }
+
+    /**
+     * Retrieves the files from a channel
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Files\Collection|false
+     */
+    public function files($offset = 0, $count = 0)
+    {
+        static::send(
+            'channels.files',
+            'GET',
+            array_merge(self::requestParams($this), ['offset' => $offset, 'count' => $count])
+        );
+        if (!static::getSuccess()) {
+            return false;
+        }
+        $response = static::getResponse();
+        $files = new \ATDev\RocketChat\Files\Collection();
+        if (isset($response->files)) {
+            foreach ($response->files as $file) {
+                $files->add(File::createOutOfResponse($file));
+            }
+        }
+        if (isset($response->total)) {
+            $files->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $files->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $files->setOffset($response->offset);
+        }
+
+        return $files;
     }
 
     /**

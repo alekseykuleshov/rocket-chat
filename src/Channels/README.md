@@ -421,3 +421,13 @@ if (!$result) {
 	$error = $channel->getError();
 }
 ```
+
+### CHANNEL FILES
+```php
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->files(10, 20);
+if (!$result) {
+	$error = $channel->getError();
+}
+```
