@@ -3,6 +3,7 @@
 namespace ATDev\RocketChat\Tests\Channels;
 
 use ATDev\RocketChat\Channels\Counters;
+use ATDev\RocketChat\Groups\Group;
 use ATDev\RocketChat\Messages\Message;
 use ATDev\RocketChat\Messages\Collection as MessagesCollection;
 use ATDev\RocketChat\Tests\Messages\ResponseFixture1 as MessageFixture1;
@@ -1506,7 +1507,34 @@ class ChannelTest extends TestCase
         $stub->verifyNeverInvoked('updateOutOfResponse');
     }
 
-    public function testSetTypeSuccess()
+    public function testSetTypePrivateSuccess()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'channel data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+        $groupStub = test::double(Group::class, [
+            'createOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Channel();
+        $result = $channel->setType('p');
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['channels.setType', 'POST', [
+            'roomId' => 'channelId123',
+            'type' => 'p'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $groupStub->verifyInvokedOnce('createOutOfResponse', ['channel data']);
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testSetTypeChatSuccess()
     {
         $stub = test::double(Channel::class, [
             'getChannelId' => 'channelId123',

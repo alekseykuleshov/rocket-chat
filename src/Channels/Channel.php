@@ -5,6 +5,7 @@ namespace ATDev\RocketChat\Channels;
 use ATDev\RocketChat\Common\Request;
 use ATDev\RocketChat\Common\Room;
 use ATDev\RocketChat\Files\File;
+use ATDev\RocketChat\Groups\Group;
 use ATDev\RocketChat\Messages\Message;
 use ATDev\RocketChat\RoomRoles\RoomRole;
 use ATDev\RocketChat\Users\User;
@@ -811,8 +812,12 @@ class Channel extends Request
     }
 
     /**
+     * Sets the type of room this channel should be
+     *
      * @param string $type
-     * @return Channel|false
+     * @return Channel|Group|false
+     * @TODO: Room types are described here: https://docs.rocket.chat/api/schema-definition/the-room-object#room-types
+     * Room type values should be described in constants in Room class
      */
     public function setType($type = 'c')
     {
@@ -826,7 +831,13 @@ class Channel extends Request
             return false;
         }
 
-        return $this->updateOutOfResponse(static::getResponse()->channel);
+        if ($type == 'p') {
+            $room = Group::createOutOfResponse(static::getResponse()->channel);
+        } else {
+            $room = self::updateOutOfResponse(static::getResponse()->channel);
+        }
+
+        return $room;
     }
 
     /**
