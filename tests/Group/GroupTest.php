@@ -449,6 +449,226 @@ class GroupTest extends TestCase
         $this->assertSame(30, $result->getTotal());
     }
 
+    public function testAddAllFailed()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+
+        $group = new Group();
+        $result = $group->addAll(false);
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['groups.addAll', 'POST', [
+            'roomId' => 'groupId123',
+            'activeUsersOnly' => false
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testAddAllSuccess()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['channel' => 'group-data'],
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $channel = new Group();
+        $result = $channel->addAll(true);
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['groups.addAll', 'POST', [
+            'roomId' => 'groupId123',
+            'activeUsersOnly' => true
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', 'group-data');
+    }
+
+    public function testAddLeaderFailed()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $group = new Group();
+        $user = new User();
+        $result = $group->addLeader($user);
+
+        $this->assertSame(false, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['groups.addLeader', 'POST', [
+            'roomId' => 'groupId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testAddLeaderSuccess()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => true
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $group = new Group();
+        $user = new User();
+        $result = $group->addLeader($user);
+
+        $this->assertSame($group, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['groups.addLeader', 'POST', [
+            'roomId' => 'groupId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testRemoveLeaderFailed()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $group = new Group();
+        $user = new User();
+        $result = $group->removeLeader($user);
+
+        $this->assertSame(false, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['groups.removeLeader', 'POST', [
+            'roomId' => 'groupId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testRemoveLeaderSuccess()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => true
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $group = new Group();
+        $user = new User();
+        $result = $group->removeLeader($user);
+
+        $this->assertSame($group, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['groups.removeLeader', 'POST', [
+            'roomId' => 'groupId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testAddModeratorFailed()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $group = new Group();
+        $user = new User();
+        $result = $group->addModerator($user);
+
+        $this->assertSame(false, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['groups.addModerator', 'POST', [
+            'roomId' => 'groupId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testAddModeratorSuccess()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => true
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $group = new Group();
+        $user = new User();
+        $result = $group->addModerator($user);
+
+        $this->assertSame($group, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['groups.addModerator', 'POST', [
+            'roomId' => 'groupId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testRemoveModeratorFailed()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => false
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $group = new Group();
+        $user = new User();
+        $result = $group->removeModerator($user);
+
+        $this->assertSame(false, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['groups.removeModerator', 'POST', [
+            'roomId' => 'groupId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
+    public function testRemoveModeratorSuccess()
+    {
+        $stub = test::double(Group::class, [
+            'getGroupId' => 'groupId123',
+            'send' => true,
+            'getSuccess' => true
+        ]);
+        $userStub = test::double(User::class, ['getUserId' => 'userId123']);
+
+        $group = new Group();
+        $user = new User();
+        $result = $group->removeModerator($user);
+
+        $this->assertSame($group, $result);
+        $userStub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce('send', ['groups.removeModerator', 'POST', [
+            'roomId' => 'groupId123',
+            'userId' => 'userId123'
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
