@@ -5,6 +5,7 @@ namespace ATDev\RocketChat\Tests\Groups;
 use ATDev\RocketChat\Channels\Channel;
 use ATDev\RocketChat\Groups\Counters;
 use ATDev\RocketChat\Groups\Group;
+use ATDev\RocketChat\Groups\Collection as GroupsCollection;
 use ATDev\RocketChat\Users\User;
 use ATDev\RocketChat\Messages\Message;
 use ATDev\RocketChat\Messages\Collection as MessagesCollection;
@@ -25,20 +26,20 @@ class GroupTest extends TestCase
 {
     public function testListingFailed()
     {
-        $stub = test::double("\ATDev\RocketChat\Groups\Group", [
+        $stub = test::double(Group::class, [
             'send' => true,
             'getSuccess' => false,
-            "getResponse" => (object) [],
-            "createOutOfResponse" => "nothing"
+            'getResponse' => (object) [],
+            'createOutOfResponse' => 'nothing'
         ]);
 
         $result = Group::listing();
 
         $this->assertSame(false, $result);
-        $stub->verifyInvokedOnce('send', ["groups.list", "GET"]);
+        $stub->verifyInvokedOnce('send', ['groups.list', 'GET']);
         $stub->verifyInvokedOnce('getSuccess');
-        $stub->verifyNeverInvoked("getResponse");
-        $stub->verifyNeverInvoked("createOutOfResponse");
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('createOutOfResponse');
     }
 
     public function testListingSuccess()
@@ -46,26 +47,24 @@ class GroupTest extends TestCase
         $group1 = new \ATDev\RocketChat\Tests\Common\ResponseFixture1();
         $group2 = new \ATDev\RocketChat\Tests\Common\ResponseFixture2();
         $response = (object) [
-            "groups" => [$group1, $group2],
-            "offset" => 2,
-            "count" => 10,
-            "total" => 30
+            'groups' => [$group1, $group2],
+            'offset' => 2,
+            'count' => 10,
+            'total' => 30
         ];
 
-        $stub = test::double("\ATDev\RocketChat\Groups\Group", [
+        $stub = test::double(Group::class, [
             'send' => true,
             'getSuccess' => true,
-            "getResponse" => $response,
-            "createOutOfResponse" => function ($arg) { return get_class($arg); }
+            'getResponse' => $response,
+            'createOutOfResponse' => function ($arg) { return get_class($arg); }
         ]);
 
-        $coll = test::double("\ATDev\RocketChat\Groups\Collection", [
-            "add" => true
-        ]);
+        $coll = test::double(GroupsCollection::class, ['add' => true]);
 
         $result = Group::listing();
 
-        $this->assertInstanceOf("\ATDev\RocketChat\Groups\Collection", $result);
+        $this->assertInstanceOf(GroupsCollection::class, $result);
         $stub->verifyInvokedOnce('send', ["groups.list", "GET"]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce("getResponse");
@@ -73,6 +72,59 @@ class GroupTest extends TestCase
         $stub->verifyInvokedOnce("createOutOfResponse", [$group2]);
         $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture1"]);
         $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture2"]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
+    }
+
+    public function testListAllFailed()
+    {
+        $stub = test::double(Group::class, [
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) [],
+            'createOutOfResponse' => 'nothing'
+        ]);
+
+        $result = Group::listAll();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['groups.listAll', 'GET', ['offset' => 0, 'count' => 0]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testListAllSuccess()
+    {
+        $group1 = new \ATDev\RocketChat\Tests\Common\ResponseFixture1();
+        $group2 = new \ATDev\RocketChat\Tests\Common\ResponseFixture2();
+        $response = (object) [
+            'groups' => [$group1, $group2],
+            'offset' => 2,
+            'count' => 10,
+            'total' => 30
+        ];
+
+        $stub = test::double(Group::class, [
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response,
+            'createOutOfResponse' => function ($arg) { return get_class($arg); }
+        ]);
+
+        $coll = test::double(GroupsCollection::class, ['add' => true]);
+
+        $result = Group::listAll(10);
+
+        $this->assertInstanceOf(GroupsCollection::class, $result);
+        $stub->verifyInvokedOnce('send', ['groups.listAll', 'GET', ['offset' => 10, 'count' => 0]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('createOutOfResponse', [$group1]);
+        $stub->verifyInvokedOnce('createOutOfResponse', [$group2]);
+        $coll->verifyInvokedOnce('add', ['ATDev\RocketChat\Tests\Common\ResponseFixture1']);
+        $coll->verifyInvokedOnce('add', ['ATDev\RocketChat\Tests\Common\ResponseFixture2']);
         $this->assertSame(2, $result->getOffset());
         $this->assertSame(10, $result->getCount());
         $this->assertSame(30, $result->getTotal());

@@ -51,6 +51,39 @@ class Group extends Request
     }
 
     /**
+     * Lists all of the private groups of any users. The calling user requires to have 'view-room-administration' right
+     *
+     * @param int $offset
+     * @param int $count
+     * @return Collection|false
+     */
+    public static function listAll($offset = 0, $count = 0)
+    {
+        static::send('groups.listAll', 'GET', ['offset' => $offset, 'count' => $count]);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $groups = new Collection();
+        $response =static::getResponse();
+        foreach ($response->groups as $group) {
+            $groups->add(static::createOutOfResponse($group));
+        }
+        if (isset($response->total)) {
+            $groups->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $groups->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $groups->setOffset($response->offset);
+        }
+
+        return $groups;
+    }
+
+    /**
      * Creates group at api instance
      *
      * @return Group|boolean
