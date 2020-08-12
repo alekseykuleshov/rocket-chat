@@ -641,7 +641,7 @@ class Group extends Request
         if ($type == 'p') {
             $room = self::updateOutOfResponse(static::getResponse()->group);
         } else {
-            $room = Group::createOutOfResponse(static::getResponse()->group);
+            $room = Channel::createOutOfResponse(static::getResponse()->group);
         }
 
         return $room;
