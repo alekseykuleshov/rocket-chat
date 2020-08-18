@@ -531,6 +531,86 @@ trait Data
     }
 
     /**
+     * @param \stdClass $response
+     * @return Data
+     */
+    public static function createOutOfResponse($response)
+    {
+        $message = new static($response->_id);
+        return $message->updateOutOfResponse($response);
+    }
+
+    /**
+     * @param \stdClass $response
+     * @return Data $this
+     */
+    public function updateOutOfResponse($response)
+    {
+        if (isset($response->_id)) {
+            $this->setIntegrationId($response->_id);
+        }
+        if (isset($response->type)) {
+            $this->setType($response->type);
+        }
+        if (isset($response->name)) {
+            $this->setName($response->name);
+        }
+        if (isset($response->enabled)) {
+            $this->setEnabled($response->enabled);
+        }
+        if (isset($response->username)) {
+            $this->setUsername($response->username);
+        }
+        if (isset($response->userId)) {
+            $this->setUserId($response->userId);
+        }
+        if (isset($response->alias)) {
+            $this->setAlias($response->alias);
+        }
+        if (isset($response->avatar)) {
+            $this->setAvatar($response->avatar);
+        }
+        if (isset($response->triggerWords)) {
+            $this->setTriggerWords($response->triggerWords);
+        }
+        if (isset($response->urls)) {
+            $this->setUrls($response->urls);
+        }
+        if (isset($response->token)) {
+            $this->setToken($response->token);
+        }
+        if (isset($response->script)) {
+            $this->setScript($response->script);
+        }
+        if (isset($response->scriptEnabled)) {
+            $this->setScriptEnabled($response->scriptEnabled);
+        }
+        if (isset($response->impersonateUser)) {
+            $this->setImpersonateUser($response->impersonateUser);
+        }
+        if (isset($response->scriptError)) {
+            $this->setScriptError($response->scriptError);
+        }
+        if (isset($response->channel)) {
+            $this->setChannel($response->channel);
+        }
+        if (isset($response->_createdAt)) {
+            $this->setCreatedAt($response->_createdAt);
+        }
+        if (isset($response->_createdBy)) {
+            $this->setCreatedBy($response->_createdBy);
+        }
+        if (isset($response->_updatedAt)) {
+            $this->setUpdatedAt($response->_updatedAt);
+        }
+        if (isset($response->event)) {
+            $this->setEvent($response->event);
+        }
+
+        return $this;
+    }
+
+    /**
      * Prepares integration data to be sent to API
      *
      * @return array
