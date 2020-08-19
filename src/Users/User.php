@@ -67,7 +67,7 @@ class User extends Request
     /**
      * Update own basic information
      *
-     * @return Data|false
+     * @return User|false
      */
     public function updateOwnBasicInfo()
     {
@@ -91,7 +91,7 @@ class User extends Request
             return false;
         }
 
-        return static::createOutOfResponse(static::getResponse()->user);
+        return $this->updateOutOfResponse(static::getResponse()->user);
     }
 
     /**
@@ -300,7 +300,7 @@ class User extends Request
     }
 
     /**
-     * Sets a user Status when the status message and state is given
+     * Sets a user status when the status message and state is given
      *
      * @param string $message
      * @param string|null $status

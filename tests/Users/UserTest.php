@@ -418,7 +418,7 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("send", ["users.updateOwnBasicInfo", "POST", ["data" => $updateData]]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyNeverInvoked("getResponse");
-        $stub->verifyNeverInvoked("createOutOfResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
     }
 
     public function testUpdateOwnBasicInfoSuccess()
@@ -428,7 +428,7 @@ class UserTest extends TestCase
             "send" => true,
             "getSuccess" => true,
             "getResponse" => $response,
-            "createOutOfResponse" => "updated user result"
+            "updateOutOfResponse" => "updated user result"
         ]);
 
         $updateData = [
@@ -452,7 +452,7 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("send", ["users.updateOwnBasicInfo", "POST", ["data" => $updateData]]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
-        $stub->verifyInvokedOnce("createOutOfResponse", "update result");
+        $stub->verifyInvokedOnce("updateOutOfResponse", "update result");
     }
 
     public function testSetActiveStatusFailed()
