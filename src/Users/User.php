@@ -302,18 +302,28 @@ class User extends Request
     /**
      * Sets a user status when the status message and state is given
      *
-     * @param string $message
-     * @param string|null $status
-     * @return bool
+     * @param $message
+     * @param null $status
+     * @return $this|false
      */
-    public static function setStatus($message, $status = null)
+    public function setStatus($message, $status = null)
     {
         $params = ['message' => $message];
         if (isset($status) && is_string($status)) {
             $params['status'] = $status;
         }
         static::send("users.setStatus", "POST", $params);
-        return static::getSuccess();
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $this->setStatusText($params['message']);
+        if (isset($params['status'])) {
+            $this->setStatusValue($params['status']);
+        }
+
+        return $this;
     }
 
     /**

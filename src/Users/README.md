@@ -73,7 +73,7 @@ $user->setCustomFields("{ twitter: '@example' }");
 
 $updatedUser = $user->updateOwnBasicInfo();
 if (!$updatedUser) {
-    $error = \ATDev\RocketChat\Users\User::getError();
+    $error = $user->getError();
 }
 ```
 
@@ -82,15 +82,16 @@ if (!$updatedUser) {
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
 $statusResult = $user->setActiveStatus(true);
 if (!$statusResult) {
-    $statusResult->getError();
+    $user->getError();
 }
 ```
 
 ### SET STATUS MESSAGE
 ```php
-$result = \ATDev\RocketChat\Users\User::setStatus("New status message", "away");
+$user = \ATDev\RocketChat\Chat::me();
+$result = $user->setStatus("[STATUS MESSAGE]", "away");
 if (!$result) {
-    $error = \ATDev\RocketChat\Users\User::getError();
+    $error = $user->getError();
 }
 ```
 

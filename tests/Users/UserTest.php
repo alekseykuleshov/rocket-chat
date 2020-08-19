@@ -497,9 +497,12 @@ class UserTest extends TestCase
     public function testSetStatusFailed()
     {
         $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $result = User::setStatus("Status message");
+        $user = new User();
+        $result = $user->setStatus("Status message");
 
         $this->assertSame(false, $result);
+        $this->assertNull($user->getStatusText());
+        $this->assertNull($user->getStatusValue());
         $stub->verifyInvokedOnce("send", ["users.setStatus", "POST", ["message" => "Status message"]]);
         $stub->verifyInvokedOnce("getSuccess");
     }
@@ -507,9 +510,12 @@ class UserTest extends TestCase
     public function testSetStatusSuccess()
     {
         $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
-        $result = User::setStatus("Status message", "away");
+        $user = new User();
+        $result = $user->setStatus("Status message", "away");
 
-        $this->assertSame(true, $result);
+        $this->assertSame($user, $result);
+        $this->assertSame("Status message", $user->getStatusText());
+        $this->assertSame("away", $user->getStatusValue());
         $stub->verifyInvokedOnce("send", ["users.setStatus", "POST", ["message" => "Status message", "status" => "away"]]);
         $stub->verifyInvokedOnce("getSuccess");
     }

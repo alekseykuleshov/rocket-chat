@@ -454,7 +454,9 @@ trait Data
      */
     public function setStatusValue($status)
     {
-        if (is_string($status)) {
+        if (!(is_null($status) || is_string($status))) {
+            $this->setDataError("Invalid status value");
+        } else {
             $this->status = $status;
         }
 
@@ -479,7 +481,9 @@ trait Data
      */
     public function setStatusText($statusText)
     {
-        if (is_string($statusText)) {
+        if (!(is_null($statusText) || is_string($statusText))) {
+            $this->setDataError("Invalid status message value");
+        } else {
             $this->statusText = $statusText;
         }
 

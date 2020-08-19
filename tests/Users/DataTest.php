@@ -414,6 +414,62 @@ class DataTest extends TestCase
         $stub->verifyNeverInvoked("setDataError");
     }
 
+    public function testInvalidStatusValue()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setStatusValue(123);
+        $this->assertNull($mock->getStatusValue());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid status value"]);
+    }
+
+    public function testValidStatusValue()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setStatusValue("asdfasdf");
+        $this->assertSame("asdfasdf", $mock->getStatusValue());
+
+        // And null value...
+        $mock->setStatusValue(null);
+        $this->assertSame(null, $mock->getStatusValue());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testInvalidStatusText()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setStatusText(123);
+        $this->assertNull($mock->getStatusText());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid status message value"]);
+    }
+
+    public function testValidStatusText()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setStatusText("asdfasdf");
+        $this->assertSame("asdfasdf", $mock->getStatusText());
+
+        // And null value...
+        $mock->setStatusText(null);
+        $this->assertSame(null, $mock->getStatusText());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
     public function testJsonSerialize()
     {
         $mock = $this->getMockForTrait(Data::class);
