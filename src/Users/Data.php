@@ -39,6 +39,8 @@ trait Data
     private $verified;
     /** @var string User custom fields, default is undefined */
     private $customFields;
+    /** @var string The new password for the user to update own info */
+    private $newPassword;
 
     /* Other methods required properties */
     /** @var string The user's status message */
@@ -209,6 +211,33 @@ trait Data
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * New password to update own info
+     *
+     * @param string $newPassword
+     * @return $this
+     */
+    public function setNewPassword($newPassword)
+    {
+        if (!(is_null($newPassword) || is_string($newPassword))) {
+            $this->setDataError("Invalid new password");
+        } else {
+            $this->newPassword = $newPassword;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns new password value
+     *
+     * @return string
+     */
+    public function getNewPassword()
+    {
+        return $this->newPassword;
     }
 
     /**

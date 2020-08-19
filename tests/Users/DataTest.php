@@ -162,6 +162,34 @@ class DataTest extends TestCase
         $stub->verifyNeverInvoked("setDataError");
     }
 
+    public function testInvalidNewPassword()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setNewPassword(123);
+        $this->assertSame(null, $mock->getNewPassword());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid new password"]);
+    }
+
+    public function testValidNewPassword()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setNewPassword("sjdfb235$$");
+        $this->assertSame("sjdfb235$$", $mock->getNewPassword());
+
+        // And null value...
+        $mock->setNewPassword(null);
+        $this->assertSame(null, $mock->getNewPassword());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
     public function testInvalidUsername()
     {
         $mock = $this->getMockForTrait(Data::class);

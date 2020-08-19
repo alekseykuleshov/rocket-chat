@@ -67,12 +67,26 @@ class User extends Request
     /**
      * Update own basic information
      *
-     * @param array $data
      * @return Data|false
      */
-    public static function updateOwnBasicInfo($data = [])
+    public function updateOwnBasicInfo()
     {
-        static::send("users.updateOwnBasicInfo", "POST", ["data" => $data]);
+        $updateData = [
+            "email" => $this->email,
+            "name" => $this->name,
+            "username" => $this->username,
+        ];
+        if (isset($this->password)) {
+            $updateData["currentPassword"] = $this->password;
+        }
+        if (isset($this->newPassword)) {
+            $updateData["newPassword"] = $this->newPassword;
+        }
+        if (isset($this->customFields)) {
+            $updateData["customFields"] = $this->customFields;
+        }
+
+        static::send("users.updateOwnBasicInfo", "POST", ["data" => $updateData]);
         if (!static::getSuccess()) {
             return false;
         }

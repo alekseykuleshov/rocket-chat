@@ -63,16 +63,15 @@ if (!$result) {
 
 ### UPDATE OWN BASIC INFO
 ```php
-$updatedUser = \ATDev\RocketChat\Users\User::updateOwnBasicInfo([
-    'email' => 'test@updated.com',
-    'name' => 'Updated Name',
-    'username' => 'new-username',
-    'currentPassword' => hash('sha256', 'q1w2e3r4t5'),
-    'newPassword' => 'newPassw0rd',
-    'customFields' => [
-        'twitter' => '@example'
-    ]
-]);
+$user = \ATDev\RocketChat\Chat::me();
+$user->setEmail('test@updated.com');
+$user->setUsername('[NEW-USER-NAME]');
+$user->setName('[NEW-NAME]');
+$user->setPassword(hash('sha256', '[CURRENT-PASSWORD]'));
+$user->setNewPassword('newPassw0rd');
+$user->setCustomFields("{ twitter: '@example' }");
+
+$updatedUser = $user->updateOwnBasicInfo();
 if (!$updatedUser) {
     $error = \ATDev\RocketChat\Users\User::getError();
 }

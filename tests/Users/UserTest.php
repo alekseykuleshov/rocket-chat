@@ -403,10 +403,16 @@ class UserTest extends TestCase
         ]);
         $updateData = [
             'email' => 'test@updated.com',
-            'name' => 'Updated Name'
+            'name' => 'Updated Name',
+            'username' => null,
+            'currentPassword' => hash('sha256', 'current-pass')
         ];
+        $user = new User();
+        $user->setEmail('test@updated.com');
+        $user->setName('Updated Name');
+        $user->setPassword(hash('sha256', 'current-pass'));
 
-        $result = User::updateOwnBasicInfo($updateData);
+        $result = $user->updateOwnBasicInfo();
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce("send", ["users.updateOwnBasicInfo", "POST", ["data" => $updateData]]);
@@ -417,11 +423,7 @@ class UserTest extends TestCase
 
     public function testUpdateOwnBasicInfoSuccess()
     {
-        $updateData = [
-            'email' => 'test@updated.com',
-            'name' => 'Updated Name'
-        ];
-        $response = (object) ["user" => (object) $updateData];
+        $response = (object) ["user" => "update result"];
         $stub = test::double(User::class, [
             "send" => true,
             "getSuccess" => true,
@@ -429,13 +431,28 @@ class UserTest extends TestCase
             "createOutOfResponse" => "updated user result"
         ]);
 
-        $result = User::updateOwnBasicInfo($updateData);
+        $updateData = [
+            'email' => 'test@updated.com',
+            'name' => 'Updated Name',
+            'username' => null,
+            'currentPassword' => hash('sha256', 'current-pass'),
+            'newPassword' => 'new0pass',
+            'customFields' => "{ twitter: '@example' }",
+        ];
+        $user = new User();
+        $user->setEmail('test@updated.com');
+        $user->setName('Updated Name');
+        $user->setPassword(hash('sha256', 'current-pass'));
+        $user->setNewPassword('new0pass');
+        $user->setCustomFields("{ twitter: '@example' }");
+
+        $result = $user->updateOwnBasicInfo();
 
         $this->assertSame("updated user result", $result);
         $stub->verifyInvokedOnce("send", ["users.updateOwnBasicInfo", "POST", ["data" => $updateData]]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
-        $stub->verifyInvokedOnce("createOutOfResponse");
+        $stub->verifyInvokedOnce("createOutOfResponse", "update result");
     }
 
     public function testSetActiveStatusFailed()
