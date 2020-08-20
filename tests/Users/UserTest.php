@@ -726,59 +726,59 @@ class UserTest extends TestCase
     public function testCreateTokenFailed()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => false,
-            "getUsername" => "username123",
-            "getUserId" => null
+            'send' => true,
+            'getSuccess' => false,
+            'getUsername' => 'username123',
+            'getUserId' => null
         ]);
-        $response = User::createToken(new User());
+        $response = (new User())->createToken();
 
         $this->assertSame(false, $response);
-        $stub->verifyInvokedOnce("send", ["users.createToken", "POST", ["username" => "username123"]]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedMultipleTimes("getUsername", 2);
-        $stub->verifyInvokedOnce("getUserId");
-        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyInvokedOnce('send', ['users.createToken', 'POST', ['username' => 'username123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedMultipleTimes('getUsername', 2);
+        $stub->verifyInvokedOnce('getUserId');
+        $stub->verifyNeverInvoked('getResponse');
     }
 
     public function testCreateTokenNull()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getUserId" => "userId123",
-            "getUsername" => null,
-            "getResponse" => null
+            'send' => true,
+            'getSuccess' => true,
+            'getUserId' => 'userId123',
+            'getUsername' => null,
+            'getResponse' => null
         ]);
-        $response = User::createToken(new User());
+        $response = (new User())->createToken();
 
         $this->assertNull($response);
-        $stub->verifyInvokedOnce("send", ["users.createToken", "POST", ["userId" => "userId123"]]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("getUsername");
-        $stub->verifyInvokedMultipleTimes("getUserId", 2);
-        $stub->verifyInvokedOnce("getResponse", 2);
+        $stub->verifyInvokedOnce('send', ['users.createToken', 'POST', ['userId' => 'userId123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getUsername');
+        $stub->verifyInvokedMultipleTimes('getUserId', 2);
+        $stub->verifyInvokedOnce('getResponse', 2);
     }
 
     public function testCreateTokenSuccess()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getUserId" => "userId123",
-            "getUsername" => null,
-            "getResponse" => (object) [
-                "data" => "response object"
+            'send' => true,
+            'getSuccess' => true,
+            'getUserId' => 'userId123',
+            'getUsername' => null,
+            'getResponse' => (object) [
+                'data' => 'response object'
             ]
         ]);
-        $response = User::createToken(new User());
+        $response = (new User())->createToken();
 
-        $this->assertSame("response object", $response);
-        $stub->verifyInvokedOnce("send", ["users.createToken", "POST", ["userId" => "userId123"]]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("getUsername");
-        $stub->verifyInvokedMultipleTimes("getUserId", 2);
-        $stub->verifyInvokedMultipleTimes("getResponse", 2);
+        $this->assertSame('response object', $response);
+        $stub->verifyInvokedOnce('send', ['users.createToken', 'POST', ['userId' => 'userId123']]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getUsername');
+        $stub->verifyInvokedMultipleTimes('getUserId', 2);
+        $stub->verifyInvokedMultipleTimes('getResponse', 2);
     }
 
     public function testGetPersonalAccessTokensFailed()
@@ -998,7 +998,7 @@ class UserTest extends TestCase
     {
         $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
         $prefStub = test::double(Preferences::class);
-        $response = User::getPreferences();
+        $response = (new User())->getPreferences();
 
         $this->assertSame(false, $response);
         $stub->verifyInvokedOnce("send", ["users.getPreferences", "GET"]);
@@ -1015,7 +1015,7 @@ class UserTest extends TestCase
             "getResponse" => (object) ["preferences" => "preferences-result"]
         ]);
         $prefStub = test::double(Preferences::class, ["updateOutOfResponse" => "result"]);
-        $response = User::getPreferences();
+        $response = (new User())->getPreferences();
 
         $this->assertSame("result", $response);
         $stub->verifyInvokedOnce("send", ["users.getPreferences", "GET"]);

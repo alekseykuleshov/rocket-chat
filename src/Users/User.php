@@ -361,12 +361,11 @@ class User extends Request
      * Create a user authentication token. This is the same type of session token a user would get via login and
      * will expire the same way. Requires `user-generate-access-token` permission.
      *
-     * @param User $user
      * @return \stdClass|null|false
      */
-    public static function createToken(User $user)
+    public function createToken()
     {
-        static::send("users.createToken", "POST", self::requestParams($user));
+        static::send('users.createToken', 'POST', self::requestParams($this));
         if (!static::getSuccess()) {
             return false;
         }
@@ -465,15 +464,14 @@ class User extends Request
      *
      * @return Preferences|false
      */
-    public static function getPreferences()
+    public function getPreferences()
     {
-        static::send("users.getPreferences", "GET");
+        static::send('users.getPreferences', 'GET');
         if (!static::getSuccess()) {
             return false;
         }
 
-        $preferences = new Preferences();
-        return $preferences->updateOutOfResponse(static::getResponse()->preferences);
+        return (new Preferences())->updateOutOfResponse(static::getResponse()->preferences);
     }
 
     /**

@@ -258,11 +258,21 @@ $preferences->getHighlights();
 
 ### GET PREFERENCES
 ```php
-$preferences = \ATDev\RocketChat\Users\User::getPreferences();
+$user = \ATDev\RocketChat\Chat::login("[USERNAME]", "[PASSWORD]");
+$preferences = $user->getPreferences();
 if (!$preferences) {
-    $preferences->getError();
+    $user->getError();
 }
 
 $preferences->getDesktopNotificationDuration();
+```
+
+### CREATE TOKEN
+```php
+$user = \ATDev\RocketChat\Chat::me();
+$result = $user->createToken();
+if (!$result) {
+    $user->getError();
+}
 ```
 
