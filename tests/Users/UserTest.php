@@ -1101,7 +1101,7 @@ class UserTest extends TestCase
             "getUserId" => null,
             "getUsername" => "username123"
         ]);
-        $result = User::getPresence(new User());
+        $result = (new User())->getPresence();
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce("send", ["users.getPresence", "GET", ["username" => "username123"]]);
@@ -1120,7 +1120,7 @@ class UserTest extends TestCase
             "getUsername" => null,
             "getResponse" => (object) ["presence" => "away"]
         ]);
-        $result = User::getPresence(new User());
+        $result = (new User())->getPresence();
 
         $this->assertIsObject($result);
         $this->assertObjectHasAttribute("presence", $result);
@@ -1145,7 +1145,7 @@ class UserTest extends TestCase
                 "lastLogin" => "2016-12-08T18:26:03.612Z"
             ]
         ]);
-        $result = User::getPresence(new User());
+        $result = (new User())->getPresence();
 
         $this->assertIsObject($result);
         $this->assertObjectHasAttribute("presence", $result);

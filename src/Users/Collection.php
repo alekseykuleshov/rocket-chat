@@ -7,7 +7,7 @@ namespace ATDev\RocketChat\Users;
  */
 class Collection extends \ATDev\RocketChat\Common\Collection
 {
-    /** @var bool */
+    /** @var bool indicates it's a partial result */
     private $full;
 
     public function add($element)

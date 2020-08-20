@@ -201,10 +201,12 @@ if (!$count) {
 
 ### PRESENCE
 ```php
-$presence = \ATDev\RocketChat\Users\User::presence();
-if (!$presence) {
+$users = \ATDev\RocketChat\Users\User::presence("2019-05-22T12:11:45.392Z");
+if (!$users) {
 	$error = \ATDev\RocketChat\Users\User::getError();
 }
+print_r($users->first()->getUsername());
+print_r($users->isFull());
 ```
 
 ### GET PRESENCE
@@ -212,12 +214,14 @@ if (!$presence) {
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
 // or by username
 $user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
-$userPresence = \ATDev\RocketChat\Users\User::getPresence($user);
+$userPresence = $user->getPresence();
 // or callee's presence
-$userPresence = \ATDev\RocketChat\Users\User::getPresence();
+$userPresence = (new \ATDev\RocketChat\Users\User())->getPresence();
 if (!$userPresence) {
 	$error = \ATDev\RocketChat\Users\User::getError();
 }
+print_r($userPresence->connectionStatus);
+print_r($userPresence->lastLogin);
 ```
 
 ### FORGOT PASSWORD

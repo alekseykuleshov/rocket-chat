@@ -228,12 +228,11 @@ class User extends Request
     /**
      * Gets a user's presence if the query string userId or username is provided, otherwise it gets the callee's
      *
-     * @param User|null $user
      * @return false|mixed
      */
-    public static function getPresence(User $user = null)
+    public function getPresence()
     {
-        static::send("users.getPresence", "GET", self::requestParams($user));
+        static::send('users.getPresence', 'GET', self::requestParams($this));
         if (!static::getSuccess()) {
             return false;
         }
