@@ -100,6 +100,66 @@ class UserTest extends TestCase
         $stub->verifyInvokedOnce("updateOutOfResponse", ["user content"]);
     }
 
+    public function testRegisterFailed()
+    {
+        $registrationParams = [
+            'username' => 'username123',
+            'email' => 'test@email',
+            'pass' => 'testPass',
+            'name' => 'name123'
+        ];
+        $stub = test::double(User::class, [
+            'getUsername' => 'username123',
+            'getEmail' => 'test@email',
+            'getPassword' => 'testPass',
+            'getName' => 'name123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) [],
+            'updateOutOfResponse' => 'nothing'
+        ]);
+
+        $user = new User();
+        $result = $user->register();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['users.register', 'POST', $registrationParams]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testRegisterSuccess()
+    {
+        $registrationParams = [
+            'username' => 'username123',
+            'email' => 'test@email',
+            'pass' => 'testPass',
+            'name' => 'name123',
+            'secretURL' => 'secretUrlString'
+        ];
+        $response = (object) ['user' => 'user content'];
+        $stub = test::double(User::class, [
+            'getUsername' => 'username123',
+            'getEmail' => 'test@email',
+            'getPassword' => 'testPass',
+            'getName' => 'name123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response,
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $user = new User();
+        $result = $user->register('secretUrlString');
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['users.register', 'POST', $registrationParams]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['user content']);
+    }
+
     public function testUpdateFailed()
     {
         $stub = test::double("\ATDev\RocketChat\Users\User", [

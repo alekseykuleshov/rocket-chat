@@ -30,6 +30,21 @@ if (!$result) {
 }
 ```
 
+### REGISTER USER
+
+```php
+$user = new \ATDev\RocketChat\Users\User();
+$user->setName("John Doe");
+$user->setEmail("john@example.com");
+$user->setUsername("jDoe");
+$user->setPassword("123456");
+
+$result = $user->register("[SECRET URL STRING]");
+if (!$result) {
+	$error = $user->getError();
+}
+```
+
 ### GET USER INFO
 
 ```php

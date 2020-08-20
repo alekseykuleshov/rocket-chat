@@ -49,6 +49,31 @@ class User extends Request
     }
 
     /**
+     * Register user
+     *
+     * @param string|null $secretURL String appended to secret registration URL (if using)
+     * @return User|false
+     */
+    public function register($secretURL = null)
+    {
+        $registrationParams = [
+            'username' => $this->getUsername(),
+            'email' => $this->getEmail(),
+            'pass' => $this->getPassword(),
+            'name' => $this->getName()
+        ];
+        if (!is_null($secretURL) && is_string($secretURL)) {
+            $registrationParams['secretURL'] = $secretURL;
+        }
+        static::send('users.register', 'POST', $registrationParams);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->user);
+    }
+
+    /**
      * Updates user at api instance
      *
      * @return User|boolean
