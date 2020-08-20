@@ -247,12 +247,12 @@ $preferences = new \ATDev\RocketChat\Users\Preferences();
 $preferences->setHighlights(['highlight phrase', 'highlightword']);
 $preferences->setAutoImageLoad(false);
 
-$user = \ATDev\RocketChat\Users\User::setPreferences($user->getUserId(), $preferences);
-if (!$user) {
-    \ATDev\RocketChat\Users\User::getError();
+$result = $user->setPreferences($preferences);
+if (!$result) {
+    $result->getError();
 }
 
-$preferences = $user->getPreferencesData();
+$preferences = $result->getPreferencesData();
 $preferences->getHighlights();
 ```
 

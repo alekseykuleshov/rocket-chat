@@ -479,18 +479,21 @@ class User extends Request
     /**
      * Sets user's preferences
      *
-     * @param $userId
      * @param Preferences $preferences
-     * @return false|User
+     * @return User|false
      */
-    public static function setPreferences($userId, Preferences $preferences)
+    public function setPreferences(Preferences $preferences)
     {
-        static::send("users.setPreferences", "POST", ["userId" => $userId, "data" => $preferences]);
+        static::send(
+            'users.setPreferences',
+            'POST',
+            ['userId' => $this->getUserId(), 'data' => $preferences]
+        );
         if (!static::getSuccess()) {
             return false;
         }
 
-        return static::createOutOfResponse(static::getResponse()->user);
+        return $this->updateOutOfResponse(static::getResponse()->user);
     }
 
     /**

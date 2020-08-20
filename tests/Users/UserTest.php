@@ -1026,33 +1026,45 @@ class UserTest extends TestCase
 
     public function testSetPreferencesFailed()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
+        $stub = test::double(
+            User::class,
+            ['send' => true, 'getSuccess' => false, 'getUserId' => 'userId123']
+        );
         $preferences = new Preferences();
-        $response = User::setPreferences("userId123", $preferences);
+        $response = (new User())->setPreferences($preferences);
 
         $this->assertSame(false, $response);
-        $stub->verifyInvokedOnce("send", ["users.setPreferences", "POST", ["userId" => "userId123", "data" => $preferences]]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("getResponse");
-        $stub->verifyNeverInvoked("createOutOfResponse");
+        $stub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce(
+            'send',
+            ['users.setPreferences', 'POST', ['userId' => 'userId123', 'data' => $preferences]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
     }
 
     public function testSetPreferencesSuccess()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getResponse" => (object) ["user" => "user-result"],
-            "createOutOfResponse" => "result"
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['user' => 'user-result'],
+            'updateOutOfResponse' => 'result',
+            'getUserId' => 'userId123'
         ]);
         $preferences = new Preferences();
-        $response = User::setPreferences("userId123", $preferences);
+        $response = (new User())->setPreferences($preferences);
 
-        $this->assertSame("result", $response);
-        $stub->verifyInvokedOnce("send", ["users.setPreferences", "POST", ["userId" => "userId123", "data" => $preferences]]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedOnce("getResponse");
-        $stub->verifyInvokedOnce("createOutOfResponse", "user-result");
+        $this->assertSame('result', $response);
+        $stub->verifyInvokedOnce('getUserId');
+        $stub->verifyInvokedOnce(
+            'send',
+            ['users.setPreferences', 'POST', ['userId' => 'userId123', 'data' => $preferences]]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', 'user-result');
     }
 
     public function testPresenceFailed()
