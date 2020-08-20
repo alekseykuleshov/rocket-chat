@@ -234,9 +234,10 @@ if (!$result) {
 
 ### GET USERNAME SUGGESTION
 ```php
-$result = \ATDev\RocketChat\Users\User::getUsernameSuggestion();
+$user = \ATDev\RocketChat\Chat::me();
+$result = $user->getUsernameSuggestion();
 if (!$result) {
-    $result->getError();
+    $user->getError();
 }
 ```
 

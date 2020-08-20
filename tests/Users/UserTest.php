@@ -684,43 +684,43 @@ class UserTest extends TestCase
 
     public function testGetUsernameSuggestionFailed()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $response = User::getUsernameSuggestion();
+        $stub = test::double(User::class, ['send' => true, 'getSuccess' => false]);
+        $response = (new User())->getUsernameSuggestion();
 
         $this->assertSame(false, $response);
-        $stub->verifyInvokedOnce("send", ["users.getUsernameSuggestion", "GET"]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyInvokedOnce('send', ['users.getUsernameSuggestion', 'GET']);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
     }
 
     public function testGetUsernameSuggestionNull()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getResponse" => null
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => null
         ]);
-        $response = User::getUsernameSuggestion();
+        $response = (new User())->getUsernameSuggestion();
 
         $this->assertNull($response);
-        $stub->verifyInvokedOnce("send", ["users.getUsernameSuggestion", "GET"]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce('send', ['users.getUsernameSuggestion', 'GET']);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
     }
 
     public function testGetUsernameSuggestionSuccess()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getResponse" => (object) ["result" => "response"]
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['result' => 'response']
         ]);
-        $response = User::getUsernameSuggestion();
+        $response = (new User())->getUsernameSuggestion();
 
-        $this->assertSame("response", $response);
-        $stub->verifyInvokedOnce("send", ["users.getUsernameSuggestion", "GET"]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedMultipleTimes("getResponse", 2);
+        $this->assertSame('response', $response);
+        $stub->verifyInvokedOnce('send', ['users.getUsernameSuggestion', 'GET']);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedMultipleTimes('getResponse', 2);
     }
 
     public function testCreateTokenFailed()
@@ -970,28 +970,28 @@ class UserTest extends TestCase
 
     public function testRequestDataDownloadFailed()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $response = User::requestDataDownload();
+        $stub = test::double(User::class, ['send' => true, 'getSuccess' => false]);
+        $response = (new User())->requestDataDownload();
 
         $this->assertSame(false, $response);
-        $stub->verifyInvokedOnce("send", ["users.requestDataDownload", "GET", ["fullExport" => false]]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyInvokedOnce('send', ['users.requestDataDownload', 'GET', ['fullExport' => false]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
     }
 
     public function testRequestDataDownloadSuccess()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getResponse" => (object) ["exportOperation" => "result"]
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['exportOperation' => 'result']
         ]);
-        $response = User::requestDataDownload(true);
+        $response = (new User())->requestDataDownload(true);
 
-        $this->assertSame("result", $response);
-        $stub->verifyInvokedOnce("send", ["users.requestDataDownload", "GET", ["fullExport" => true]]);
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedOnce("getResponse");
+        $this->assertSame('result', $response);
+        $stub->verifyInvokedOnce('send', ['users.requestDataDownload', 'GET', ['fullExport' => true]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
     }
 
     public function testGetPreferencesFailed()

@@ -347,7 +347,7 @@ class User extends Request
      *
      * @return string|null|false
      */
-    public static function getUsernameSuggestion()
+    public function getUsernameSuggestion()
     {
         static::send("users.getUsernameSuggestion", "GET");
         if (!static::getSuccess()) {
@@ -450,7 +450,7 @@ class User extends Request
      * @param bool $fullExport If needs a full export
      * @return false|mixed
      */
-    public static function requestDataDownload($fullExport = false)
+    public function requestDataDownload($fullExport = false)
     {
         static::send("users.requestDataDownload", "GET", ['fullExport' => $fullExport]);
         if (!static::getSuccess()) {
