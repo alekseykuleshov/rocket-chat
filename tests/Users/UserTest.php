@@ -784,7 +784,7 @@ class UserTest extends TestCase
     public function testGetPersonalAccessTokensFailed()
     {
         $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $response = User::getPersonalAccessTokens();
+        $response = (new User())->getPersonalAccessTokens();
 
         $this->assertSame(false, $response);
         $stub->verifyInvokedOnce("send", ["users.getPersonalAccessTokens", "GET"]);
@@ -799,7 +799,7 @@ class UserTest extends TestCase
             "getSuccess" => true,
             "getResponse" => null
         ]);
-        $response = User::getPersonalAccessTokens();
+        $response = (new User())->getPersonalAccessTokens();
 
         $this->assertNull($response);
         $stub->verifyInvokedOnce("send", ["users.getPersonalAccessTokens", "GET"]);
@@ -814,7 +814,7 @@ class UserTest extends TestCase
             "getSuccess" => true,
             "getResponse" => (object) ["tokens" => "personal tokens array"]
         ]);
-        $response = User::getPersonalAccessTokens();
+        $response = (new User())->getPersonalAccessTokens();
 
         $this->assertSame("personal tokens array", $response);
         $stub->verifyInvokedOnce("send", ["users.getPersonalAccessTokens", "GET"]);
@@ -824,148 +824,148 @@ class UserTest extends TestCase
 
     public function testGeneratePersonalAccessTokenFailed()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $response = User::generatePersonalAccessToken("token-name");
+        $stub = test::double(User::class, ['send' => true, 'getSuccess' => false]);
+        $response = (new User())->generatePersonalAccessToken('token-name');
 
         $this->assertSame(false, $response);
         $stub->verifyInvokedOnce(
-            "send",
-            ["users.generatePersonalAccessToken", "POST", ["tokenName" => "token-name", "bypassTwoFactor" => false]]
+            'send',
+            ['users.generatePersonalAccessToken', 'POST', ['tokenName' => 'token-name', 'bypassTwoFactor' => false]]
         );
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
     }
 
     public function testGeneratePersonalAccessTokenNull()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getResponse" => null
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => null
         ]);
-        $response = User::generatePersonalAccessToken("token-name");
+        $response = (new User())->generatePersonalAccessToken('token-name');
 
         $this->assertNull($response);
         $stub->verifyInvokedOnce(
-            "send",
-            ["users.generatePersonalAccessToken", "POST", ["tokenName" => "token-name", "bypassTwoFactor" => false]]
+            'send',
+            ['users.generatePersonalAccessToken', 'POST', ['tokenName' => 'token-name', 'bypassTwoFactor' => false]]
         );
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
     }
 
     public function testGeneratePersonalAccessTokenSuccess()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getResponse" => (object) ["token" => "personal-token"]
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['token' => 'personal-token']
         ]);
-        $response = User::generatePersonalAccessToken("token-name", true);
+        $response = (new User())->generatePersonalAccessToken('token-name', true);
 
-        $this->assertSame("personal-token", $response);
+        $this->assertSame('personal-token', $response);
         $stub->verifyInvokedOnce(
-            "send",
-            ["users.generatePersonalAccessToken", "POST", ["tokenName" => "token-name", "bypassTwoFactor" => true]]
+            'send',
+            ['users.generatePersonalAccessToken', 'POST', ['tokenName' => 'token-name', 'bypassTwoFactor' => true]]
         );
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedMultipleTimes("getResponse", 2);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedMultipleTimes('getResponse', 2);
     }
 
     public function testRegeneratePersonalAccessTokenFailed()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $response = User::regeneratePersonalAccessToken("token-name");
+        $stub = test::double(User::class, ['send' => true, 'getSuccess' => false]);
+        $response = (new User())->regeneratePersonalAccessToken('token-name');
 
         $this->assertSame(false, $response);
         $stub->verifyInvokedOnce(
-            "send",
-            ["users.regeneratePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+            'send',
+            ['users.regeneratePersonalAccessToken', 'POST', ['tokenName' => 'token-name']]
         );
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
     }
 
     public function testRegeneratePersonalAccessTokenNull()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getResponse" => null
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => null
         ]);
-        $response = User::regeneratePersonalAccessToken("token-name");
+        $response = (new User())->regeneratePersonalAccessToken('token-name');
 
         $this->assertNull($response);
         $stub->verifyInvokedOnce(
-            "send",
-            ["users.regeneratePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+            'send',
+            ['users.regeneratePersonalAccessToken', 'POST', ['tokenName' => 'token-name']]
         );
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
     }
 
     public function testRegeneratePersonalAccessTokenSuccess()
     {
         $stub = test::double(User::class, [
-            "send" => true,
-            "getSuccess" => true,
-            "getResponse" => (object) ["token" => "personal-token"]
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => (object) ['token' => 'personal-token']
         ]);
-        $response = User::regeneratePersonalAccessToken("token-name");
+        $response = (new User())->regeneratePersonalAccessToken('token-name');
 
-        $this->assertSame("personal-token", $response);
+        $this->assertSame('personal-token', $response);
         $stub->verifyInvokedOnce(
-            "send",
-            ["users.regeneratePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+            'send',
+            ['users.regeneratePersonalAccessToken', 'POST', ['tokenName' => 'token-name']]
         );
-        $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedMultipleTimes("getResponse", 2);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedMultipleTimes('getResponse', 2);
     }
 
     public function testRemovePersonalAccessTokenFailed()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $response = User::removePersonalAccessToken("token-name");
+        $stub = test::double(User::class, ['send' => true, 'getSuccess' => false]);
+        $response = (new User())->removePersonalAccessToken('token-name');
 
         $this->assertSame(false, $response);
         $stub->verifyInvokedOnce(
-            "send",
-            ["users.removePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+            'send',
+            ['users.removePersonalAccessToken', 'POST', ['tokenName' => 'token-name']]
         );
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testRemovePersonalAccessTokenSuccess()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
-        $response = User::removePersonalAccessToken("token-name");
+        $stub = test::double(User::class, ['send' => true, 'getSuccess' => true]);
+        $response = (new User())->removePersonalAccessToken('token-name');
 
         $this->assertSame(true, $response);
         $stub->verifyInvokedOnce(
-            "send",
-            ["users.removePersonalAccessToken", "POST", ["tokenName" => "token-name"]]
+            'send',
+            ['users.removePersonalAccessToken', 'POST', ['tokenName' => 'token-name']]
         );
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testRemoveOtherTokensFailed()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $response = User::removeOtherTokens();
+        $stub = test::double(User::class, ['send' => true, 'getSuccess' => false]);
+        $response = (new User())->removeOtherTokens();
 
         $this->assertSame(false, $response);
-        $stub->verifyInvokedOnce("send", ["users.removeOtherTokens", "POST"]);
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('send', ['users.removeOtherTokens', 'POST']);
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testRemoveOtherTokensSuccess()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
-        $response = User::removeOtherTokens();
+        $stub = test::double(User::class, ['send' => true, 'getSuccess' => true]);
+        $response = (new User())->removeOtherTokens();
 
         $this->assertSame(true, $response);
-        $stub->verifyInvokedOnce("send", ["users.removeOtherTokens", "POST"]);
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('send', ['users.removeOtherTokens', 'POST']);
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testRequestDataDownloadFailed()

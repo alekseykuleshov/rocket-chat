@@ -378,9 +378,9 @@ class User extends Request
      *
      * @return array|null|false
      */
-    public static function getPersonalAccessTokens()
+    public function getPersonalAccessTokens()
     {
-        static::send("users.getPersonalAccessTokens", "GET");
+        static::send('users.getPersonalAccessTokens', 'GET');
         if (!static::getSuccess()) {
             return false;
         }
@@ -395,7 +395,7 @@ class User extends Request
      * @param bool $bypassTwoFactor
      * @return string|null|false
      */
-    public static function generatePersonalAccessToken($tokenName, $bypassTwoFactor = false)
+    public function generatePersonalAccessToken($tokenName, $bypassTwoFactor = false)
     {
         static::send("users.generatePersonalAccessToken", "POST", ['tokenName' => $tokenName, 'bypassTwoFactor' => $bypassTwoFactor]);
         if (!static::getSuccess()) {
@@ -411,7 +411,7 @@ class User extends Request
      * @param string $tokenName
      * @return string|null|false
      */
-    public static function regeneratePersonalAccessToken($tokenName)
+    public function regeneratePersonalAccessToken($tokenName)
     {
         static::send("users.regeneratePersonalAccessToken", "POST", ['tokenName' => $tokenName]);
         if (!static::getSuccess()) {
@@ -427,7 +427,7 @@ class User extends Request
      * @param string $tokenName
      * @return bool
      */
-    public static function removePersonalAccessToken($tokenName)
+    public function removePersonalAccessToken($tokenName)
     {
         static::send("users.removePersonalAccessToken", "POST", ['tokenName' => $tokenName]);
         return static::getSuccess();
@@ -438,7 +438,7 @@ class User extends Request
      *
      * @return bool
      */
-    public static function removeOtherTokens()
+    public function removeOtherTokens()
     {
         static::send("users.removeOtherTokens", "POST");
         return static::getSuccess();

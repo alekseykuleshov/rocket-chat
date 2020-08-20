@@ -276,3 +276,47 @@ if (!$result) {
 }
 ```
 
+### GET PERSONAL ACCESS TOKENS
+```php
+$user = \ATDev\RocketChat\Chat::me();
+$result = $user->getPersonalAccessTokens();
+if (!$result) {
+    $user->getError();
+}
+```
+
+### GENERATE PERSONAL ACCESS TOKEN
+```php
+$user = \ATDev\RocketChat\Chat::me();
+$result = $user->generatePersonalAccessToken("[TOKEN NAME]", true);
+if (!$result) {
+    $user->getError();
+}
+```
+
+### REGENERATE PERSONAL ACCESS TOKEN
+```php
+$user = \ATDev\RocketChat\Chat::me();
+$result = $user->regeneratePersonalAccessToken("[TOKEN NAME]");
+if (!$result) {
+    $user->getError();
+}
+```
+
+### REMOVE PERSONAL ACCESS TOKEN
+```php
+$user = \ATDev\RocketChat\Chat::me();
+$result = $user->removePersonalAccessToken("[TOKEN NAME]");
+if (!$result) {
+    $user->getError();
+}
+```
+
+### REMOVE OTHER TOKENS
+```php
+$user = \ATDev\RocketChat\Chat::me();
+$result = $user->removeOtherTokens();
+if (!$result) {
+    $user->getError();
+}
+```
