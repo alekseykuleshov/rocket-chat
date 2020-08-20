@@ -279,24 +279,16 @@ class User extends Request
     /**
      * Gets a user's Status if the query string userId or username is provided, otherwise it gets the callee's.
      *
-     * @param User|null $user
      * @return false|User
      */
-    public static function getStatus(User $user = null)
+    public function getStatus()
     {
-        static::send("users.getStatus", "GET", self::requestParams($user));
+        static::send('users.getStatus', 'GET', self::requestParams($this));
         if (!static::getSuccess()) {
             return false;
         }
 
-        $response = static::getResponse();
-        if (isset($user)) {
-            $user = $user->updateOutOfResponse($response);
-        } else {
-            $user = static::createOutOfResponse($response);
-        }
-
-        return $user;
+        return $this->updateOutOfResponse(static::getResponse());
     }
 
     /**

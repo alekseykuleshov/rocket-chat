@@ -523,12 +523,13 @@ class UserTest extends TestCase
     public function testGetStatusFailed()
     {
         $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $result = User::getStatus();
+        $result = (new User())->getStatus();
 
         $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("getUserId");
+        $stub->verifyInvokedOnce("getUsername");
         $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", []]);
         $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("createOutOfResponse");
         $stub->verifyNeverInvoked("updateOutOfResponse");
     }
 
@@ -542,11 +543,12 @@ class UserTest extends TestCase
         ]);
 
         $user = new User();
-        $result = User::getStatus($user);
+        $result = $user->getStatus();
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", ["username" => "user-name"]]);
+        $stub->verifyInvokedOnce("getUserId");
+        $stub->verifyInvokedMultipleTimes("getUsername", 2);
         $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyNeverInvoked("createOutOfResponse");
         $stub->verifyNeverInvoked("updateOutOfResponse");
     }
 
@@ -561,17 +563,16 @@ class UserTest extends TestCase
             "send" => true,
             "getSuccess" => true,
             "getResponse" => $response,
-            "createOutOfResponse" => "userInstance"
+            "updateOutOfResponse" => "userInstance"
         ]);
 
-        $result = User::getStatus();
+        $result = (new User())->getStatus();
         $this->assertSame("userInstance", $result);
         $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", []]);
-        $stub->verifyNeverInvoked("getUserId");
-        $stub->verifyNeverInvoked("getUsername");
+        $stub->verifyInvokedOnce("getUserId");
+        $stub->verifyInvokedOnce("getUsername");
         $stub->verifyInvokedOnce("getSuccess");
-        $stub->verifyInvokedOnce("createOutOfResponse", $response);
-        $stub->verifyNeverInvoked("updateOutOfResponse");
+        $stub->verifyInvokedOnce("updateOutOfResponse", $response);
     }
 
     public function testGetStatusWithUserIdSuccess()
@@ -591,15 +592,13 @@ class UserTest extends TestCase
             "getUsername" => null
         ]);
 
-        $user = new User();
-        $result = User::getStatus($user);
+        $result = (new User())->getStatus();
         $this->assertSame("userInstance", $result);
         $stub->verifyInvokedOnce("send", ["users.getStatus", "GET", ["userId" => "userId123"]]);
         $stub->verifyInvokedMultipleTimes("getUserId", 2);
         $stub->verifyNeverInvoked("getUsername");
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("updateOutOfResponse", $response);
-        $stub->verifyNeverInvoked("createOutOfResponse");
     }
 
     public function testForgotPasswordFailed()

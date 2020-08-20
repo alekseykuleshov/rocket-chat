@@ -97,13 +97,14 @@ if (!$result) {
 
 ### GET STATUS
 ```php
-$user = new \ATDev\RocketChat\Users\User("[USER ID]");
+// by userId
+$user = (new \ATDev\RocketChat\Users\User())->setUserId("[USER ID]");
 // or by username
 $user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
-$user = \ATDev\RocketChat\Users\User::getStatus($user);
-// or get callee's status if no user argument provided
-$user = \ATDev\RocketChat\Users\User::getStatus();
-if (!$user) {
+$result = $user->getStatus();
+// or get callee's status if no userId or username provided
+$result = (new \ATDev\RocketChat\Users\User())->getStatus();
+if (!$result) {
     $error = \ATDev\RocketChat\Users\User::getError();
 }
 ```
