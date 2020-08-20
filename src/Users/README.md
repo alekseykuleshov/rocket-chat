@@ -105,7 +105,7 @@ $result = $user->getStatus();
 // or get callee's status if no userId or username provided
 $result = (new \ATDev\RocketChat\Users\User())->getStatus();
 if (!$result) {
-    $error = \ATDev\RocketChat\Users\User::getError();
+    $error = $user->getError();
 }
 ```
 
@@ -183,7 +183,9 @@ if (!$result) {
 
 ### DELETE OWN ACCOUNT
 ```php
-$result = \ATDev\RocketChat\Users\User::deleteOwnAccount(hash("sha256","[USER PASSWORD]"));
+$user = \ATDev\RocketChat\Chat::me();
+$user->setPassword(hash("sha256","[USER PASSWORD]"));
+$result = $user->deleteOwnAccount();
 if (!$result) {
     $error = \ATDev\RocketChat\Users\User::getError();
 }

@@ -649,22 +649,37 @@ class UserTest extends TestCase
 
     public function testDeleteOwnAccountFailed()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => false]);
-        $response = User::deleteOwnAccount("pass123");
+        $stub = test::double(
+            User::class,
+            ['send' => true, 'getSuccess' => false, 'getPassword' => 'pass123']
+        );
+        $response = (new User())->deleteOwnAccount();
 
         $this->assertSame(false, $response);
-        $stub->verifyInvokedOnce("send", ["users.deleteOwnAccount", "POST", ["password" => "pass123"]]);
-        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce('getPassword');
+        $stub->verifyInvokedOnce('send', ['users.deleteOwnAccount', 'POST', ['password' => 'pass123']]);
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testDeleteOwnAccountSuccess()
     {
-        $stub = test::double(User::class, ["send" => true, "getSuccess" => true]);
-        $response = User::deleteOwnAccount("pass123");
+        $stub = test::double(
+            User::class,
+            ['send' => true, 'getSuccess' => true, 'getPassword' => 'pass123']
+        );
+        $user = new User();
+        $user->setUserId('testUserId');
+        $this->assertSame('testUserId', $user->getUserId());
+        $user->setUsername('testUsername');
+        $this->assertSame('testUsername', $user->getUsername());
+        $response = $user->deleteOwnAccount();
 
-        $this->assertSame(true, $response);
-        $stub->verifyInvokedOnce("send", ["users.deleteOwnAccount", "POST", ["password" => "pass123"]]);
-        $stub->verifyInvokedOnce("getSuccess");
+        $this->assertSame($user, $response);
+        $this->assertNull($user->getUserId());
+        $this->assertNull($user->getUsername());
+        $stub->verifyInvokedOnce('getPassword');
+        $stub->verifyInvokedOnce('send', ['users.deleteOwnAccount', 'POST', ['password' => 'pass123']]);
+        $stub->verifyInvokedOnce('getSuccess');
     }
 
     public function testGetUsernameSuggestionFailed()

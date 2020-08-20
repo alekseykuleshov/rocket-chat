@@ -129,13 +129,18 @@ class User extends Request
     /**
      * Deletes your own user. Requires `Allow Users to Delete Own Account` enabled
      *
-     * @param string $password
-     * @return bool
+     * @return $this|false
      */
-    public static function deleteOwnAccount($password)
+    public function deleteOwnAccount()
     {
-        static::send("users.deleteOwnAccount", "POST", ["password" => $password]);
-        return static::getSuccess();
+        static::send('users.deleteOwnAccount', 'POST', ['password' => $this->getPassword()]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+        $this->setUserId(null);
+        $this->setUsername(null);
+
+        return $this;
     }
 
     /**
