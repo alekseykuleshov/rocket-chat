@@ -121,7 +121,7 @@ if (!$result) {
 }
 ```
 
-### REMOVE USER OUT OF CHANNEL
+### REMOVE OWNER OUT OF CHANNEL
 
 ```php
 $user = new \ATDev\RocketChat\Users\User("[USER ID]");
