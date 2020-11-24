@@ -1152,7 +1152,7 @@ class ChannelTest extends TestCase
         $result = $channel->online();
 
         $this->assertSame(false, $result);
-		$stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedOnce('getChannelId');
         $stub->verifyInvokedOnce('send', ['channels.online', 'GET']);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyNeverInvoked('getResponse');
@@ -1182,7 +1182,7 @@ class ChannelTest extends TestCase
         $result = $channel->online();
 
         $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
-		$stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedOnce('getChannelId');
         $stub->verifyInvokedOnce('send', ['channels.online', 'GET', [
             'query' => json_encode(['_id' => 'channelId123'])
         ]]);

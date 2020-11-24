@@ -565,7 +565,7 @@ class Channel extends Request
      */
     public function online()
     {
-		$query = ['_id' => $this->getChannelId()];
+        $query = ['_id' => $this->getChannelId()];
 
         static::send('channels.online', 'GET', ['query' => json_encode($query)]);
         if (!static::getSuccess()) {
@@ -583,15 +583,14 @@ class Channel extends Request
         return $users;
     }
 
-   /**
-     * Lists all online users of all channels
-     *
-     * @param array|null $query
-     * @return \ATDev\RocketChat\Users\Collection|false
-     */
+    /**
+      * Lists all online users of all channels
+      *
+      * @param array|null $query
+      * @return \ATDev\RocketChat\Users\Collection|false
+      */
     public static function onlineAll()
     {
-
         static::send('channels.online', 'GET', ['query' => json_encode(null)]);
         if (!static::getSuccess()) {
             return false;
