@@ -2,6 +2,9 @@
 
 namespace ATDev\RocketChat\Messages;
 
+use ATDev\RocketChat\Channels\Channel;
+use ATDev\RocketChat\Users\User;
+
 trait Data
 {
 
@@ -35,11 +38,15 @@ trait Data
     private $username;
     /** @var string Date-time */
     private $updatedAt;
+    /** @var \ATDev\RocketChat\Users\Collection Users mentioned in message */
+    private $mentions;
+    /** @var \ATDev\RocketChat\Channels\Collection Channels mentioned in message */
+    private $channels;
 
     /**
      * Class constructor
      *
-     * @param string $messageId
+     * @param string|null $messageId
      */
     public function __construct($messageId = null)
     {
@@ -321,6 +328,62 @@ trait Data
     }
 
     /**
+     * Returns users collection mentioned in message
+     *
+     * @return \ATDev\RocketChat\Users\Collection
+     */
+    public function getMentions()
+    {
+        return $this->mentions;
+    }
+
+    /**
+     * Sets users collection mentioned in message
+     *
+     * @param array $mentions
+     * @return $this
+     */
+    private function setMentions($mentions = [])
+    {
+        if (is_array($mentions)) {
+            $this->mentions = new \ATDev\RocketChat\Users\Collection();
+            foreach ($mentions as $user) {
+                $this->mentions->add(User::createOutOfResponse($user));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns channels collection mentioned in message
+     *
+     * @return \ATDev\RocketChat\Channels\Collection
+     */
+    public function getChannels()
+    {
+        return $this->channels;
+    }
+
+    /**
+     * Sets channels collection mentioned in message
+     *
+     * @param array $channels
+     * @return $this
+     */
+    private function setChannels($channels = [])
+    {
+        if (is_array($channels)) {
+            $this->channels = new \ATDev\RocketChat\Channels\Collection();
+            foreach ($channels as $channel) {
+                $this->channels->add(Channel::createOutOfResponse($channel));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @param \stdClass $response
      * @return Data
      */
@@ -372,6 +435,12 @@ trait Data
         }
         if (isset($response->_updatedAt)) {
             $this->setUpdatedAt($response->_updatedAt);
+        }
+        if (isset($response->mentions)) {
+            $this->setMentions($response->mentions);
+        }
+        if (isset($response->channels)) {
+            $this->setChannels($response->channels);
         }
 
         return $this;

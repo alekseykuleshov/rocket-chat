@@ -3,6 +3,8 @@
 namespace ATDev\RocketChat\Tests\Messages;
 
 use ATDev\RocketChat\Messages\Data;
+use ATDev\RocketChat\Users\Collection as UsersCollection;
+use ATDev\RocketChat\Channels\Collection as ChannelsCollection;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -147,6 +149,8 @@ class DataTest extends TestCase
         $this->assertSame('This is a test!', $mock->getMsg());
         $this->assertSame('http://res.guggy.com/logo_128.png', $mock->getAvatar());
         $this->assertSame(':sunglasses:', $mock->getEmoji());
+        $this->assertInstanceOf(UsersCollection::class, $mock->getMentions());
+        $this->assertSame('graywolf336', $mock->getMentions()->first()->getUsername());
 
         $this->assertNull($mock->isGroupable());
         $this->assertNull($mock->isParseUrls());
@@ -155,6 +159,7 @@ class DataTest extends TestCase
         $this->assertNull($mock->getTs());
         $this->assertNull($mock->getT());
         $this->assertNull($mock->getUpdatedAt());
+        $this->assertNull($mock->getChannels());
     }
 
     public function testUpdateOutOfResponse2()
@@ -169,6 +174,7 @@ class DataTest extends TestCase
         $this->assertNull($mock->getMsg());
         $this->assertNull($mock->getAvatar());
         $this->assertNull($mock->getEmoji());
+        $this->assertNull($mock->getMentions());
 
         $this->assertSame(false, $mock->isGroupable());
         $this->assertSame(true, $mock->isParseUrls());
@@ -177,6 +183,8 @@ class DataTest extends TestCase
         $this->assertSame('2020-05-12T15:24:04.977Z', $mock->getTs());
         $this->assertSame('room_changed_privacy', $mock->getT());
         $this->assertSame('2018-10-05T13:48:49.535Z', $mock->getUpdatedAt());
+        $this->assertInstanceOf(ChannelsCollection::class, $mock->getChannels());
+        $this->assertSame('channel123', $mock->getChannels()->first()->getName());
     }
 
     public function testUpdateOutOfResponseFull()
@@ -191,6 +199,8 @@ class DataTest extends TestCase
         $this->assertSame('This is a test!', $mock->getMsg());
         $this->assertSame('http://res.guggy.com/logo_128.png', $mock->getAvatar());
         $this->assertSame(':sunglasses:', $mock->getEmoji());
+        $this->assertInstanceOf(UsersCollection::class, $mock->getMentions());
+        $this->assertSame('graywolf336', $mock->getMentions()->first()->getUsername());
 
         $this->assertSame(false, $mock->isGroupable());
         $this->assertSame(true, $mock->isParseUrls());
@@ -199,6 +209,8 @@ class DataTest extends TestCase
         $this->assertSame('2020-05-12T15:24:04.977Z', $mock->getTs());
         $this->assertSame('room_changed_privacy', $mock->getT());
         $this->assertSame('2018-10-05T13:48:49.535Z', $mock->getUpdatedAt());
+        $this->assertInstanceOf(ChannelsCollection::class, $mock->getChannels());
+        $this->assertSame('channel123', $mock->getChannels()->first()->getName());
     }
 
     public function testCreateOutOfResponse()

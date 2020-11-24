@@ -18,6 +18,10 @@ trait Room
     /* Optional properties for creation */
     /** @var boolean Indicates if room is read-only */
     private $readOnly;
+    /** @var \stdClass The custom fields set to the channel or to the private group */
+    private $customFields;
+    /** @var string channel's topic */
+    private $topic;
 
     /* Readonly properties returned from api */
     /** @var string Room type */
@@ -32,6 +36,8 @@ trait Room
     private $default;
     /** @var boolean Contains room sysMes */
     private $sysMes;
+    /** @var boolean Indicates if code required to join the channel */
+    private $joinCodeRequired;
 
     /**
      * Creates room out of api response
@@ -118,11 +124,10 @@ trait Room
     /**
      * Sets if room is read-only
      *
-     * @param boolean $name
-     *
+     * @param boolean $readOnly
      * @return \ATDev\RocketChat\Common\Room
      */
-    public function setReadOnly($readOnly)
+    public function setReadOnlyValue($readOnly)
     {
         if (!(is_bool($readOnly) || is_string($readOnly))) {
             $this->setDataError("Invalid read only value");
@@ -204,6 +209,36 @@ trait Room
     }
 
     /**
+     * If channel join code is required
+     *
+     * @return bool
+     */
+    public function getJoinCodeRequired()
+    {
+        return $this->joinCodeRequired;
+    }
+
+    /**
+     * Gets the custom fields data
+     *
+     * @return \stdClass
+     */
+    public function getCustomFieldsData()
+    {
+        return $this->customFields;
+    }
+
+    /**
+     * Returns channel topic message
+     *
+     * @return string
+     */
+    public function getTopic()
+    {
+        return $this->topic;
+    }
+
+    /**
      * Updates current room out of api response
      *
      * @param \stdClass $response
@@ -237,15 +272,27 @@ trait Room
         }
 
         if (isset($response->ro)) {
-            $this->setReadOnly($response->ro);
+            $this->setReadOnlyValue($response->ro);
         }
 
         if (isset($response->default)) {
-            $this->setDefault($response->default);
+            $this->setDefaultValue($response->default);
         }
 
         if (isset($response->sysMes)) {
             $this->setSysMes($response->sysMes);
+        }
+
+        if (isset($response->joinCodeRequired)) {
+            $this->setJoinCodeRequired($response->joinCodeRequired);
+        }
+
+        if (isset($response->customFields)) {
+            $this->setCustomFieldsData($response->customFields);
+        }
+
+        if (isset($response->topic)) {
+            $this->setTopicMessage($response->topic);
         }
 
         return $this;
@@ -340,7 +387,7 @@ trait Room
      *
      * @return \ATDev\RocketChat\Common\Room
      */
-    private function setDefault($default)
+    private function setDefaultValue($default)
     {
         if (is_bool($default)) {
             $this->default = $default;
@@ -360,6 +407,51 @@ trait Room
     {
         if (is_bool($sysMes)) {
             $this->sysMes = $sysMes;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets if channel join code required
+     *
+     * @param bool $required
+     * @return $this
+     */
+    private function setJoinCodeRequired($required)
+    {
+        if (is_bool($required)) {
+            $this->joinCodeRequired = $required;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the custom fields data
+     *
+     * @param \stdClass $customFields
+     * @return $this
+     */
+    private function setCustomFieldsData($customFields)
+    {
+        if (is_object($customFields)) {
+            $this->customFields = $customFields;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets channel topic message
+     *
+     * @param string $value
+     * @return $this
+     */
+    private function setTopicMessage($value)
+    {
+        if (is_string($value)) {
+            $this->topic = $value;
         }
 
         return $this;

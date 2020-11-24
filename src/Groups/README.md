@@ -17,7 +17,7 @@ if (!$listing) {
 ```php
 $group = new \ATDev\RocketChat\Groups\Group();
 $group->setName("[GROUP-NAME-NO-SPACES]");
-$group->setReadOnly(true);
+$group->setReadOnlyValue(true);
 
 $result = $group->create();
 
