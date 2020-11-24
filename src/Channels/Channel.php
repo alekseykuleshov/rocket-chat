@@ -558,14 +558,41 @@ class Channel extends Request
     }
 
     /**
-     * Lists all online users of a channel if the channel's id is provided, otherwise it gets all online users of all channels
+     * Lists all online users of a channel
      *
      * @param array|null $query
      * @return \ATDev\RocketChat\Users\Collection|false
      */
-    public static function online(array $query = null)
+    public function online()
     {
+		$query = ['_id' => $this->getChannelId()];
+
         static::send('channels.online', 'GET', ['query' => json_encode($query)]);
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $users = new \ATDev\RocketChat\Users\Collection();
+        $response = static::getResponse();
+        if (isset($response->online)) {
+            foreach ($response->online as $user) {
+                $users->add(User::createOutOfResponse($user));
+            }
+        }
+
+        return $users;
+    }
+
+   /**
+     * Lists all online users of all channels
+     *
+     * @param array|null $query
+     * @return \ATDev\RocketChat\Users\Collection|false
+     */
+    public static function onlineAll()
+    {
+
+        static::send('channels.online', 'GET', ['query' => json_encode(null)]);
         if (!static::getSuccess()) {
             return false;
         }
