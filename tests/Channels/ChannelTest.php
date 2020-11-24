@@ -1088,7 +1088,7 @@ class ChannelTest extends TestCase
         $collection->verifyInvokedOnce('add', [$user2]);
     }
 
-    public function testOnlineFailed()
+    public function testOnlineAllFailed()
     {
         $stub = test::double(Channel::class, [
             'send' => true,
@@ -1097,7 +1097,7 @@ class ChannelTest extends TestCase
         ]);
         $userStub = test::double(User::class, ['createOutOfResponse' => 'nothing']);
 
-        $result = Channel::online();
+        $result = Channel::onlineAll();
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce('send', ['channels.online', 'GET']);
@@ -1106,7 +1106,7 @@ class ChannelTest extends TestCase
         $userStub->verifyNeverInvoked('createOutOfResponse');
     }
 
-    public function testOnlineSuccess()
+    public function testOnlineAllSuccess()
     {
         $user1 = (object) ['_id' => 'userId1', 'username' => 'username1'];
         $user2 = (object) ['_id' => 'userId2', 'username' => 'username2'];
@@ -1124,11 +1124,67 @@ class ChannelTest extends TestCase
         );
         $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
 
-        $result = Channel::online(['queryParam' => 'queryVal']);
+        $result = Channel::onlineAll();
 
         $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
         $stub->verifyInvokedOnce('send', ['channels.online', 'GET', [
-            'query' => json_encode(['queryParam' => 'queryVal'])
+            'query' => json_encode(null)
+        ]]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user1]);
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user2]);
+        $collection->verifyInvokedOnce('add', [$user1]);
+        $collection->verifyInvokedOnce('add', [$user2]);
+    }
+
+    public function testOnlineFailed()
+    {
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+        $userStub = test::double(User::class, ['createOutOfResponse' => 'nothing']);
+
+        $channel = new Channel();
+        $result = $channel->online();
+
+        $this->assertSame(false, $result);
+		$stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedOnce('send', ['channels.online', 'GET']);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $userStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testOnlineSuccess()
+    {
+        $user1 = (object) ['_id' => 'userId1', 'username' => 'username1'];
+        $user2 = (object) ['_id' => 'userId2', 'username' => 'username2'];
+        $response = (object) ['online' => [$user1, $user2]];
+        $stub = test::double(Channel::class, [
+            'getChannelId' => 'channelId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $userStub = test::double(
+            User::class,
+            ['createOutOfResponse' => function ($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
+
+        $channel = new Channel();
+        $result = $channel->online();
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
+		$stub->verifyInvokedOnce('getChannelId');
+        $stub->verifyInvokedOnce('send', ['channels.online', 'GET', [
+            'query' => json_encode(['_id' => 'channelId123'])
         ]]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce('getResponse');

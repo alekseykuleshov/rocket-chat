@@ -262,9 +262,18 @@ if (!$result) {
 
 ### CHANNEL ONLINE
 ```php
-$result = \ATDev\RocketChat\Channels\Channel::online(['_id' => 'channelId123']);
+// Get online users of all channels
+$result = \ATDev\RocketChat\Channels\Channel::onlineAll();
 if (!$result) {
 	$error = \ATDev\RocketChat\Channels\Channel::getError();
+}
+
+// Or get online users of particular channel
+$channel = new \ATDev\RocketChat\Channels\Channel("[CHANNEL ID]");
+
+$result = $channel->online();
+if (!$result) {
+	$error = $channel->getError();
 }
 ```
 
