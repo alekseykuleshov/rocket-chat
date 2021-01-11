@@ -97,7 +97,7 @@ class RoomTest extends TestCase
         ], $mock->jsonSerialize());
 
         $mock = $this->getMockForTrait(Room::class);
-        $mock->setReadOnly(true);
+        $mock->setReadOnlyValue(true);
 
         $this->assertSame([
             "name" => null,

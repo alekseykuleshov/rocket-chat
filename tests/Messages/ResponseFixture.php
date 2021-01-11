@@ -12,6 +12,7 @@ class ResponseFixture1 extends \stdClass
         $this->emoji = ':sunglasses:';
         $this->avatar = 'http://res.guggy.com/logo_128.png';
         $this->msg = 'This is a test!';
+        $this->mentions = [(object) ['_id' => 'y65tAmHs93aDChMWu', 'username' => 'graywolf336']];
     }
 }
 
@@ -26,6 +27,7 @@ class ResponseFixture2 extends \stdClass
         $this->parseUrls = true;
         $this->t = 'room_changed_privacy';
         $this->attachments = [];
+        $this->channels = [(object) ['_id' => 'y65tAmHs93aDChMWu', 'name' => 'channel123']];
     }
 }
 

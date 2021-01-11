@@ -120,9 +120,8 @@ class Im extends Request
     /**
      * Retrieves the messages from a direct message
      *
-     * @param int $offset
-     * @param int $count
-     * @return \ATDev\RocketChat\Messages\Collection|bool
+     * @param array $options
+     * @return \ATDev\RocketChat\Messages\Collection|false
      */
     public function history($options = [])
     {
