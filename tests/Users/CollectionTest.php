@@ -33,6 +33,38 @@ class CollectionTest extends TestCase
         $stub->verifyInvokedOnce("add", [$user]);
     }
 
+    public function testIsFull()
+    {
+        $stub = test::double(Collection::class, ["isFull" => "result"]);
+        $collection = new Collection();
+        $result = $collection->isFull();
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvoked("isFull");
+    }
+
+    public function testInvalidSetFull()
+    {
+        $stub = test::double(Collection::class);
+        $collection = new Collection();
+        $result = $collection->setFull("invalid type value");
+
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertNull($result->isFull());
+        $stub->verifyInvoked("setFull");
+    }
+
+    public function testValidSetFull()
+    {
+        $stub = test::double(Collection::class);
+        $collection = new Collection();
+        $result = $collection->setFull(true);
+
+        $this->assertInstanceOf(Collection::class, $result);
+        $this->assertSame(true, $result->isFull());
+        $stub->verifyInvoked("setFull");
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

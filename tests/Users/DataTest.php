@@ -2,6 +2,7 @@
 
 namespace ATDev\RocketChat\Tests\Users;
 
+use ATDev\RocketChat\Users\Preferences;
 use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
@@ -157,6 +158,34 @@ class DataTest extends TestCase
         // And null value...
         $mock->setPassword(null);
         $this->assertSame(null, $mock->getPassword());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testInvalidNewPassword()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setNewPassword(123);
+        $this->assertSame(null, $mock->getNewPassword());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid new password"]);
+    }
+
+    public function testValidNewPassword()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setNewPassword("sjdfb235$$");
+        $this->assertSame("sjdfb235$$", $mock->getNewPassword());
+
+        // And null value...
+        $mock->setNewPassword(null);
+        $this->assertSame(null, $mock->getNewPassword());
 
         $stub->verifyNeverInvoked("setDataError");
     }
@@ -385,6 +414,62 @@ class DataTest extends TestCase
         $stub->verifyNeverInvoked("setDataError");
     }
 
+    public function testInvalidStatusValue()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setStatusValue(123);
+        $this->assertNull($mock->getStatusValue());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid status value"]);
+    }
+
+    public function testValidStatusValue()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setStatusValue("asdfasdf");
+        $this->assertSame("asdfasdf", $mock->getStatusValue());
+
+        // And null value...
+        $mock->setStatusValue(null);
+        $this->assertSame(null, $mock->getStatusValue());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
+    public function testInvalidStatusText()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setStatusText(123);
+        $this->assertNull($mock->getStatusText());
+
+        $stub->verifyInvokedOnce("setDataError", ["Invalid status message value"]);
+    }
+
+    public function testValidStatusText()
+    {
+        $mock = $this->getMockForTrait(Data::class);
+
+        $stub = test::double($mock, ["setDataError" => $mock]);
+
+        $mock->setStatusText("asdfasdf");
+        $this->assertSame("asdfasdf", $mock->getStatusText());
+
+        // And null value...
+        $mock->setStatusText(null);
+        $this->assertSame(null, $mock->getStatusText());
+
+        $stub->verifyNeverInvoked("setDataError");
+    }
+
     public function testJsonSerialize()
     {
         $mock = $this->getMockForTrait(Data::class);
@@ -434,15 +519,21 @@ class DataTest extends TestCase
         $this->assertSame("test@example.com", $mock->getEmail());
         $this->assertSame(true, $mock->getVerified());
         $this->assertSame("user", $mock->getType());
-        $this->assertSame("some", $mock->getStatus());
+        $this->assertSame("some", $mock->getStatusValue());
         $this->assertSame(true, $mock->getActive());
         $this->assertSame(["admin", "guest"], $mock->getRoles());
         $this->assertSame("John Doe", $mock->getName());
         $this->assertSame("2016-12-08T00:22:15.167Z", $mock->getLastLogin());
-        $this->assertSame("offline", $mock->getStatusConnection());
+        $this->assertSame("online", $mock->getStatusConnection());
+        $this->assertSame("status message", $mock->getStatusText());
         $this->assertSame(-3.5, $mock->getUtcOffset());
         $this->assertSame("jDoe", $mock->getUserName());
         $this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
+        $this->assertInstanceOf(Preferences::class, $mock->getPreferencesData());
+        $this->assertClassHasAttribute("newRoomNotification", Preferences::class);
+        $this->assertSame("notification", $mock->getPreferencesData()->getNewRoomNotification());
+        $this->assertClassHasAttribute("useEmojis", Preferences::class);
+        $this->assertSame(true, $mock->getPreferencesData()->isUseEmojis());
 
         $user1 = new ResponseFixture1();
         $mock = $this->getMockForTrait(Data::class);
@@ -453,15 +544,17 @@ class DataTest extends TestCase
         $this->assertSame("test@example.com", $mock->getEmail());
         $this->assertNull($mock->getVerified());
         $this->assertNull($mock->getType());
-        $this->assertSame("some", $mock->getStatus());
+        $this->assertSame("some", $mock->getStatusValue());
         $this->assertNull($mock->getActive());
         $this->assertSame(["admin", "guest"], $mock->getRoles());
         $this->assertNull($mock->getName());
         $this->assertSame("2016-12-08T00:22:15.167Z", $mock->getLastLogin());
         $this->assertNull($mock->getStatusConnection());
+        $this->assertSame("status text", $mock->getStatusText());
         $this->assertSame(-3.5, $mock->getUtcOffset());
         $this->assertNull($mock->getUserName());
         $this->assertSame("https://localhost/avatar.png", $mock->getAvatarUrl());
+        $this->assertNull($mock->getPreferencesData());
 
         $user2 = new ResponseFixture2();
         $mock = $this->getMockForTrait(Data::class);
@@ -472,15 +565,21 @@ class DataTest extends TestCase
         $this->assertNull($mock->getEmail());
         $this->assertNull($mock->getVerified());
         $this->assertSame("user", $mock->getType());
-        $this->assertNull($mock->getStatus());
+        $this->assertNull($mock->getStatusValue());
         $this->assertSame(true, $mock->getActive());
         $this->assertNull($mock->getRoles());
         $this->assertSame("John Doe", $mock->getName());
         $this->assertNull($mock->getLastLogin());
         $this->assertSame("offline", $mock->getStatusConnection());
+        $this->assertNull($mock->getStatusText());
         $this->assertNull($mock->getUtcOffset());
         $this->assertSame("jDoe", $mock->getUserName());
         $this->assertNull($mock->getAvatarUrl());
+        $this->assertInstanceOf(Preferences::class, $mock->getPreferencesData());
+        $this->assertClassHasAttribute("newRoomNotification", Preferences::class);
+        $this->assertSame("notification", $mock->getPreferencesData()->getNewRoomNotification());
+        $this->assertClassHasAttribute("useEmojis", Preferences::class);
+        $this->assertSame(true, $mock->getPreferencesData()->isUseEmojis());
     }
 
     public function testCreateOutOfResponse()

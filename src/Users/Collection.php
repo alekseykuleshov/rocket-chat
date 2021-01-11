@@ -7,6 +7,9 @@ namespace ATDev\RocketChat\Users;
  */
 class Collection extends \ATDev\RocketChat\Common\Collection
 {
+    /** @var bool indicates it's a partial result */
+    private $full;
+
     public function add($element)
     {
         if (!($element instanceof User)) {
@@ -14,5 +17,25 @@ class Collection extends \ATDev\RocketChat\Common\Collection
         }
 
         return parent::add($element);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFull()
+    {
+        return $this->full;
+    }
+
+    /**
+     * @param bool $full
+     * @return $this
+     */
+    public function setFull($full)
+    {
+        if (is_bool($full)) {
+            $this->full = $full;
+        }
+        return $this;
     }
 }

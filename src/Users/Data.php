@@ -39,6 +39,12 @@ trait Data
     private $verified;
     /** @var string User custom fields, default is undefined */
     private $customFields;
+    /** @var string The new password for the user to update own info */
+    private $newPassword;
+
+    /* Other methods required properties */
+    /** @var string The user's status message */
+    private $statusText;
 
     /* Readonly properties returned from api */
     /** @var string Date-time user created at api */
@@ -55,8 +61,10 @@ trait Data
     private $utcOffset;
     /** @var string Avatar Url */
     private $avatarUrl;
-    /** @var string User status text */
-    private $statusText;
+    /** @var string Authentication token - the same type of session token a user would get via login */
+    private $authToken;
+    /** @var Preferences All preferences of the user */
+    private $preferences;
 
     /**
      * Creates user out of api response
@@ -75,7 +83,7 @@ trait Data
     /**
      * Class constructor
      *
-     * @param string $userId
+     * @param string|null $userId
      */
     public function __construct($userId = null)
     {
@@ -87,7 +95,7 @@ trait Data
     /**
      * Sets user id
      *
-     * @param string $userid
+     * @param string $userId
      *
      * @return \ATDev\RocketChat\Users\Data
      */
@@ -203,6 +211,33 @@ trait Data
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * New password to update own info
+     *
+     * @param string $newPassword
+     * @return $this
+     */
+    public function setNewPassword($newPassword)
+    {
+        if (!(is_null($newPassword) || is_string($newPassword))) {
+            $this->setDataError("Invalid new password");
+        } else {
+            $this->newPassword = $newPassword;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns new password value
+     *
+     * @return string
+     */
+    public function getNewPassword()
+    {
+        return $this->newPassword;
     }
 
     /**
@@ -402,6 +437,60 @@ trait Data
     }
 
     /**
+     * Gets user status
+     *
+     * @return string
+     */
+    public function getStatusValue()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Sets user status like 'online', 'away', 'busy', 'offline'
+     *
+     * @param string $status
+     * @return $this
+     */
+    public function setStatusValue($status)
+    {
+        if (!(is_null($status) || is_string($status))) {
+            $this->setDataError("Invalid status value");
+        } else {
+            $this->status = $status;
+        }
+
+        return $this;
+    }
+
+    /**
+     * The user's status message
+     *
+     * @return string
+     */
+    public function getStatusText()
+    {
+        return $this->statusText;
+    }
+
+    /**
+     * Sets the user's status message
+     *
+     * @param string $statusText
+     * @return $this
+     */
+    public function setStatusText($statusText)
+    {
+        if (!(is_null($statusText) || is_string($statusText))) {
+            $this->setDataError("Invalid status message value");
+        } else {
+            $this->statusText = $statusText;
+        }
+
+        return $this;
+    }
+
+    /**
      * Sets user custom fields
      *
      * @param string $customFields
@@ -450,16 +539,6 @@ trait Data
     }
 
     /**
-     * Gets user status
-     *
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
      * Gets date-time user last logged in
      *
      * @return string
@@ -500,13 +579,23 @@ trait Data
     }
 
     /**
-     * Gets user status text
+     * Returns user authentication token received by createToken api request
      *
      * @return string
      */
-    public function getStatusText()
+    public function getAuthToken()
     {
-        return $this->statusText;
+        return $this->authToken;
+    }
+
+    /**
+     * Returns user preferences
+     *
+     * @return Preferences
+     */
+    public function getPreferencesData()
+    {
+        return $this->preferences;
     }
 
     /**
@@ -539,7 +628,15 @@ trait Data
         }
 
         if (isset($response->status)) {
-            $this->setStatus($response->status);
+            $this->setStatusValue($response->status);
+        }
+
+        if (isset($response->statusText)) {
+            $this->setStatusText($response->statusText);
+        }
+
+        if (isset($response->message)) {
+            $this->setStatusText($response->message);
         }
 
         if (isset($response->active)) {
@@ -562,6 +659,10 @@ trait Data
             $this->setStatusConnection($response->statusConnection);
         }
 
+        if (isset($response->connectionStatus)) {
+            $this->setStatusConnection($response->connectionStatus);
+        }
+
         if (isset($response->utcOffset)) {
             $this->setUtcOffset($response->utcOffset);
         }
@@ -574,8 +675,9 @@ trait Data
             $this->setAvatarUrl($response->avatarUrl);
         }
 
-        if (isset($response->statusText)) {
-            $this->setStatusText($response->statusText);
+        if (isset($response->settings) && isset($response->settings->preferences)) {
+            $preferences = new Preferences();
+            $this->setPreferencesData($preferences->updateOutOfResponse($response->settings->preferences));
         }
 
         return $this;
@@ -662,22 +764,6 @@ trait Data
     }
 
     /**
-     * Sets user status
-     *
-     * @param string $status
-     *
-     * @return \ATDev\RocketChat\Users\Data
-     */
-    private function setStatus($status)
-    {
-        if (is_string($status)) {
-            $this->status = $status;
-        }
-
-        return $this;
-    }
-
-    /**
      * Sets date-time user last logged in
      *
      * @param string $lastLogin
@@ -718,7 +804,7 @@ trait Data
      */
     private function setUtcOffset($utcOffset)
     {
-        if (is_int($utcOffset) || is_float($utcOffset)) {
+        if (is_numeric($utcOffset)) {
             $this->utcOffset = $utcOffset;
         }
 
@@ -742,18 +828,12 @@ trait Data
     }
 
     /**
-     * Sets user status text
-     *
-     * @param $statusText
-     *
+     * @param Preferences $preferences
      * @return $this
      */
-    private function setStatusText($statusText)
+    private function setPreferencesData(Preferences $preferences)
     {
-        if (is_string($statusText)) {
-            $this->statusText = $statusText;
-        }
-
+        $this->preferences = $preferences;
         return $this;
     }
 
