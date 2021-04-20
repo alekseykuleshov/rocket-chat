@@ -32,11 +32,26 @@ print_r($result->getRemovedRoles());
 ### CREATE ROLE
 ```php
 $role = new \ATDev\RocketChat\Roles\Role();
-$role->setName("[ROLE-NAME]");
-$role->setScope("Subscriptions");
-$role->setDescription("Role description");
+$role->setName("[ROLE NAME]");
+$role->setScope("[ROLE SCOPE]");
+$role->setDescription("[ROLE DESCRIPTION]");
 
 $result = $role->create();
+
+if (!$result) {
+	// Log the error
+	$error = $role->getError();
+}
+```
+
+### ASSIGN THE ROLE TO AN USER
+```php
+$role = new \ATDev\RocketChat\Roles\Role();
+$role->setRoleName("[ROLE NAME]");
+$role->setUsername("[USERNAME]");
+$role->setRoomId("[ROOM ID]");
+
+$result = $role->addUserToRole();
 
 if (!$result) {
 	// Log the error

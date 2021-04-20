@@ -158,6 +158,46 @@ class RoleTest extends TestCase
         $stub->verifyInvokedOnce("updateOutOfResponse", ["role content"]);
     }
 
+    public function testAddUserToRoleFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Roles\Role", [
+            "send" => true,
+            "getSuccess" => false,
+            "getResponse" => (object) [],
+            "updateOutOfResponse" => "nothing"
+        ]);
+
+        $role = new Role();
+        $result = $role->addUserToRole();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["roles.addUserToRole", "POST", $role]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testAddUserToRoleSuccess()
+    {
+        $response = (object) ["role" => "role content"];
+
+        $stub = test::double("\ATDev\RocketChat\Roles\Role", [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "updateOutOfResponse" => "result"
+        ]);
+
+        $role = new Role();
+        $result = $role->addUserToRole();
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["roles.addUserToRole", "POST", $role]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("updateOutOfResponse", ["role content"]);
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
