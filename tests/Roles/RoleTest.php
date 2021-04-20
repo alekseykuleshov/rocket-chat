@@ -83,13 +83,13 @@ class RoleTest extends TestCase
         $role2 = new ResponseFixture2();
         $role3 = new ResponseFixture1();
         $role4 = new ResponseFixture2();
-        $response = (object) ['roles' => (object) ['update' => [$role1, $role2], 'remove' => [$role3, $role4]]];
-        $stub = test::double('ATDev\RocketChat\Roles\Role', [
+        $response = (object) ["roles" => (object) ["update" => [$role1, $role2], "remove" => [$role3, $role4]]];
+        $stub = test::double("ATDev\RocketChat\Roles\Role", [
             "updatedSince" => "2021-04-19T15:08:17.248Z",
-            'send' => true,
-            'getSuccess' => true,
-            'getResponse' => $response,
-            'createOutOfResponse' => function ($arg) { return get_class($arg); }
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "createOutOfResponse" => function ($arg) { return get_class($arg); }
         ]);
 
         $role = new Role();
@@ -100,6 +100,62 @@ class RoleTest extends TestCase
         $stub->verifyInvokedOnce("send", ["roles.sync", "GET", ["updatedSince" => "2021-04-19T15:08:17.248Z"]]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
+    }
+
+    public function testCreateFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Roles\Role", [
+            "send" => true,
+            "getSuccess" => false,
+            "getResponse" => (object) [],
+            "updateOutOfResponse" => "nothing"
+        ]);
+        $createData = [
+            'name' => 'newRole',
+            'scope' => 'Subscriptions',
+            'description' => 'Role description'
+        ];
+        $role = new Role();
+        $role->setName("newRole");
+        $role->setScope("Subscriptions");
+        $role->setDescription("Role description");
+
+        $result = $role->create();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["roles.create", "POST", $createData]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("getResponse");
+        $stub->verifyNeverInvoked("updateOutOfResponse");
+    }
+
+    public function testCreateSuccess()
+    {
+        $response = (object) ["role" => "role content"];
+        $stub = test::double("\ATDev\RocketChat\Roles\Role", [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "updateOutOfResponse" => "result"
+        ]);
+
+        $createData = [
+            'name' => 'newRole',
+            'scope' => 'Subscriptions',
+            'description' => 'Role description'
+        ];
+        $role = new Role();
+        $role->setName("newRole");
+        $role->setScope("Subscriptions");
+        $role->setDescription("Role description");
+
+        $result = $role->create();
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["roles.create", "POST", $createData]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("updateOutOfResponse", ["role content"]);
     }
 
     protected function tearDown(): void
