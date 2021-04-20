@@ -58,4 +58,30 @@ class Role extends Request
 
         return $this;
     }
+
+    /**
+     * Create a new role in the system
+     *
+     * @return Role|false
+     */
+    public function create()
+    {
+        $createData = [
+            "name" => $this->name
+        ];
+        if (isset($this->scope)) {
+            $createData["scope"] = $this->scope;
+        }
+        if (isset($this->description)) {
+            $createData["description"] = $this->description;
+        }
+
+        static::send("roles.create", "POST", $createData);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->role);
+    }
 }

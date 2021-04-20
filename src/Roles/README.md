@@ -28,3 +28,18 @@ print_r($result->getUpdatedRoles());
 // or removed ones
 print_r($result->getRemovedRoles());
 ```
+
+### CREATE ROLE
+```php
+$role = new \ATDev\RocketChat\Roles\Role();
+$role->setName("[ROLE-NAME]");
+$role->setScope("Subscriptions");
+$role->setDescription("Role description");
+
+$result = $role->create();
+
+if (!$result) {
+	// Log the error
+	$error = $role->getError();
+}
+```

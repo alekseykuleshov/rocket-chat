@@ -8,6 +8,7 @@ namespace ATDev\RocketChat\Roles;
 trait Data
 {
     private $roleId;
+    private $updatedAt;
     private $description;
     private $mandatory2fa;
     private $protected;
@@ -43,6 +44,29 @@ trait Data
     }
 
     /**
+     * Gets updatedAt
+     *
+     * @return string
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    private function setUpdatedAt($value)
+    {
+        if (is_string($value)) {
+            $this->updatedAt = $value;
+        }
+
+        return $this;
+    }
+
+    /**
      * Gets description id
      *
      * @return string
@@ -53,13 +77,15 @@ trait Data
     }
 
     /**
-     * @param string $value
+     * @param string $description
      * @return $this
      */
-    private function setDescription($value)
+    public function setDescription($description)
     {
-        if (is_string($value)) {
-            $this->description = $value;
+        if (!(is_null($description) || is_string($description))) {
+            $this->setDataError("Invalid description");
+        } else {
+            $this->description = $description;
         }
 
         return $this;
@@ -122,13 +148,15 @@ trait Data
     }
 
     /**
-     * @param string $value
+     * @param string $name
      * @return $this
      */
-    private function setName($value)
+    public function setName($name)
     {
-        if (is_string($value)) {
-            $this->name = $value;
+        if (!(is_null($name) || is_string($name))) {
+            $this->setDataError("Invalid name");
+        } else {
+            $this->name = $name;
         }
 
         return $this;
@@ -145,13 +173,15 @@ trait Data
     }
 
     /**
-     * @param string $value
+     * @param string $scope
      * @return $this
      */
-    private function setScope($value)
+    public function setScope($scope)
     {
-        if (is_string($value)) {
-            $this->scope = $value;
+        if (!(is_null($scope) || is_string($scope))) {
+            $this->setDataError("Invalid scope");
+        } else {
+            $this->scope = $scope;
         }
 
         return $this;
@@ -225,6 +255,9 @@ trait Data
     {
         if (isset($response->_id)) {
             $this->setRoleId($response->_id);
+        }
+        if (isset($response->_updatedAt)) {
+            $this->setUpdatedAt($response->_updatedAt);
         }
         if (isset($response->description)) {
             $this->setDescription($response->description);
