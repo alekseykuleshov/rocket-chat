@@ -60,7 +60,7 @@ class Role extends Request
     }
 
     /**
-     * Create a new role in the system
+     * Creates a new role in the system
      *
      * @return Role|false
      */
@@ -77,6 +77,22 @@ class Role extends Request
         }
 
         static::send("roles.create", "POST", $createData);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->role);
+    }
+
+    /**
+     * Assigns a role to an user
+     *
+     * @return Role|false
+     */
+    public function addUserToRole()
+    {
+        static::send("roles.addUserToRole", "POST", $this);
 
         if (!static::getSuccess()) {
             return false;

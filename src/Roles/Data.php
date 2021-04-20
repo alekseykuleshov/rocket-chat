@@ -20,6 +20,10 @@ trait Data
     private $update;
     private $remove;
 
+    private $roleName;
+    private $username;
+    private $roomId;
+
     /**
      * Gets role id
      *
@@ -216,6 +220,51 @@ trait Data
     }
 
     /**
+     * @param string $roleName
+     * @return $this
+     */
+    public function setRoleName($roleName)
+    {
+        if (!(is_null($roleName) || is_string($roleName))) {
+            $this->setDataError("Invalid role name");
+        } else {
+            $this->roleName = $roleName;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $username
+     * @return $this
+     */
+    public function setUsername($username)
+    {
+        if (!(is_null($username) || is_string($username))) {
+            $this->setDataError("Invalid user name");
+        } else {
+            $this->username = $username;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $roomId
+     * @return $this
+     */
+    public function setRoomId($roomId)
+    {
+        if (!(is_null($roomId) || is_string($roomId))) {
+            $this->setDataError("Invalid room Id");
+        } else {
+            $this->roomId = $roomId;
+        }
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getUpdatedRoles()
@@ -229,6 +278,27 @@ trait Data
     public function getRemovedRoles()
     {
         return $this->remove;
+    }
+
+    /**
+     * Gets full role data to submit to api
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $roleData = [];
+        if (!is_null($this->roleName)) {
+            $roleData['roleName'] = $this->roleName;
+        }
+        if (!is_null($this->username)) {
+            $roleData['username'] = $this->username;
+        }
+        if (!is_null($this->roomId)) {
+            $roleData['roomId'] = $this->roomId;
+        }
+
+        return $roleData;
     }
 
     /**
