@@ -41,7 +41,6 @@ class Role extends Request
     public function sync()
     {
         static::send("roles.sync", "GET", ["updatedSince" => $this->getUpdatedSince()]);
-
         if (!static::getSuccess()) {
             return false;
         }
