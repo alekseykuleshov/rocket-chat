@@ -7,18 +7,32 @@ namespace ATDev\RocketChat\Roles;
  */
 trait Data
 {
-    private $description;
-    private $name;
-    private $scope;
+    /* Required property for sync method */
+    /** @var string Date-time */
     private $updatedSince;
-    private $roomId;
 
-    private $update;
-    private $remove;
+    /* Required property for creation */
+    /** @var string The name of the new role */
+    private $name;
 
+    /* Optional properties for creation */
+    /** @var string The scope of the new role */
+    private $scope;
+    /** @var string A description for the new role */
+    private $description;
+
+    /* Required property for addUserToRole method */
+    /** @var string The role name */
     private $roleName;
+    /** @var string The user name */
     private $username;
 
+    /* Optional properties for addUserToRole method */
+    /** @var string If the role scope be Subscriptions and assign it to a room, you need to pass the roomId as parameter */
+    private $roomId;
+
+    /* Required property for getUsersInRole method */
+    /** @var string The role */
     private $role;
 
     /* Readonly properties returned from api */
@@ -26,10 +40,16 @@ trait Data
     private $roleId;
     /** @var string Date-time */
     private $updatedAt;
-    /** @var boolean */
+    /** @var boolean Indicates if user is using two factor authentication */
     private $mandatory2fa;
     /** @var boolean */
     private $protected;
+
+    /* Readonly properties returned from sync method */
+    /** @var array Contains roles collection */
+    private $update;
+    /** @var array Contains roles collection */
+    private $remove;
 
     /**
      * Gets role id
