@@ -67,17 +67,7 @@ class Role extends Request
      */
     public function create()
     {
-        $createData = [
-            "name" => $this->name
-        ];
-        if (isset($this->scope)) {
-            $createData["scope"] = $this->scope;
-        }
-        if (isset($this->description)) {
-            $createData["description"] = $this->description;
-        }
-
-        static::send("roles.create", "POST", $createData);
+        static::send("roles.create", "POST", $this);
 
         if (!static::getSuccess()) {
             return false;
@@ -93,7 +83,15 @@ class Role extends Request
      */
     public function addUserToRole()
     {
-        static::send("roles.addUserToRole", "POST", $this);
+        $data = [
+            'roleName' => $this->roleName,
+            'username' => $this->username
+        ];
+        if (isset($this->roomId)) {
+            $data["roomId"] = $this->roomId;
+        }
+        static::send("roles.addUserToRole", "POST", $data);
+
         if (!static::getSuccess()) {
             return false;
         }

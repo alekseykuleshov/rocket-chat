@@ -110,20 +110,12 @@ class RoleTest extends TestCase
             "getResponse" => (object) [],
             "updateOutOfResponse" => "nothing"
         ]);
-        $createData = [
-            'name' => 'newRole',
-            'scope' => 'Subscriptions',
-            'description' => 'Role description'
-        ];
-        $role = new Role();
-        $role->setName("newRole");
-        $role->setScope("Subscriptions");
-        $role->setDescription("Role description");
 
+        $role = new Role();
         $result = $role->create();
 
         $this->assertSame(false, $result);
-        $stub->verifyInvokedOnce("send", ["roles.create", "POST", $createData]);
+        $stub->verifyInvokedOnce("send", ["roles.create", "POST", $role]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyNeverInvoked("getResponse");
         $stub->verifyNeverInvoked("updateOutOfResponse");
@@ -132,6 +124,7 @@ class RoleTest extends TestCase
     public function testCreateSuccess()
     {
         $response = (object) ["role" => "role content"];
+
         $stub = test::double("\ATDev\RocketChat\Roles\Role", [
             "send" => true,
             "getSuccess" => true,
@@ -139,20 +132,11 @@ class RoleTest extends TestCase
             "updateOutOfResponse" => "result"
         ]);
 
-        $createData = [
-            'name' => 'newRole',
-            'scope' => 'Subscriptions',
-            'description' => 'Role description'
-        ];
         $role = new Role();
-        $role->setName("newRole");
-        $role->setScope("Subscriptions");
-        $role->setDescription("Role description");
-
         $result = $role->create();
 
         $this->assertSame("result", $result);
-        $stub->verifyInvokedOnce("send", ["roles.create", "POST", $createData]);
+        $stub->verifyInvokedOnce("send", ["roles.create", "POST", $role]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
         $stub->verifyInvokedOnce("updateOutOfResponse", ["role content"]);
@@ -166,12 +150,19 @@ class RoleTest extends TestCase
             "getResponse" => (object) [],
             "updateOutOfResponse" => "nothing"
         ]);
+        $data = [
+            'roleName' => 'roleName123',
+            'username' => 'username123'
+        ];
 
         $role = new Role();
+        $role->setRoleName("roleName123");
+        $role->setUsername("username123");
+
         $result = $role->addUserToRole();
 
         $this->assertSame(false, $result);
-        $stub->verifyInvokedOnce("send", ["roles.addUserToRole", "POST", $role]);
+        $stub->verifyInvokedOnce("send", ["roles.addUserToRole", "POST", $data]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyNeverInvoked("getResponse");
         $stub->verifyNeverInvoked("updateOutOfResponse");
@@ -180,22 +171,30 @@ class RoleTest extends TestCase
     public function testAddUserToRoleSuccess()
     {
         $response = (object) ["role" => "role content"];
-
         $stub = test::double("\ATDev\RocketChat\Roles\Role", [
             "send" => true,
             "getSuccess" => true,
             "getResponse" => $response,
             "updateOutOfResponse" => "result"
         ]);
+        $data = [
+            'roleName' => 'roleName123',
+            'username' => 'username123',
+            'roomId' => 'roomId123',
+        ];
 
         $role = new Role();
+        $role->setRoleName("roleName123");
+        $role->setUsername("username123");
+        $role->setRoomId("roomId123");
+
         $result = $role->addUserToRole();
 
         $this->assertSame("result", $result);
-        $stub->verifyInvokedOnce("send", ["roles.addUserToRole", "POST", $role]);
+        $stub->verifyInvokedOnce("send", ["roles.addUserToRole", "POST", $data]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
-        $stub->verifyInvokedOnce("updateOutOfResponse", ["role content"]);
+        $stub->verifyInvokedOnce("updateOutOfResponse", $response);
     }
 
     public function testGetUsersInRoleFailed()

@@ -7,24 +7,29 @@ namespace ATDev\RocketChat\Roles;
  */
 trait Data
 {
-    private $roleId;
-    private $updatedAt;
     private $description;
-    private $mandatory2fa;
-    private $protected;
     private $name;
     private $scope;
-
     private $updatedSince;
+    private $roomId;
 
     private $update;
     private $remove;
 
     private $roleName;
     private $username;
-    private $roomId;
 
     private $role;
+
+    /* Readonly properties returned from api */
+    /** @var string Role id */
+    private $roleId;
+    /** @var string Date-time */
+    private $updatedAt;
+    /** @var boolean */
+    private $mandatory2fa;
+    /** @var boolean */
+    private $protected;
 
     /**
      * Gets role id
@@ -324,15 +329,12 @@ trait Data
      */
     public function jsonSerialize()
     {
-        $roleData = [];
-        if (!is_null($this->roleName)) {
-            $roleData['roleName'] = $this->roleName;
+        $roleData = ['name' => $this->name];
+        if (!is_null($this->scope)) {
+            $roleData['scope'] = $this->scope;
         }
-        if (!is_null($this->username)) {
-            $roleData['username'] = $this->username;
-        }
-        if (!is_null($this->roomId)) {
-            $roleData['roomId'] = $this->roomId;
+        if (!is_null($this->description)) {
+            $roleData['description'] = $this->description;
         }
 
         return $roleData;
