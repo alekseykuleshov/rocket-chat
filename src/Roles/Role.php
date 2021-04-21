@@ -121,6 +121,7 @@ class Role extends Request
 
         $users = new \ATDev\RocketChat\Users\Collection();
         $response = static::getResponse();
+
         if (isset($response->users)) {
             foreach ($response->users as $user) {
                 $users->add(User::createOutOfResponse($user));

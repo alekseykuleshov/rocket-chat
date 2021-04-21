@@ -198,6 +198,74 @@ class RoleTest extends TestCase
         $stub->verifyInvokedOnce("updateOutOfResponse", ["role content"]);
     }
 
+    public function testGetUsersInRoleFailed()
+    {
+        $stub = test::double('\ATDev\RocketChat\Roles\Role', [
+            'getRole' => 'role123',
+            'getRoomId' => 'roomId123',
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) []
+        ]);
+        $userStub = test::double('\ATDev\RocketChat\Users\User', ['createOutOfResponse' => 'nothing']);
+
+        $role = new Role();
+        $result = $role->getUsersInRole();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            ['roles.getUsersInRole', 'GET', ['offset' => 0, 'count' => 0, 'role' => 'role123', 'roomId' => 'roomId123']]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $userStub->verifyNeverInvoked('createOutOfResponse');
+    }
+
+    public function testGetUsersInRoleSuccess()
+    {
+        $user1 = new \ATDev\RocketChat\Tests\Users\ResponseFixture1();
+        $user2 = new \ATDev\RocketChat\Tests\Users\ResponseFixture2();
+        $response = (object) [
+            "users" => [$user1, $user2],
+            "total" => 30
+        ];
+        $stub = test::double("\ATDev\RocketChat\Roles\Role", [
+            'getRole' => 'role123',
+            'getRoomId' => 'roomId123',
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response
+        ]);
+        $userStub = test::double(
+            '\ATDev\RocketChat\Users\User',
+            ['createOutOfResponse' => function ($arg) {
+                return $arg;
+            }]
+        );
+        $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
+
+        $role = new Role();
+        $result = $role->getUsersInRole(2, 10);
+
+        $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
+        $stub->verifyInvokedOnce(
+            'send',
+            [
+                'roles.getUsersInRole',
+                'GET',
+                ['offset' => 2, 'count' => 10, 'role' => 'role123', 'roomId' => 'roomId123']
+            ]
+        );
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user1]);
+        $userStub->verifyInvokedOnce('createOutOfResponse', [$user2]);
+        $collection->verifyInvokedOnce('add', [$user1]);
+        $collection->verifyInvokedOnce('add', [$user2]);
+        $this->assertSame(30, $result->getTotal());
+    }
+
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles
