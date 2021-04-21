@@ -44,7 +44,7 @@ if (!$result) {
 }
 ```
 
-### ASSIGN THE ROLE TO AN USER
+### ASSIGN A ROLE TO AN USER
 ```php
 $role = new \ATDev\RocketChat\Roles\Role();
 $role->setRoleName("[ROLE NAME]");
@@ -52,6 +52,20 @@ $role->setUsername("[USERNAME]");
 $role->setRoomId("[ROOM ID]");
 
 $result = $role->addUserToRole();
+
+if (!$result) {
+	// Log the error
+	$error = $role->getError();
+}
+```
+
+### GETS THE USERS THAT BELONGS TO A ROLE
+```php
+$role = new \ATDev\RocketChat\Roles\Role();
+$role->setRole("[ROLE NAME]");
+$role->setRoomId("[ROOM ID]");
+
+$result = $role->getUsersInRole();
 
 if (!$result) {
 	// Log the error

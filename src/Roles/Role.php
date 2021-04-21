@@ -3,6 +3,7 @@
 namespace ATDev\RocketChat\Roles;
 
 use ATDev\RocketChat\Common\Request;
+use ATDev\RocketChat\Users\User;
 
 /**
  * Role class
@@ -93,11 +94,42 @@ class Role extends Request
     public function addUserToRole()
     {
         static::send("roles.addUserToRole", "POST", $this);
-
         if (!static::getSuccess()) {
             return false;
         }
 
         return $this->updateOutOfResponse(static::getResponse()->role);
+    }
+
+    /**
+     * Gets the users that belongs to a role
+     *
+     * @param int $offset
+     * @param int $count
+     * @return \ATDev\RocketChat\Users\Collection|false
+     */
+    public function getUsersInRole($offset = 0, $count = 0)
+    {
+        static::send(
+            "roles.getUsersInRole",
+            "GET",
+            ["offset" => $offset, "count" => $count, "role" => $this->getRole(), "roomId" => $this->getRoomId()]
+        );
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        $users = new \ATDev\RocketChat\Users\Collection();
+        $response = static::getResponse();
+        if (isset($response->users)) {
+            foreach ($response->users as $user) {
+                $users->add(User::createOutOfResponse($user));
+            }
+        }
+        if (isset($response->total)) {
+            $users->setTotal($response->total);
+        }
+
+        return $users;
     }
 }

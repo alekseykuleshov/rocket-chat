@@ -24,6 +24,8 @@ trait Data
     private $username;
     private $roomId;
 
+    private $role;
+
     /**
      * Gets role id
      *
@@ -250,6 +252,16 @@ trait Data
     }
 
     /**
+     * Gets room id
+     *
+     * @return string
+     */
+    public function getRoomId()
+    {
+        return $this->roomId;
+    }
+
+    /**
      * @param string $roomId
      * @return $this
      */
@@ -259,6 +271,31 @@ trait Data
             $this->setDataError("Invalid room Id");
         } else {
             $this->roomId = $roomId;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets role
+     *
+     * @return string
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param string $role
+     * @return $this
+     */
+    public function setRole($role)
+    {
+        if (!(is_null($role) || is_string($role))) {
+            $this->setDataError("Invalid role");
+        } else {
+            $this->role = $role;
         }
 
         return $this;
