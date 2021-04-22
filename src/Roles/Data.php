@@ -17,10 +17,6 @@ trait Data
     /** @var string A description for the new role */
     private $description;
 
-    /* Optional properties for addUserToRole method */
-    /** @var string If the role scope be Subscriptions and assign it to a room, you need to pass the roomId as parameter */
-    private $roomId;
-
     /* Readonly properties returned from api */
     /** @var string Role id */
     private $roleId;
@@ -196,41 +192,6 @@ trait Data
         }
 
         return $this;
-    }
-
-    /**
-     * Gets room id
-     *
-     * @return string
-     */
-    public function getRoomId()
-    {
-        return $this->roomId;
-    }
-
-    /**
-     * @param string $roomId
-     * @return $this
-     */
-    public function setRoomId($roomId)
-    {
-        if (!(is_null($roomId) || is_string($roomId))) {
-            $this->setDataError("Invalid room Id");
-        } else {
-            $this->roomId = $roomId;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Gets role
-     *
-     * @return string
-     */
-    public function getRole()
-    {
-        return $this->role;
     }
 
     /**
