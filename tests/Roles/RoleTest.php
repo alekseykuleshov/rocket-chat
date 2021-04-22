@@ -152,9 +152,8 @@ class RoleTest extends TestCase
         ];
 
         $role = (new Role())->setName('roleName123');
-        $user = (new User())->setUsername('username123');
 
-        $result = $role->addUserToRole($user);
+        $result = $role->addUserToRole('username123');
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce('send', ['roles.addUserToRole', 'POST', $data]);
@@ -179,9 +178,8 @@ class RoleTest extends TestCase
         ];
 
         $role = (new Role())->setName('roleName123');
-        $user = (new User())->setUsername('username123');
 
-        $result = $role->addUserToRole($user, 'roomId123');
+        $result = $role->addUserToRole('username123', 'roomId123');
 
         $this->assertSame('result', $result);
         $stub->verifyInvokedOnce('send', ['roles.addUserToRole', 'POST', $data]);

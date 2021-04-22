@@ -79,15 +79,15 @@ class Role extends Request
     /**
      * Assigns a role to an user
      *
-     * @param User $user
+     * @param string $username
      * @param string $roomId
      * @return Role|false
      */
-    public function addUserToRole(User $user, $roomId = '')
+    public function addUserToRole($username, $roomId = '')
     {
         $data = [
             'roleName' => $this->name,
-            'username' => $user->getUsername()
+            'username' => $username
         ];
         if (!empty($roomId)) {
             $data["roomId"] = $roomId;

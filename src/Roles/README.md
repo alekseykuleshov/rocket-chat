@@ -40,9 +40,8 @@ if (!$result) {
 ### ASSIGN A ROLE TO AN USER
 ```php
 $role = (new \ATDev\RocketChat\Roles\Role())->setName("[ROLE NAME]");
-$user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
 
-$result = $role->addUserToRole($user, "[ROOM ID]");
+$result = $role->addUserToRole("[USERNAME]", "[ROOM ID]");
 
 if (!$result) {
 	// Log the error
