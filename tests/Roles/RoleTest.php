@@ -193,21 +193,19 @@ class RoleTest extends TestCase
     public function testGetUsersInRoleFailed()
     {
         $stub = test::double('\ATDev\RocketChat\Roles\Role', [
-            'getRole' => 'role123',
-            'getRoomId' => 'roomId123',
             'send' => true,
             'getSuccess' => false,
             'getResponse' => (object) []
         ]);
         $userStub = test::double('\ATDev\RocketChat\Users\User', ['createOutOfResponse' => 'nothing']);
 
-        $role = new Role();
-        $result = $role->getUsersInRole();
+        $role = (new Role())->setName('roleName123');
+        $result = $role->getUsersInRole(5, 10, "roomId123");
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce(
             'send',
-            ['roles.getUsersInRole', 'GET', ['offset' => 0, 'count' => 0, 'role' => 'role123', 'roomId' => 'roomId123']]
+            ['roles.getUsersInRole', 'GET', ['offset' => 5, 'count' => 10, 'role' => 'roleName123', 'roomId' => 'roomId123']]
         );
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyNeverInvoked('getResponse');
@@ -223,8 +221,6 @@ class RoleTest extends TestCase
             'total' => 30
         ];
         $stub = test::double('\ATDev\RocketChat\Roles\Role', [
-            'getRole' => 'role123',
-            'getRoomId' => 'roomId123',
             'send' => true,
             'getSuccess' => true,
             'getResponse' => $response
@@ -237,8 +233,8 @@ class RoleTest extends TestCase
         );
         $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
 
-        $role = new Role();
-        $result = $role->getUsersInRole(2, 10);
+        $role = (new Role())->setName('roleName123');
+        $result = $role->getUsersInRole(5, 10, "roomId123");
 
         $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
         $stub->verifyInvokedOnce(
@@ -246,7 +242,7 @@ class RoleTest extends TestCase
             [
                 'roles.getUsersInRole',
                 'GET',
-                ['offset' => 2, 'count' => 10, 'role' => 'role123', 'roomId' => 'roomId123']
+                ['offset' => 5, 'count' => 10, 'role' => 'roleName123', 'roomId' => 'roomId123']
             ]
         );
         $stub->verifyInvokedOnce('getSuccess');
