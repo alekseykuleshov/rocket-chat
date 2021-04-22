@@ -7,10 +7,6 @@ namespace ATDev\RocketChat\Roles;
  */
 trait Data
 {
-    /* Required property for sync method */
-    /** @var string Date-time */
-    private $updatedSince;
-
     /* Required property for creation */
     /** @var string The name of the new role */
     private $name;
@@ -44,12 +40,6 @@ trait Data
     private $mandatory2fa;
     /** @var boolean */
     private $protected;
-
-    /* Readonly properties returned from sync method */
-    /** @var array Contains roles collection */
-    private $update;
-    /** @var array Contains roles collection */
-    private $remove;
 
     /**
      * Gets role id
@@ -219,34 +209,6 @@ trait Data
     }
 
     /**
-     * Gets updatedSince
-     *
-     * @return string
-     */
-    public function getUpdatedSince()
-    {
-        return $this->updatedSince;
-    }
-
-    /**
-     * Sets updatedSince
-     *
-     * @param string $updatedSince
-     *
-     * @return \ATDev\RocketChat\Roles\Data
-     */
-    public function setUpdatedSince($updatedSince)
-    {
-        if (!(is_null($updatedSince) || is_string($updatedSince))) {
-            $this->setDataError("Invalid updatedSince");
-        } else {
-            $this->updatedSince = $updatedSince;
-        }
-
-        return $this;
-    }
-
-    /**
      * @param string $roleName
      * @return $this
      */
@@ -324,22 +286,6 @@ trait Data
         }
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getUpdatedRoles()
-    {
-        return $this->update;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRemovedRoles()
-    {
-        return $this->remove;
     }
 
     /**

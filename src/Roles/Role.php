@@ -37,27 +37,27 @@ class Role extends Request
     /**
      * Gets all the roles in the system which are updated after a given date
      *
-     * @return $this|false
+     * @param string $updatedSince
+     * @return array|false
      */
-    public function sync()
+    public static function sync($updatedSince)
     {
-        static::send("roles.sync", "GET", ["updatedSince" => $this->getUpdatedSince()]);
+        static::send("roles.sync", "GET", ["updatedSince" => $updatedSince]);
         if (!static::getSuccess()) {
             return false;
         }
 
         $roles = static::getResponse()->roles;
-
-        $this->update = new Collection();
+        
+        $result = ["update" => new Collection(), "remove" => new Collection()];
         foreach ($roles->update as $role) {
-            $this->update->add(static::createOutOfResponse($role));
+            $result['update']->add(static::createOutOfResponse($role));
         }
-        $this->remove = new Collection();
         foreach ($roles->remove as $role) {
-            $this->remove->add(static::createOutOfResponse($role));
+            $result['remove']->add(static::createOutOfResponse($role));
         }
 
-        return $this;
+        return $result;
     }
 
     /**

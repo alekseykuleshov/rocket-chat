@@ -14,19 +14,12 @@ if (!$listing) {
 
 ### ROLE SYNC
 ```php
-$role = new \ATDev\RocketChat\Roles\Role();
-$role->setUpdatedSince("2021-04-19T15:08:17.248Z");
-$result = $role->sync();
+$result = \ATDev\RocketChat\Roles\Role::sync("2021-04-19T15:08:17.248Z");
 
 if (!$result) {
 	// Log the error
-	$error = $role->getError();
+	$error = \ATDev\RocketChat\Roles\Role::getError();
 }
-
-// You can get updated roles
-print_r($result->getUpdatedRoles());
-// or removed ones
-print_r($result->getRemovedRoles());
 ```
 
 ### CREATE ROLE
