@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
 use ATDev\RocketChat\Roles\Role;
-use ATDev\RocketChat\Users\User;
 use ATDev\RocketChat\Roles\Data;
 
 class RoleTest extends TestCase
@@ -67,7 +66,7 @@ class RoleTest extends TestCase
             'createOutOfResponse' => 'nothing'
         ]);
 
-        $result = Role::sync("2021-04-19T15:08:17.248Z");
+        $result = Role::sync('2021-04-19T15:08:17.248Z');
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce('send', ['roles.sync', 'GET', ['updatedSince' => '2021-04-19T15:08:17.248Z']]);
@@ -82,18 +81,27 @@ class RoleTest extends TestCase
         $role2 = new ResponseFixture2();
         $role3 = new ResponseFixture1();
         $role4 = new ResponseFixture2();
-        $response = (object) ['roles' => (object) ['update' => [$role1, $role2], 'remove' => [$role3, $role4]]];
+        $response = (object) [
+            'roles' => (object) ['update' => [$role1, $role2], 'remove' => [$role3, $role4]]
+        ];
         $stub = test::double('ATDev\RocketChat\Roles\Role', [
             'send' => true,
             'getSuccess' => true,
             'getResponse' => $response,
             'createOutOfResponse' => function ($arg) { return get_class($arg); }
         ]);
+        $collection = test::double('\ATDev\RocketChat\Roles\Collection', ['add' => true]);
 
-        $result = Role::sync("2021-04-19T15:08:17.248Z");
+        $result = Role::sync('2021-04-19T15:08:17.248Z');
 
         $this->assertIsArray($result);
         $stub->verifyInvokedOnce('send', ['roles.sync', 'GET', ['updatedSince' => '2021-04-19T15:08:17.248Z']]);
+        $stub->verifyInvokedOnce('createOutOfResponse', [$role1]);
+        $stub->verifyInvokedOnce('createOutOfResponse', [$role2]);
+        $stub->verifyInvokedOnce('createOutOfResponse', [$role3]);
+        $stub->verifyInvokedOnce('createOutOfResponse', [$role4]);
+        $collection->verifyInvokedMultipleTimes('add', 2, ['ATDev\RocketChat\Tests\Roles\ResponseFixture1']);
+        $collection->verifyInvokedMultipleTimes('add', 2, ['ATDev\RocketChat\Tests\Roles\ResponseFixture2']);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce('getResponse');
     }
@@ -185,7 +193,7 @@ class RoleTest extends TestCase
         $stub->verifyInvokedOnce('send', ['roles.addUserToRole', 'POST', $data]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce('getResponse');
-        $stub->verifyInvokedOnce('updateOutOfResponse', $response);
+        $stub->verifyInvokedOnce('updateOutOfResponse', 'role content');
     }
 
     public function testGetUsersInRoleFailed()
@@ -198,7 +206,7 @@ class RoleTest extends TestCase
         $userStub = test::double('\ATDev\RocketChat\Users\User', ['createOutOfResponse' => 'nothing']);
 
         $role = (new Role())->setName('roleName123');
-        $result = $role->getUsersInRole(5, 10, "roomId123");
+        $result = $role->getUsersInRole(5, 10, 'roomId123');
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce(
@@ -232,7 +240,7 @@ class RoleTest extends TestCase
         $collection = test::double('\ATDev\RocketChat\Users\Collection', ['add' => true]);
 
         $role = (new Role())->setName('roleName123');
-        $result = $role->getUsersInRole(5, 10, "roomId123");
+        $result = $role->getUsersInRole(5, 10, 'roomId123');
 
         $this->assertInstanceOf('\ATDev\RocketChat\Users\Collection', $result);
         $stub->verifyInvokedOnce(
