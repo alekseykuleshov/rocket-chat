@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use AspectMock\Test as test;
 
 use ATDev\RocketChat\Roles\Role;
+use ATDev\RocketChat\Users\User;
 use ATDev\RocketChat\Roles\Data;
 
 class RoleTest extends TestCase
@@ -150,11 +151,10 @@ class RoleTest extends TestCase
             'username' => 'username123'
         ];
 
-        $role = new Role();
-        $role->setRoleName('roleName123');
-        $role->setUsername('username123');
+        $role = (new Role())->setName('roleName123');
+        $user = (new User())->setUsername('username123');
 
-        $result = $role->addUserToRole();
+        $result = $role->addUserToRole($user);
 
         $this->assertSame(false, $result);
         $stub->verifyInvokedOnce('send', ['roles.addUserToRole', 'POST', $data]);
@@ -178,12 +178,10 @@ class RoleTest extends TestCase
             'roomId' => 'roomId123',
         ];
 
-        $role = new Role();
-        $role->setRoleName('roleName123');
-        $role->setUsername('username123');
-        $role->setRoomId('roomId123');
+        $role = (new Role())->setName('roleName123');
+        $user = (new User())->setUsername('username123');
 
-        $result = $role->addUserToRole();
+        $result = $role->addUserToRole($user, 'roomId123');
 
         $this->assertSame('result', $result);
         $stub->verifyInvokedOnce('send', ['roles.addUserToRole', 'POST', $data]);

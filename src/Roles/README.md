@@ -39,12 +39,10 @@ if (!$result) {
 
 ### ASSIGN A ROLE TO AN USER
 ```php
-$role = new \ATDev\RocketChat\Roles\Role();
-$role->setRoleName("[ROLE NAME]");
-$role->setUsername("[USERNAME]");
-$role->setRoomId("[ROOM ID]");
+$role = (new \ATDev\RocketChat\Roles\Role())->setName("[ROLE NAME]");
+$user = (new \ATDev\RocketChat\Users\User())->setUsername("[USERNAME]");
 
-$result = $role->addUserToRole();
+$result = $role->addUserToRole($user, "[ROOM ID]");
 
 if (!$result) {
 	// Log the error

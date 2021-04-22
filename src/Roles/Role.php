@@ -48,7 +48,7 @@ class Role extends Request
         }
 
         $roles = static::getResponse()->roles;
-        
+
         $result = ["update" => new Collection(), "remove" => new Collection()];
         foreach ($roles->update as $role) {
             $result['update']->add(static::createOutOfResponse($role));
@@ -79,16 +79,18 @@ class Role extends Request
     /**
      * Assigns a role to an user
      *
+     * @param User $user
+     * @param string $roomId
      * @return Role|false
      */
-    public function addUserToRole()
+    public function addUserToRole(User $user, $roomId = '')
     {
         $data = [
-            'roleName' => $this->roleName,
-            'username' => $this->username
+            'roleName' => $this->name,
+            'username' => $user->getUsername()
         ];
-        if (isset($this->roomId)) {
-            $data["roomId"] = $this->roomId;
+        if (!empty($roomId)) {
+            $data["roomId"] = $roomId;
         }
         static::send("roles.addUserToRole", "POST", $data);
 

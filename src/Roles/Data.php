@@ -17,12 +17,6 @@ trait Data
     /** @var string A description for the new role */
     private $description;
 
-    /* Required property for addUserToRole method */
-    /** @var string The role name */
-    private $roleName;
-    /** @var string The user name */
-    private $username;
-
     /* Optional properties for addUserToRole method */
     /** @var string If the role scope be Subscriptions and assign it to a room, you need to pass the roomId as parameter */
     private $roomId;
@@ -203,36 +197,6 @@ trait Data
             $this->setDataError("Invalid scope");
         } else {
             $this->scope = $scope;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $roleName
-     * @return $this
-     */
-    public function setRoleName($roleName)
-    {
-        if (!(is_null($roleName) || is_string($roleName))) {
-            $this->setDataError("Invalid role name");
-        } else {
-            $this->roleName = $roleName;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $username
-     * @return $this
-     */
-    public function setUsername($username)
-    {
-        if (!(is_null($username) || is_string($username))) {
-            $this->setDataError("Invalid user name");
-        } else {
-            $this->username = $username;
         }
 
         return $this;
