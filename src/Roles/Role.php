@@ -106,14 +106,15 @@ class Role extends Request
      *
      * @param int $offset
      * @param int $count
+     * @param string $roomId
      * @return \ATDev\RocketChat\Users\Collection|false
      */
-    public function getUsersInRole($offset = 0, $count = 0)
+    public function getUsersInRole($offset = 0, $count = 0, $roomId = '')
     {
         static::send(
             "roles.getUsersInRole",
             "GET",
-            ["offset" => $offset, "count" => $count, "role" => $this->getRole(), "roomId" => $this->getRoomId()]
+            ["offset" => $offset, "count" => $count, "role" => $this->getName(), "roomId" => $roomId]
         );
         if (!static::getSuccess()) {
             return false;

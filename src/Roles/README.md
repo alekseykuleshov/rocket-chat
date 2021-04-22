@@ -52,11 +52,9 @@ if (!$result) {
 
 ### GETS THE USERS THAT BELONGS TO A ROLE
 ```php
-$role = new \ATDev\RocketChat\Roles\Role();
-$role->setRole("[ROLE NAME]");
-$role->setRoomId("[ROOM ID]");
+$role = (new \ATDev\RocketChat\Roles\Role())->setName("[ROLE NAME]");
 
-$result = $role->getUsersInRole();
+$result = $role->getUsersInRole(5, 10, "[ROOM ID]");
 
 if (!$result) {
 	// Log the error

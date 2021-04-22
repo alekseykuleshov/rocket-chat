@@ -21,10 +21,6 @@ trait Data
     /** @var string If the role scope be Subscriptions and assign it to a room, you need to pass the roomId as parameter */
     private $roomId;
 
-    /* Required property for getUsersInRole method */
-    /** @var string The role */
-    private $role;
-
     /* Readonly properties returned from api */
     /** @var string Role id */
     private $roleId;
@@ -235,21 +231,6 @@ trait Data
     public function getRole()
     {
         return $this->role;
-    }
-
-    /**
-     * @param string $role
-     * @return $this
-     */
-    public function setRole($role)
-    {
-        if (!(is_null($role) || is_string($role))) {
-            $this->setDataError("Invalid role");
-        } else {
-            $this->role = $role;
-        }
-
-        return $this;
     }
 
     /**
