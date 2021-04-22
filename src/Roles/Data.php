@@ -89,7 +89,7 @@ trait Data
      */
     public function setDescription($description)
     {
-        if (!(is_null($description) || is_string($description))) {
+        if (!is_string($description)) {
             $this->setDataError("Invalid description");
         } else {
             $this->description = $description;
@@ -160,7 +160,7 @@ trait Data
      */
     public function setName($name)
     {
-        if (!(is_null($name) || is_string($name))) {
+        if (!is_string($name)) {
             $this->setDataError("Invalid name");
         } else {
             $this->name = $name;
@@ -185,7 +185,7 @@ trait Data
      */
     public function setScope($scope)
     {
-        if (!(is_null($scope) || is_string($scope))) {
+        if (!is_string($scope)) {
             $this->setDataError("Invalid scope");
         } else {
             $this->scope = $scope;

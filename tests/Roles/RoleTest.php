@@ -260,26 +260,6 @@ class RoleTest extends TestCase
         $this->assertSame(30, $result->getTotal());
     }
 
-    public function testJsonSerialize()
-    {
-        $mock = $this->getMockForTrait(Data::class);
-        $mock->setName('roleName');
-
-        $this->assertSame([
-            'name' => 'roleName'
-        ], $mock->jsonSerialize());
-
-        $mock = $this->getMockForTrait(Data::class);
-        $mock->setScope('Subscriptions');
-        $mock->setDescription('description');
-
-        $this->assertSame([
-            'name' => null,
-            'scope' => 'Subscriptions',
-            'description' => 'description'
-        ], $mock->jsonSerialize());
-    }
-
     protected function tearDown(): void
     {
         test::clean(); // remove all registered test doubles

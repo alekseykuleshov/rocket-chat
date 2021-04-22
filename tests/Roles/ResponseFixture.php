@@ -7,6 +7,7 @@ class ResponseFixture1 extends \stdClass
     public function __construct()
     {
         $this->_id = 'moderator';
+        $this->_updatedAt = '2021-04-21T03:57:54.603Z';
         $this->description = 'description';
         $this->mandatory2fa = false;
     }
