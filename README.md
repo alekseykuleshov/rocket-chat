@@ -58,6 +58,8 @@ Now, when you are logged in, you can:
 
 [Manage Ims](src/Ims)
 
+[Manage Roles](src/Roles)
+
 ## Unit tests
 
 Tests are run by `./vendor/bin/phpunit tests`. Although the library code is designed to be compatible with `php 5.6`, testing
