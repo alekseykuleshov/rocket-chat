@@ -35,7 +35,12 @@ class UserTest extends TestCase
     {
         $user1 = new ResponseFixture1();
         $user2 = new ResponseFixture2();
-        $response = (object) ["users" => [$user1, $user2]];
+        $response = (object) [
+            "users" => [$user1, $user2],
+            "offset" => 2,
+            "count" => 10,
+            "total" => 30
+        ];
 
         $stub = test::double("\ATDev\RocketChat\Users\User", [
             "send" => true,
@@ -51,13 +56,53 @@ class UserTest extends TestCase
         $result = User::listing();
 
         $this->assertInstanceOf("\ATDev\RocketChat\Users\Collection", $result);
-        $stub->verifyInvokedOnce("send", ["users.list", "GET"]);
+        $stub->verifyInvokedOnce("send", ["users.list", "GET", []]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
         $stub->verifyInvokedOnce("createOutOfResponse", [$user1]);
         $stub->verifyInvokedOnce("createOutOfResponse", [$user2]);
         $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Users\ResponseFixture1"]);
         $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Users\ResponseFixture2"]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
+    }
+
+    public function testListingSuccessWithPaging()
+    {
+        $user1 = new ResponseFixture1();
+        $user2 = new ResponseFixture2();
+        $response = (object) [
+            "users" => [$user1, $user2],
+            "offset" => 2,
+            "count" => 10,
+            "total" => 30
+        ];
+
+        $stub = test::double("\ATDev\RocketChat\Users\User", [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "createOutOfResponse" => function ($arg) { return get_class($arg); }
+        ]);
+
+        $coll = test::double("\ATDev\RocketChat\Users\Collection", [
+            "add" => true
+        ]);
+
+        $result = User::listing(5, 10);
+
+        $this->assertInstanceOf("\ATDev\RocketChat\Users\Collection", $result);
+        $stub->verifyInvokedOnce("send", ["users.list", "GET", ['offset' => 5, 'count' => 10]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("createOutOfResponse", [$user1]);
+        $stub->verifyInvokedOnce("createOutOfResponse", [$user2]);
+        $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Users\ResponseFixture1"]);
+        $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Users\ResponseFixture2"]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
     }
 
     public function testCreateFailed()

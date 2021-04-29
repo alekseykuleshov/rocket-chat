@@ -16,17 +16,35 @@ class User extends Request
      *
      * @return Collection|boolean
      */
-    public static function listing()
+    public static function listing($offset = 0, $count = 0)
     {
-        static::send("users.list", "GET");
+        $parameters = [];
+        if (!empty($offset)) {
+            $parameters['offset'] = $offset;
+        }
+        if (!empty($count)) {
+            $parameters['count'] = $count;
+        }
+
+        static::send("users.list", "GET", $parameters);
 
         if (!static::getSuccess()) {
             return false;
         }
 
         $users = new Collection();
-        foreach (static::getResponse()->users as $user) {
+        $response = static::getResponse();
+        foreach ($response->users as $user) {
             $users->add(static::createOutOfResponse($user));
+        }
+        if (isset($response->total)) {
+            $users->setTotal($response->total);
+        }
+        if (isset($response->count)) {
+            $users->setCount($response->count);
+        }
+        if (isset($response->offset)) {
+            $users->setOffset($response->offset);
         }
 
         return $users;

@@ -52,7 +52,44 @@ class ImTest extends TestCase
         $result = Im::listing();
 
         $this->assertInstanceOf("\ATDev\RocketChat\Ims\Collection", $result);
-        $stub->verifyInvokedOnce("send", ["im.list", "GET"]);
+        $stub->verifyInvokedOnce("send", ["im.list", "GET", []]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("getResponse");
+        $stub->verifyInvokedOnce("createOutOfResponse", [$im1]);
+        $stub->verifyInvokedOnce("createOutOfResponse", [$im2]);
+        $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture1"]);
+        $coll->verifyInvokedOnce("add", ["ATDev\RocketChat\Tests\Common\ResponseFixture2"]);
+        $this->assertSame(2, $result->getOffset());
+        $this->assertSame(10, $result->getCount());
+        $this->assertSame(30, $result->getTotal());
+    }
+
+    public function testListingSuccessWithPaging()
+    {
+        $im1 = new \ATDev\RocketChat\Tests\Common\ResponseFixture1();
+        $im2 = new \ATDev\RocketChat\Tests\Common\ResponseFixture2();
+        $response = (object) [
+            "ims" => [$im1, $im2],
+            "offset" => 2,
+            "count" => 10,
+            "total" => 30
+        ];
+
+        $stub = test::double("\ATDev\RocketChat\Ims\Im", [
+            "send" => true,
+            "getSuccess" => true,
+            "getResponse" => $response,
+            "createOutOfResponse" => function ($arg) { return get_class($arg); }
+        ]);
+
+        $coll = test::double("\ATDev\RocketChat\Ims\Collection", [
+            "add" => true
+        ]);
+
+        $result = Im::listing(5, 10);
+
+        $this->assertInstanceOf("\ATDev\RocketChat\Ims\Collection", $result);
+        $stub->verifyInvokedOnce("send", ["im.list", "GET", ['offset' => 5, 'count' => 10]]);
         $stub->verifyInvokedOnce("getSuccess");
         $stub->verifyInvokedOnce("getResponse");
         $stub->verifyInvokedOnce("createOutOfResponse", [$im1]);

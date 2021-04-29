@@ -22,7 +22,15 @@ class Im extends Request
      */
     public static function listing($offset = 0, $count = 0)
     {
-        static::send("im.list", "GET", ['offset' => $offset, 'count' => $count]);
+        $parameters = [];
+        if (!empty($offset)) {
+            $parameters['offset'] = $offset;
+        }
+        if (!empty($count)) {
+            $parameters['count'] = $count;
+        }
+
+        static::send("im.list", "GET", $parameters);
 
         if (!static::getSuccess()) {
             return false;
