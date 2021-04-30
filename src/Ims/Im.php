@@ -20,13 +20,13 @@ class Im extends Request
      * @param int $count
      * @return Collection|bool
      */
-    public static function listing($offset = 0, $count = 0)
+    public static function listing($offset = null, $count = null)
     {
         $parameters = [];
-        if (!empty($offset)) {
+        if (!is_null($offset)) {
             $parameters['offset'] = $offset;
         }
-        if (!empty($count)) {
+        if (!is_null($count)) {
             $parameters['count'] = $count;
         }
 
