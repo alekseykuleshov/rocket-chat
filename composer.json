@@ -13,7 +13,7 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^9.0",
-		"codeception/aspect-mock": "^3.0",
+		"codeception/aspect-mock": "^4.0",
 		"friendsofphp/php-cs-fixer": "^2.16"
 	},
 	"autoload": {
