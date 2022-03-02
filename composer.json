@@ -8,7 +8,7 @@
 	"require": {
 		"php": ">=5.6.0",
 		"guzzlehttp/guzzle": "^6.0 || ^7.0",
-		"egulias/email-validator": "^2.0",
+		"egulias/email-validator": ">=2.0",
 		"doctrine/collections": "^1.0"
 	},
 	"require-dev": {
