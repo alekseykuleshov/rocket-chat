@@ -38,6 +38,7 @@ class Chat extends Request
         if ($auth) {
             static::setAuthUserId(static::getResponse()->data->userId);
             static::setAuthToken(static::getResponse()->data->authToken);
+            static::setAuthPassword(hash("sha256", $password));
         }
 
         return User::createOutOfResponse(static::getResponse()->data->me);
@@ -68,6 +69,7 @@ class Chat extends Request
 
         static::setAuthUserId(null);
         static::setAuthToken(null);
+        static::setAuthPassword(null);
 
         return true;
     }

@@ -35,6 +35,9 @@ abstract class Request implements \JsonSerializable
     /** @var string Chat user auth token */
     private static $authToken;
 
+    /** @var string Chat user hashed password */
+    private static $authPassword;
+
     /**
      * Sets chat url
      *
@@ -52,7 +55,7 @@ abstract class Request implements \JsonSerializable
     }
 
     /**
-     * Sets chat id of user to act as
+     * Sets id of user to act as
      *
      * @param string $userId Chat user id
      */
@@ -62,13 +65,23 @@ abstract class Request implements \JsonSerializable
     }
 
     /**
-     * Sets chat auth token of user to act as
+     * Sets auth token of user to act as
      *
      * @param string $authToken Chat user auth token
      */
     public static function setAuthToken($authToken)
     {
         self::$authToken = $authToken;
+    }
+
+    /**
+     * Sets hashed password of user to act as
+     *
+     * @param string $authPassword Chat user hashed password
+     */
+    public static function setAuthPassword($authPassword)
+    {
+        self::$authPassword = $authPassword;
     }
 
     /**
@@ -185,6 +198,11 @@ abstract class Request implements \JsonSerializable
 
         if (!empty(self::$authToken)) {
             $headers["X-Auth-Token"] = self::$authToken;
+        }
+
+        if (!empty(self::$authPassword)) {
+            $headers["X-2fa-method"] = "password";
+            $headers["X-2fa-code"] = self::$authPassword;
         }
 
         if (!empty($headers)) {

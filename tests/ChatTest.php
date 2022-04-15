@@ -16,7 +16,8 @@ class ChatTest extends TestCase
             "getResponse" => (object) ["status" => "failed"],
             "setError" => true,
             "setAuthUserId" => true,
-            "setAuthToken" => true
+            "setAuthToken" => true,
+            "setAuthPassword" => true
         ]);
 
         $user = test::double("\ATDev\RocketChat\Users\User", [
@@ -31,6 +32,7 @@ class ChatTest extends TestCase
         $stub->verifyInvokedOnce("setError", ["Unknown error occurred while logging in"]);
         $stub->verifyNeverInvoked("setAuthUserId");
         $stub->verifyNeverInvoked("setAuthToken");
+        $stub->verifyNeverInvoked("setAuthPassword");
         $user->verifyNeverInvoked("createOutOfResponse");
     }
 
@@ -42,6 +44,7 @@ class ChatTest extends TestCase
             "setError" => true,
             "setAuthUserId" => true,
             "setAuthToken" => true,
+            "setAuthPassword" => true
         ]);
 
         $user = test::double("\ATDev\RocketChat\Users\User", [
@@ -56,6 +59,7 @@ class ChatTest extends TestCase
         $stub->verifyInvokedOnce("setError", ["something happened"]);
         $stub->verifyNeverInvoked("setAuthUserId");
         $stub->verifyNeverInvoked("setAuthToken");
+        $stub->verifyNeverInvoked("setAuthPassword");
         $user->verifyNeverInvoked("createOutOfResponse");
     }
 
@@ -66,7 +70,8 @@ class ChatTest extends TestCase
             "getResponse" => (object) ["data" => (object) ["me" => "some data"]],
             "setError" => true,
             "setAuthUserId" => true,
-            "setAuthToken" => true
+            "setAuthToken" => true,
+            "setAuthPassword" => true
         ]);
 
         $user = test::double("\ATDev\RocketChat\Users\User", [
@@ -81,6 +86,7 @@ class ChatTest extends TestCase
         $stub->verifyNeverInvoked("setError");
         $stub->verifyNeverInvoked("setAuthUserId");
         $stub->verifyNeverInvoked("setAuthToken");
+        $stub->verifyNeverInvoked("setAuthPassword");
         $user->verifyInvokedOnce("createOutOfResponse", ["some data"]);
     }
 
@@ -91,7 +97,8 @@ class ChatTest extends TestCase
             "getResponse" => (object) ["status" => "success", "data" => (object) ["me" => "some data", "userId" => "ID", "authToken" => "Tok"]],
             "setError" => true,
             "setAuthUserId" => true,
-            "setAuthToken" => true
+            "setAuthToken" => true,
+            "setAuthPassword" => true
         ]);
 
         $user = test::double("\ATDev\RocketChat\Users\User", [
@@ -106,6 +113,7 @@ class ChatTest extends TestCase
         $stub->verifyNeverInvoked("setError");
         $stub->verifyInvokedOnce("setAuthUserId", ["ID"]);
         $stub->verifyInvokedOnce("setAuthToken", ["Tok"]);
+        $stub->verifyInvokedOnce("setAuthPassword", [hash("sha256", "zxc")]);
         $user->verifyInvokedOnce("createOutOfResponse", ["some data"]);
     }
 
