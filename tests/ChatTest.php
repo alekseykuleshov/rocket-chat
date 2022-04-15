@@ -113,7 +113,7 @@ class ChatTest extends TestCase
         $stub->verifyNeverInvoked("setError");
         $stub->verifyInvokedOnce("setAuthUserId", ["ID"]);
         $stub->verifyInvokedOnce("setAuthToken", ["Tok"]);
-        $stub->verifyInvokedOnce("setAuthPassword", [hash("sha256", "zxc")]);
+        $stub->verifyInvokedOnce("setAuthPassword", ["zxc"]);
         $user->verifyInvokedOnce("createOutOfResponse", ["some data"]);
     }
 

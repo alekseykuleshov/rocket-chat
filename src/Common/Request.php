@@ -81,7 +81,7 @@ abstract class Request implements \JsonSerializable
      */
     public static function setAuthPassword($authPassword)
     {
-        self::$authPassword = $authPassword;
+        self::$authPassword = hash("sha256", $authPassword);
     }
 
     /**
