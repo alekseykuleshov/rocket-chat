@@ -1,6 +1,6 @@
 # Rocket Chat Rest API PHP Wrapper Library
 
-This is a wrapper for Rest API of Rocket Chat: https://rocket.chat/docs/developer-guides/rest-api/
+This is a wrapper for Rest API of Rocket Chat: https://developer.rocket.chat/reference/api/rest-api
 
 ## Installation
 
