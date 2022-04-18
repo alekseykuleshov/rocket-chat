@@ -154,7 +154,8 @@ abstract class Request implements \JsonSerializable
         $options = [
             "timeout" => 60,
             "connect_timeout" => 60,
-            "exceptions" => false
+            "exceptions" => false,
+            "http_errors" => false,
         ];
 
         // Set data
