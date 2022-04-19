@@ -10,7 +10,7 @@ use ATDev\RocketChat\Users\User;
  */
 class Role extends Request
 {
-    use \ATDev\RocketChat\Roles\Data;
+    use Data;
 
     /**
      * Gets role listing
@@ -77,7 +77,55 @@ class Role extends Request
     }
 
     /**
-     * Assigns a role to an user
+     * Delete a role in the system
+     *
+     * @param string $roleId
+     * @return Role|false
+     */
+    public function delete($roleId)
+    {
+        $data = ['roleId' => $roleId];
+        static::send("roles.delete", "POST", $data);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->setRoleId(null);
+    }
+
+    /**
+     * Updates a role
+     *
+     * @param string $roleId
+     * @return Role|false
+     */
+    public function update($roleId)
+    {
+        $data = ['roleId' => $roleId];
+        if ($this->name !== null) {
+            $data['name'] = $this->name;
+        }
+        if ($this->description !== null) {
+            $data['description'] = $this->description;
+        }
+        if ($this->scope !== null) {
+            $data['scope'] = $this->scope;
+        }
+        if ($this->mandatory2fa !== null) {
+            $data['mandatory2fa'] = $this->mandatory2fa;
+        }
+        static::send("roles.update", "POST", $data);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->role);
+    }
+
+    /**
+     * Add a user to a role
      *
      * @param string $username
      * @param string $roomId
@@ -93,6 +141,31 @@ class Role extends Request
             $data["roomId"] = $roomId;
         }
         static::send("roles.addUserToRole", "POST", $data);
+
+        if (!static::getSuccess()) {
+            return false;
+        }
+
+        return $this->updateOutOfResponse(static::getResponse()->role);
+    }
+
+    /**
+     * Remove a user from a role
+     *
+     * @param string $username
+     * @param string $roomId
+     * @return Role|false
+     */
+    public function removeUserFromRole($username, $roomId = '')
+    {
+        $data = [
+            'roleName' => $this->name,
+            'username' => $username
+        ];
+        if (!empty($roomId)) {
+            $data["roomId"] = $roomId;
+        }
+        static::send("roles.removeUserFromRole", "POST", $data);
 
         if (!static::getSuccess()) {
             return false;

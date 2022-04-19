@@ -7,11 +7,9 @@ namespace ATDev\RocketChat\Roles;
  */
 trait Data
 {
-    /* Required property for creation */
+    /* Optional properties for creation */
     /** @var string The name of the new role */
     private $name;
-
-    /* Optional properties for creation */
     /** @var string The scope of the new role */
     private $scope;
     /** @var string A description for the new role */
@@ -201,7 +199,9 @@ trait Data
      */
     public function jsonSerialize()
     {
-        $roleData = ['name' => $this->name];
+        if (!is_null($this->name)) {
+            $roleData = ['name' => $this->name];
+        }
         if (!is_null($this->scope)) {
             $roleData['scope'] = $this->scope;
         }
