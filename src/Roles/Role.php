@@ -79,13 +79,11 @@ class Role extends Request
     /**
      * Delete a role in the system
      *
-     * @param string $roleId
      * @return Role|false
      */
-    public function delete($roleId)
+    public function delete()
     {
-        $data = ['roleId' => $roleId];
-        static::send("roles.delete", "POST", $data);
+        static::send("roles.delete", "POST", ['roleId' => $this->getRoleId()]);
 
         if (!static::getSuccess()) {
             return false;
@@ -97,25 +95,11 @@ class Role extends Request
     /**
      * Updates a role
      *
-     * @param string $roleId
      * @return Role|false
      */
-    public function update($roleId)
+    public function update()
     {
-        $data = ['roleId' => $roleId];
-        if ($this->name !== null) {
-            $data['name'] = $this->name;
-        }
-        if ($this->description !== null) {
-            $data['description'] = $this->description;
-        }
-        if ($this->scope !== null) {
-            $data['scope'] = $this->scope;
-        }
-        if ($this->mandatory2fa !== null) {
-            $data['mandatory2fa'] = $this->mandatory2fa;
-        }
-        static::send("roles.update", "POST", $data);
+        static::send("roles.update", "POST", $this);
 
         if (!static::getSuccess()) {
             return false;

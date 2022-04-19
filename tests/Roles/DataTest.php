@@ -161,13 +161,16 @@ class DataTest extends TestCase
         ], $mock->jsonSerialize());
 
         $mock = $this->getMockForTrait(Data::class);
+        $mock->setRoleId('id');
         $mock->setScope('Subscriptions');
         $mock->setDescription('description');
+        $mock->setMandatory2fa(true);
 
         $this->assertSame([
-            'name' => null,
+            'roleId' => 'id',
             'scope' => 'Subscriptions',
-            'description' => 'description'
+            'description' => 'description',
+            'mandatory2fa' => true
         ], $mock->jsonSerialize());
     }
 

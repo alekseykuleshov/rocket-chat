@@ -146,6 +146,82 @@ class RoleTest extends TestCase
         $stub->verifyInvokedOnce('updateOutOfResponse', ['role content']);
     }
 
+    public function testUpdateFailed()
+    {
+        $stub = test::double('\ATDev\RocketChat\Roles\Role', [
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) [],
+            'updateOutOfResponse' => 'nothing'
+        ]);
+
+        $role = new Role();
+        $result = $role->update();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['roles.update', 'POST', $role]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testUpdateSuccess()
+    {
+        $response = (object) ['role' => 'role content'];
+
+        $stub = test::double('\ATDev\RocketChat\Roles\Role', [
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response,
+            'updateOutOfResponse' => 'result'
+        ]);
+
+        $role = new Role();
+        $result = $role->update();
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['roles.update', 'POST', $role]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', ['role content']);
+    }
+
+    public function testDeleteFailed()
+    {
+        $stub = test::double("\ATDev\RocketChat\Roles\Role", [
+            "getRoleId" => "roleId123",
+            "send" => true,
+            "getSuccess" => false,
+            "setRoleId" => "nothing"
+        ]);
+
+        $role = new Role();
+        $result = $role->delete();
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce("send", ["roles.delete", "POST", ["roleId" => "roleId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyNeverInvoked("setRoleId");
+    }
+
+    public function testDeleteSuccess()
+    {
+        $stub = test::double("\ATDev\RocketChat\Roles\Role", [
+            "getRoleId" => "roleId123",
+            "send" => true,
+            "getSuccess" => true,
+            "setRoleId" => "result"
+        ]);
+
+        $role = new Role();
+        $result = $role->delete();
+
+        $this->assertSame("result", $result);
+        $stub->verifyInvokedOnce("send", ["roles.delete", "POST", ["roleId" => "roleId123"]]);
+        $stub->verifyInvokedOnce("getSuccess");
+        $stub->verifyInvokedOnce("setRoleId", [null]);
+    }
+
     public function testAddUserToRoleFailed()
     {
         $stub = test::double('\ATDev\RocketChat\Roles\Role', [
@@ -191,6 +267,56 @@ class RoleTest extends TestCase
 
         $this->assertSame('result', $result);
         $stub->verifyInvokedOnce('send', ['roles.addUserToRole', 'POST', $data]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyInvokedOnce('getResponse');
+        $stub->verifyInvokedOnce('updateOutOfResponse', 'role content');
+    }
+
+    public function testRemoveUserFromRoleFailed()
+    {
+        $stub = test::double('\ATDev\RocketChat\Roles\Role', [
+            'send' => true,
+            'getSuccess' => false,
+            'getResponse' => (object) [],
+            'updateOutOfResponse' => 'nothing'
+        ]);
+        $data = [
+            'roleName' => 'roleName123',
+            'username' => 'username123'
+        ];
+
+        $role = (new Role())->setName('roleName123');
+
+        $result = $role->removeUserFromRole('username123');
+
+        $this->assertSame(false, $result);
+        $stub->verifyInvokedOnce('send', ['roles.removeUserFromRole', 'POST', $data]);
+        $stub->verifyInvokedOnce('getSuccess');
+        $stub->verifyNeverInvoked('getResponse');
+        $stub->verifyNeverInvoked('updateOutOfResponse');
+    }
+
+    public function testRemoveUserFromRoleSuccess()
+    {
+        $response = (object) ['role' => 'role content'];
+        $stub = test::double('\ATDev\RocketChat\Roles\Role', [
+            'send' => true,
+            'getSuccess' => true,
+            'getResponse' => $response,
+            'updateOutOfResponse' => 'result'
+        ]);
+        $data = [
+            'roleName' => 'roleName123',
+            'username' => 'username123',
+            'roomId' => 'roomId123',
+        ];
+
+        $role = (new Role())->setName('roleName123');
+
+        $result = $role->removeUserFromRole('username123', 'roomId123');
+
+        $this->assertSame('result', $result);
+        $stub->verifyInvokedOnce('send', ['roles.removeUserFromRole', 'POST', $data]);
         $stub->verifyInvokedOnce('getSuccess');
         $stub->verifyInvokedOnce('getResponse');
         $stub->verifyInvokedOnce('updateOutOfResponse', 'role content');

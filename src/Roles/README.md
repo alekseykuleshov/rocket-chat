@@ -39,9 +39,9 @@ if (!$result) {
 
 ### DELETE ROLE
 ```php
-$role = (new \ATDev\RocketChat\Roles\Role())->setName("[ROLE NAME]");
+$role = (new \ATDev\RocketChat\Roles\Role())->setRoleId("[ROLE ID]");
 
-$result = $role->delete("[ROLE ID]");
+$result = $role->delete();
 
 if (!$result) {
 	// Log the error
@@ -51,13 +51,13 @@ if (!$result) {
 
 ### UPDATE ROLE
 ```php
-$role = new \ATDev\RocketChat\Roles\Role();
+$role = new \ATDev\RocketChat\Roles\Role()->setRoleId("[ROLE ID]");
 $role->setName("[ROLE NEW NAME]");
 $role->setScope("[ROLE NEW SCOPE]"); // optional
 $role->setDescription("[ROLE NEW DESCRIPTION]"); // optional
 $role->setMandatory2fa("[ROLE NEW MANDATORY 2 FA]"); // optional
 
-$result = $role->update("[ROLE ID]");
+$result = $role->update();
 
 if (!$result) {
 	// Log the error

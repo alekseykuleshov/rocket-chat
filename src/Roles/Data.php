@@ -1,4 +1,4 @@
-<?php
+<?php //
 
 namespace ATDev\RocketChat\Roles;
 
@@ -15,15 +15,16 @@ trait Data
     /** @var string A description for the new role */
     private $description;
 
-    /* Readonly properties returned from api */
     /** @var string Role id */
     private $roleId;
-    /** @var string Date-time */
-    private $updatedAt;
     /** @var boolean Indicates if user is using two factor authentication */
     private $mandatory2fa;
     /** @var boolean */
     private $protected;
+
+    /* Readonly properties returned from api */
+    /** @var string Date-time */
+    private $updatedAt;
 
     /**
      * Gets role id
@@ -39,7 +40,7 @@ trait Data
      * @param string $value
      * @return $this
      */
-    private function setRoleId($value)
+    public function setRoleId($value)
     {
         if (is_string($value)) {
             $this->roleId = $value;
@@ -110,7 +111,7 @@ trait Data
      * @param bool $value
      * @return $this
      */
-    private function setMandatory2fa($value)
+    public function setMandatory2fa($value)
     {
         if (is_bool($value)) {
             $this->mandatory2fa = $value;
@@ -133,7 +134,7 @@ trait Data
      * @param bool $value
      * @return $this
      */
-    private function setProtected($value)
+    public function setProtected($value)
     {
         if (is_bool($value)) {
             $this->protected = $value;
@@ -199,14 +200,21 @@ trait Data
      */
     public function jsonSerialize()
     {
+        $roleData = [];
+        if (!is_null($this->roleId)) {
+            $roleData['roleId'] = $this->roleId;
+        }
         if (!is_null($this->name)) {
-            $roleData = ['name' => $this->name];
+            $roleData['name'] = $this->name;
         }
         if (!is_null($this->scope)) {
             $roleData['scope'] = $this->scope;
         }
         if (!is_null($this->description)) {
             $roleData['description'] = $this->description;
+        }
+        if (!is_null($this->mandatory2fa)) {
+            $roleData['mandatory2fa'] = $this->mandatory2fa;
         }
 
         return $roleData;
