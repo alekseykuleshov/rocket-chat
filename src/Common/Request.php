@@ -278,6 +278,7 @@ abstract class Request implements \JsonSerializable
      *
      * @return array Data to serialize
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return null;

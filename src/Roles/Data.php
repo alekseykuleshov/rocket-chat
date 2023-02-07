@@ -198,6 +198,7 @@ trait Data
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $roleData = [];
