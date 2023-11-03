@@ -24,7 +24,7 @@ class Chat extends Request
     {
         static::send("login", "POST", ["user" => $userName, "password" => $password]);
 
-        if (isset(static::getResponse()->status) && (static::getResponse()->status != "success")) { // Own error structure
+        if (!isset(static::getResponse()->status) || (static::getResponse()->status != "success")) { // Own error structure
 
             if (isset(static::getResponse()->error)) {
                 static::setError(static::getResponse()->error);
